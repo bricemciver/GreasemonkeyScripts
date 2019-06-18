@@ -1,8 +1,9 @@
 // ==UserScript==
 // @name Ancestry.com - Remove paid hints
 // @description Removes paid hints on the "All Hints" page and on individual person pages
-// @version 0.0.1
+// @version 0.0.2
 // @match *://*.ancestry.com/*
+// @match *://*.ancestry.de/*
 // @author bricem
 // @namespace bricem.scripts
 // @grant GM_xmlhttpRequest
