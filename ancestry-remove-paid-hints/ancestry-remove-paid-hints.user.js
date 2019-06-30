@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Ancestry.com - Remove paid hints
 // @description Removes paid hints on the "All Hints" page and on individual person pages
-// @version 0.0.2
+// @version 0.0.3
 // @match *://*.ancestry.com/*
 // @match *://*.ancestry.de/*
 // @author bricem
@@ -10,19 +10,19 @@
 // @run-at document-end
 // ==/UserScript==
 
-function findId(targetNode) {
-    let dbid = targetNode.href.match(/dbid=(\d*)\&/);
+function findId(href) {
+    let dbid = href.match(/dbid=(\d*)\&/);
     if (dbid && dbid.length > 1) {
         dbid = dbid[1];
     }
     if (!dbid) {
-        dbid = targetNode.href.match(/otid=(\d*)\&/);
+        dbid = href.match(/otid=(\d*)\&/);
         if (dbid && dbid.length > 1) {
             dbid = dbid[1];
         }
     }
     if (!dbid) {
-        dbid = targetNode.href;
+        dbid = href;
     }
     return dbid;
 }
@@ -36,6 +36,14 @@ function removeTreeByClass(targetNode, className1, className2) {
     if (pNode) {
         pNode.parentNode.removeChild(pNode);
     }
+}
+
+function addDbidFromJoinPage() {
+  // If we do end up on join page, add that dbid to the list of paid databases
+  if (window.location.pathname.indexOf('join') !== -1) {
+    let dbid = findId(window.location.href);
+    localStorage.setItem(dbid, "true");
+  }
 }
 
 function removePaidHints() {
@@ -55,7 +63,7 @@ function removePaidHints() {
                 mutation.target.href.indexOf("phstart=default&usePUBJs=true") !== -1 &&
                 mutation.target.className.indexOf("ancBtn") !== -1) {
                 // check if we have seen this database before before trying network call
-                let dbid = findId(mutation.target);
+                let dbid = findId(mutation.target.href);
                 let paidInd = localStorage.getItem(dbid);
                 if ("true" === paidInd) {
                     removeTreeByClass(mutation.target, "typeContent", "hntTabHintCard");
@@ -65,7 +73,7 @@ function removePaidHints() {
                         url: mutation.target.href,
                         context: mutation.target,
                         onload: function (response) {
-                            let dbid = findId(response.context);
+                            let dbid = findId(response.context.href);
                             if (response.finalUrl && response.finalUrl.indexOf("join") !== -1) {
                                 removeTreeByClass(response.context, "typeContent", "hntTabHintCard");
                                 localStorage.setItem(dbid, "true");
@@ -74,15 +82,15 @@ function removePaidHints() {
                             }
                         },
                         ontimeout: function (response) {
-                            let dbid = findId(response.context);
+                            let dbid = findId(response.context.href);
                             localStorage.removeItem(dbid);
                         },
                         onerror: function (response) {
-                            let dbid = findId(response.context);
+                            let dbid = findId(response.context.href);
                             localStorage.removeItem(dbid);
                         },
                         onabort: function (response) {
-                            let dbid = findId(response.context);
+                            let dbid = findId(response.context.href);
                             localStorage.removeItem(dbid);
                         },
                     });
@@ -96,4 +104,5 @@ function removePaidHints() {
     observer.observe(document.body, config);
 }
 
+addDbidFromJoinPage();
 removePaidHints();
