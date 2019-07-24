@@ -4,6 +4,7 @@
 // @version       0.0.2
 // @include       *://amazon.tld/*
 // @include       *://*.amazon.tld/*
+// @license       MIT
 // @author        bricem
 // @namespace     bricem.scripts
 // ==/UserScript==
