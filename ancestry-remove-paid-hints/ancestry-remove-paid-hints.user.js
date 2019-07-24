@@ -6,6 +6,7 @@
 // @match *://*.ancestry.de/*
 // @author bricem
 // @namespace bricem.scripts
+// @license MIT
 // @grant GM_xmlhttpRequest
 // @run-at document-end
 // ==/UserScript==
