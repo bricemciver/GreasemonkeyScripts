@@ -5,6 +5,7 @@
 // @version 0.0.1
 // @author bricem
 // @namespace bricem.scripts
+// @license MIT
 // @grant none
 // ==/UserScript==
 
