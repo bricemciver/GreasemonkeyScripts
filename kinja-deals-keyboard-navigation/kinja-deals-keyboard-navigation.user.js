@@ -1,68 +1,94 @@
 // ==UserScript==
-// @name Kinja Deals Keyboard Navigation
-// @description Use 'j' and 'k' key navigation of post content
+// @name Keyboard Navigation
+// @description Use 'j' and 'k' keys for navigation of post content
 // @match *://*.theinventory.com/*
-// @version 0.0.1
+// @version 0.0.2
 // @author bricem
 // @namespace bricem.scripts
 // @license MIT
 // @grant none
 // ==/UserScript==
 
-function keyPressed(event) {
+const headTags = []
+let pos = -1
+
+const addGlobalStyle = (css) => {
+    const head = document.getElementsByTagName('head')[0];
+    if (!head) { return; }
+    const style = document.createElement('style');
+    style.type = 'text/css';
+    style.innerHTML = css;
+    head.appendChild(style);
+}
+
+const keyPressed = (event) => {
     if ((event.code == 'KeyK') || (event.code == 'KeyJ')) {
+        if (headTags[pos]) {
+            headTags[pos].className = headTags[pos].className.replace(' selected','')
+        }
         if ('KeyK' == event.code) {
             pos--;
         }
         if ('KeyJ' == event.code) {
             pos++;
         }
+        // wrap around
         if (pos >= headTags.length) {
-            pos = headTags.length - 1;
+            pos = 0;
         }
-        if (pos < -1) {
-            pos = -1;
+        if (pos < 0) {
+            pos = headTags.length-1;
         }
-        let clientRects = (pos == -1) ? mainDiv.getBoundingClientRect() : headTags[pos].getBoundingClientRect();
-        let scrollY = clientRects.top;
-        if (scrollY < 0) {
-            scrollY -= 110;
-        } else {
-            scrollY -= 50;
-        }
-        window.scrollBy(clientRects.left, scrollY);
+        headTags[pos].className = headTags[pos].className + ' selected'
+        headTags[pos].scrollIntoView();
     }
 }
 
-function removeCruft() {
-    if (mainDiv) {
+const removeCruft = (containerDiv) => {
+    if (containerDiv) {
         // remove unneeded content
-        mainDiv.querySelectorAll('span.twitter-embed').forEach(function (element) {
-            if (element.parentNode) {
-                element.parentNode.removeChild(element);
-            }
-        });
-        mainDiv.querySelectorAll('aside.inset--story').forEach(function (element) {
-            if (element.parentNode) {
-                element.parentNode.removeChild(element);
-            }
-        });
+        containerDiv.querySelectorAll('.branded-item, .ad-container, .movable-ad').forEach((element) => element.remove());
     }
 }
 
-function addListeners() {
+const createEntries = (containerDiv) => {
+    if (containerDiv && containerDiv.children) {
+        let newElement
+        Array.from(containerDiv.children).forEach((element) => {
+            // this is the beginning or end or a section
+            if (element.tagName === 'HR' || element.tagName === 'H3') {
+                if (newElement) {
+                    element.insertAdjacentElement('beforebegin', newElement)
+                }
+                newElement = document.createElement('div')
+                newElement.className = 'inlineFrame'
+            } else if (newElement) {
+                newElement.append(element)
+            }
+        })
+    }
+}
+
+const addListeners = (containerDiv) => {
     // get all section headers
-    headTags = mainDiv.querySelectorAll('.align--center, .align--left');
+    headTags.push(containerDiv);
+    headTags.push(...containerDiv.querySelectorAll('div.inlineFrame, h3, h4'));
     document.addEventListener('keydown', keyPressed);
 }
 
 // find main content
-let mainDiv = document.querySelectorAll('div.entry-content')[0];
+let mainDiv = document.querySelector('.js_entry-content');
+if (mainDiv) {
+  // remove unneeded content
+  removeCruft(mainDiv);
 
-// remove unneeded content
-removeCruft();
+  // add necessary styles
+  addGlobalStyle('div.inlineFrame { margin-top:17px; margin-bottom:17px; padding:33px; border-radius:3px; border: 1px solid rgba(0,0,0,0.05) }')
+  addGlobalStyle('div.inlineFrame.selected { border: 1px solid rgba(0, 0, 0, 0.15) }')
 
-// add keyboard navigation
-let pos = 0;
-let headTags = [];
-addListeners();
+  // create entries
+  createEntries(mainDiv);
+
+  // add keyboard navigation
+  addListeners(mainDiv);
+}
