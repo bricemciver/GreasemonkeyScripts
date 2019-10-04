@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name Keyboard Navigation
+// @name Kinja Deals Keyboard Navigation
 // @description Use 'j' and 'k' keys for navigation of post content
 // @match *://*.theinventory.com/*
 // @version 0.0.3
