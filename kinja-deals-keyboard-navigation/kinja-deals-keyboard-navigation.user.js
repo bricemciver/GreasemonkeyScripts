@@ -2,7 +2,7 @@
 // @name Keyboard Navigation
 // @description Use 'j' and 'k' keys for navigation of post content
 // @match *://*.theinventory.com/*
-// @version 0.0.2
+// @version 0.0.3
 // @author bricem
 // @namespace bricem.scripts
 // @license MIT
@@ -77,7 +77,7 @@ const addListeners = (containerDiv) => {
 }
 
 // find main content
-let mainDiv = document.querySelector('.js_entry-content');
+let mainDiv = document.querySelector('.js_entry-content, .js_post-content');
 if (mainDiv) {
   // remove unneeded content
   removeCruft(mainDiv);
