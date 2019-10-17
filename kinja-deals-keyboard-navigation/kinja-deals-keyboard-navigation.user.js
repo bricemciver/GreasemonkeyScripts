@@ -2,7 +2,7 @@
 // @name Kinja Deals Keyboard Navigation
 // @description Use 'j' and 'k' keys for navigation of post content
 // @match *://*.theinventory.com/*
-// @version 0.0.3
+// @version 0.0.5
 // @author bricem
 // @namespace bricem.scripts
 // @license MIT
@@ -41,14 +41,14 @@ const keyPressed = (event) => {
         }
         headTags[pos].className = headTags[pos].className + ' selected'
         headTags[pos].scrollIntoView();
+        window.scrollBy(0, -17);
     }
 }
 
-const removeCruft = (containerDiv) => {
-    if (containerDiv) {
-        // remove unneeded content
-        containerDiv.querySelectorAll('.branded-item, .ad-container, .movable-ad').forEach((element) => element.remove());
-    }
+const removeCruft = () => {
+    // remove unneeded content
+    document.querySelectorAll('.branded-item, .ad-container, .movable-ad').forEach((element) => element.remove());
+    document.querySelectorAll('#sidebar_wrapper').forEach((element) => element.closest('aside').remove());
 }
 
 const createEntries = (containerDiv) => {
@@ -76,15 +76,19 @@ const addListeners = (containerDiv) => {
     document.addEventListener('keydown', keyPressed);
 }
 
-// find main content
-let mainDiv = document.querySelector('.js_entry-content, .js_post-content');
-if (mainDiv) {
-  // remove unneeded content
-  removeCruft(mainDiv);
+// remove unneeded content
+removeCruft();
 
+// find main content
+let mainDiv = document.querySelector('.js_post-content > .js_expandable-container')
+if (!mainDiv) {
+    mainDiv = document.querySelector('.js_entry-content, .js_post-content')
+}
+if (mainDiv) {
   // add necessary styles
   addGlobalStyle('div.inlineFrame { margin-top:17px; margin-bottom:17px; padding:33px; border-radius:3px; border: 1px solid rgba(0,0,0,0.05) }')
   addGlobalStyle('div.inlineFrame.selected { border: 1px solid rgba(0, 0, 0, 0.15) }')
+  addGlobalStyle('main { width:100% !important }')
 
   // create entries
   createEntries(mainDiv);
