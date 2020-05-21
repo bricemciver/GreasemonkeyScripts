@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name eBay Seller Hider
 // @description Hide items from low/poor feedback eBay sellers and sponsored items
-// @version 0.0.1
+// @version 0.0.2
 // @match *://*.ebay.com/*
 // @author bricem
 // @namespace bricem.scripts
@@ -36,33 +36,15 @@ const createHeader = () => {
     return header
 }
 
-const createCheckboxSvg = () => {
-    const checkboxSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-    checkboxSvg.setAttribute('class', 'x-refine-svg-icon')
-    checkboxSvg.setAttribute('aria-hidden', 'true')
-    checkboxSvg.setAttribute('focusable', 'false')
-    const selected = document.createElementNS('http://www.w3.org/2000/svg', 'use')
-    selected.setAttribute('class', 'x-refine-svg-icon--selected')
-    selected.setAttribute('href', '#svg-icon-checkbox--checked')
-    const unselected = document.createElementNS('http://www.w3.org/2000/svg', 'use')
-    unselected.setAttribute('class', 'x-refine-svg-icon--unselected')
-    unselected.setAttribute('href', '#svg-icon-checkbox--unchecked')
-    checkboxSvg.append(selected)
-    checkboxSvg.append(unselected)
-    return checkboxSvg
-}
-
 const createListItem = (text, valueName, value) => {
     const listItem = document.createElement('li')
     listItem.className = 'x-refine__main__list--value'
     const selectItem = document.createElement('div')
     selectItem.className = 'x-refine__multi-select'
-    const selectSvg = document.createElement('div')
-    selectSvg.className = 'x-refine__select__svg'
     const checkbox = document.createElement('input')
     checkbox.setAttribute('type', 'checkbox')
-    checkbox.className = 'cbx x-refine__multi-select-checkbox'
     checkbox.setAttribute('aria-label', text)
+    checkbox.className = 'cbx x-refine__multi-select-checkbox'
     checkbox.setAttribute('autocomplete', 'off')
     checkbox.setAttribute('aria-hidden', 'true')
     checkbox.setAttribute('tab-index', '-1')
@@ -86,11 +68,9 @@ const createListItem = (text, valueName, value) => {
             filterSponsored()
         }
     })
-    const checkboxTextDiv = document.createElement('div')
     const checkboxText = document.createElement('span')
     checkboxText.className = 'cbx x-refine__multi-select-cbx'
     checkboxText.innerText = text
-    checkboxTextDiv.append(checkboxText)
     if (value) {
       const input = document.createElement('input')
       input.setAttribute('type', 'text')
@@ -101,12 +81,10 @@ const createListItem = (text, valueName, value) => {
           updateFilter()
       })
       input.setAttribute('style', 'height: 22px; width: 50px; margin: -3px 0 0 8px; padding: 3px; float:right; font-size: 11px')
-      checkboxTextDiv.append(input)
+      checkboxText.append(input)
     }
-    selectSvg.append(checkbox)
-    selectSvg.append(createCheckboxSvg())
-    selectSvg.append(checkboxTextDiv)
-    selectItem.append(selectSvg)
+    selectItem.append(checkbox)
+    selectItem.append(checkboxText)
     listItem.append(selectItem)
     return listItem
 }
@@ -135,12 +113,14 @@ const getPresets = () => {
 }
 
 const addFilter = () => {
-    const menu = document.querySelector('ul.x-refine__left__nav')
-    const list = document.createElement('li')
-    list.className = 'x-refine__main__list'
-    list.append(createHeader())
-    list.append(createGroup())
-    menu.prepend(list)
+    const menu = document.querySelector('.x-refine__left__nav')
+    if (menu) {
+      const list = document.createElement('li')
+      list.className = 'x-refine__main__list'
+      list.append(createHeader())
+      list.append(createGroup())
+      menu.prepend(list)
+    }
 }
 
 const updateFilter = () => {
