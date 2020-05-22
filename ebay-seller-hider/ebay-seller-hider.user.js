@@ -18,6 +18,7 @@ let hideSponsored = true
 
 const hideItem = (seller) => {
     let [,reviews, feedback] = seller.innerText && seller.innerText.match(/\((.*)\) (.*)%/)
+    reviews = reviews.replace(',', '')
     reviews = parseInt(reviews, 10)
     feedback = parseInt(feedback, 10)
     let parent = seller.parentNode
