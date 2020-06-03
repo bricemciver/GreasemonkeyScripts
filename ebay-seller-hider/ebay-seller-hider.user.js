@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name eBay Seller Hider
 // @description Hide items from low/poor feedback eBay sellers and sponsored items
-// @version 0.0.2
+// @version 0.0.3
 // @match *://*.ebay.com/*
 // @author bricem
 // @namespace bricem.scripts
@@ -134,13 +134,25 @@ const updateFilter = () => {
 
 const filterSponsored = () => {
     getPresets()
-    var sellers = document.querySelectorAll('div.s-item__title--tagblock')
+    var sellers = document.querySelectorAll('div.s-item__title--tagblock > span[role="text"]')
     sellers.forEach((seller) => {
-       let parent = seller.parentNode
-       while (parent.tagName !== 'LI') {
-         parent = parent.parentNode
-       }
-       parent.style.display = hideSponsored ? 'none' : 'list-item'
+        // look at children to determine text
+        let labels = {}
+        for (let i = 0; i < seller.children.length; i++) {
+            let node = seller.children[i]
+            // group by class
+            if (!labels[node.className]) {
+                labels[node.className] = ''
+            }
+            labels[node.className] += node.innerText
+        }
+        if (Object.values(labels).some((label) => label.startsWith('SPONSORED'))) {
+            let parent = seller.parentNode
+            while (parent.tagName !== 'LI') {
+               parent = parent.parentNode
+            }
+            parent.style.display = hideSponsored ? 'none' : 'list-item'
+        }
     })
 }
 
