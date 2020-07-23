@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name          Amazon - Add to Goodreads widget
 // @description   Places an "Add to Goodreads" widget on Amazon book pages
-// @version       0.0.2
+// @version       0.0.3
 // @include       *://amazon.tld/*
 // @include       *://*.amazon.tld/*
 // @license       MIT
@@ -9,18 +9,19 @@
 // @namespace     bricem.scripts
 // ==/UserScript==
 
-const isbnRegex = /(.\d{10})/
+const isbnRegex = /\d{10}/
 
 const findISBN = () => {
   // check first if we're on a book page, if so use it
   const array = isbnRegex.exec(document.location.pathname)
-  let isbn = (array) ? array[1] : ''
+  let isbn = (array) ? array[0] : ''
   // if it's blank, see if a book version of the current page exists, use that
   if (!isbn) {
     const links = document.querySelectorAll('#MediaMatrix a[href*=dp]')
     for (const link of links) {
-        isbn = isbnRegex.exec(link.href)
-        if (isbn) {
+        const res = isbnRegex.exec(link.href)
+        if (res && res[0]) {
+            isbn = res[0]
             break
         }
     }
