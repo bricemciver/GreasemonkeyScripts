@@ -51,14 +51,8 @@ function removePaidHints() {
     // Options for the observer (which mutations to observe)
     const config = { attributes: true, subtree: true };
 
-    const myInit = {
-        method: 'GET',
-        redirect: 'manual',
-        mode: 'cors'
-    };
-
     // Callback function to execute when mutations are observed
-    const callback = function (mutationsList, observer) {
+    const callback = function (mutationsList) {
         for (var mutation of mutationsList) {
             if (mutation.attributeName == 'href' &&
                 mutation.target.href.indexOf("phstart=default&usePUBJs=true") !== -1 &&
@@ -74,7 +68,7 @@ function removePaidHints() {
                         url: mutation.target.href,
                         context: mutation.target,
                         onload: function (response) {
-                            let dbid = findId(response.context.href);
+                            dbid = findId(response.context.href);
                             if (response.finalUrl && response.finalUrl.indexOf("join") !== -1) {
                                 removeTreeByClass(response.context, "typeContent", "hntTabHintCard");
                                 localStorage.setItem(dbid, "true");
@@ -83,15 +77,15 @@ function removePaidHints() {
                             }
                         },
                         ontimeout: function (response) {
-                            let dbid = findId(response.context.href);
+                            dbid = findId(response.context.href);
                             localStorage.removeItem(dbid);
                         },
                         onerror: function (response) {
-                            let dbid = findId(response.context.href);
+                            dbid = findId(response.context.href);
                             localStorage.removeItem(dbid);
                         },
                         onabort: function (response) {
-                            let dbid = findId(response.context.href);
+                            dbid = findId(response.context.href);
                             localStorage.removeItem(dbid);
                         },
                     });
@@ -101,7 +95,7 @@ function removePaidHints() {
     };
 
     // Create an observer instance linked to the callback function
-    var observer = new MutationObserver(callback);
+    const observer = new MutationObserver(callback);
     observer.observe(document.body, config);
 }
 
