@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name eBay Seller Hider
 // @description Hide items from low/poor feedback eBay sellers and sponsored items
-// @version 0.0.3
+// @version 0.0.4
 // @match *://*.ebay.com/*
 // @author bricem
 // @namespace bricem.scripts
@@ -13,14 +13,14 @@
 let filterReviews = true
 let reviewMin = 10
 let filterFeedback = true
-let feedbackMin = 95
+let feedbackMin = 95.0
 let hideSponsored = true
 
 const hideItem = (seller) => {
     let [,reviews, feedback] = seller.innerText && seller.innerText.match(/\((.*)\) (.*)%/)
     reviews = reviews.replace(',', '')
     reviews = parseInt(reviews, 10)
-    feedback = parseInt(feedback, 10)
+    feedback = parseFloat(feedback)
     let parent = seller.parentNode
     while (parent.tagName !== 'LI') {
         parent = parent.parentNode
@@ -109,7 +109,7 @@ const getPresets = () => {
     reviewMin = parseInt(reviewMin, 10) || 10
     filterFeedback = localStorage.getItem('filterFeedback') === 'false' ? false : true
     feedbackMin = localStorage.getItem('feedbackMin')
-    feedbackMin = parseInt(feedbackMin, 10) || 95
+    feedbackMin = parseFloat(feedbackMin) || 95.0
     hideSponsored = localStorage.getItem('hideSponsored') === 'false' ? false : true
 }
 
