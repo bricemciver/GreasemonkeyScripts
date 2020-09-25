@@ -11,22 +11,37 @@
 
 const isbnRegex = /\d{10}/
 
+// Returns ISBN error syndrome, zero for a valid ISBN, non-zero for an invalid one.
+// digits[i] must be between 0 and 10.
+const checkISBN = (isbn) => {
+  let s = 0
+  let t = 0
+  for (let i = 0; i < isbn.length; i++) {
+    t += Number.parseInt(isbn.charAt(i));
+    s += t;
+  }
+  console.log('ISBN check: ' + (s % 11))
+  return s % 11;
+}
+
 const findISBN = () => {
   // check first if we're on a book page, if so use it
   const array = isbnRegex.exec(document.location.pathname)
-  let isbn = (array) ? array[0] : ''
+  let isbn = (array && checkISBN(array[0]) === 0) ? array[0] : ''
   // if it's blank, see if a book version of the current page exists, use that
   if (!isbn) {
     const links = document.querySelectorAll('#MediaMatrix a[href*=dp]')
     for (const link of links) {
         const res = isbnRegex.exec(link.href)
-        if (res && res[0]) {
+        if (res && res[0] && checkISBN(res[0]) === 0) {
             isbn = res[0]
+            console.log('ISBN in link: ' + isbn)
             break
         }
     }
+  } else {
+     console.log('ISBN in pathname: ' + isbn)
   }
-  console.log('ISBN:' + isbn)
   return isbn
 }
 
