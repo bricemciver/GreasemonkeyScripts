@@ -2,7 +2,7 @@
 // @name Kinja Deals Keyboard Navigation
 // @description Use 'j' and 'k' keys for navigation of post content
 // @match *://*.theinventory.com/*
-// @version 0.0.6
+// @version 0.0.7
 // @author bricem
 // @namespace bricem.scripts
 // @license MIT
@@ -47,9 +47,14 @@ const keyPressed = (event) => {
 }
 
 const removeCruft = () => {
-  document
-    .querySelectorAll('.js_movable_ad_slot')
-    .forEach((element) => element.remove())
+  const movableAds = document.querySelectorAll('.js_movable_ad_slot')
+  if (movableAds) {
+    movableAds.forEach((element) => element.remove())
+  }
+  const connatix = document.querySelectorAll('.connatix-container')
+  if (connatix) {
+    connatix.forEach((element) => element.remove())
+  }
   const insets = document.evaluate(
     "//*[contains(text(), 'G/O Media may get a commission')]",
     document,
