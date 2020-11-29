@@ -10,6 +10,7 @@
 // @match        https://www.amazon.de/*
 // @match        http://www.amazon.co.uk/*
 // @match        https://www.amazon.co.uk/*
+// @license      GPL2
 // @grant        none
 // @run-at       document-start
 // ==/UserScript==
