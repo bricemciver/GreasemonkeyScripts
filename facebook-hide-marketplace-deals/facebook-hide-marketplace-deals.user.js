@@ -14,9 +14,9 @@ const config = { childList: true, attributes: true, subtree: true }
 
 // Callback function to execute when mutations are observed
 const callback = (mutationsList, observer) => {
-    for (let mutation of mutationsList) {
+    for (const mutation of mutationsList) {
         if (mutation.type === 'childList' && mutation.addedNodes.length) {
-            for (let node of mutation.addedNodes) {
+            for (const node of mutation.addedNodes) {
                 if (node.nodeType === Node.ELEMENT_NODE) {
                     const dealsLink = node.querySelector("a[href*='tracking']")
                     if (dealsLink) {

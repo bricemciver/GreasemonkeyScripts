@@ -23,14 +23,14 @@ const addGlobalStyle = (css) => {
 }
 
 const keyPressed = (event) => {
-  if (event.code == 'KeyK' || event.code == 'KeyJ') {
+  if (event.code === 'KeyK' || event.code === 'KeyJ') {
     if (headTags[pos]) {
       headTags[pos].className = headTags[pos].className.replace(' selected', '')
     }
-    if ('KeyK' == event.code) {
+    if ('KeyK' === event.code) {
       pos--
     }
-    if ('KeyJ' == event.code) {
+    if ('KeyJ' === event.code) {
       pos++
     }
     // wrap around
@@ -99,7 +99,7 @@ const addListeners = (containerDiv) => {
 removeCruft()
 
 // find main content
-let mainDiv = document.querySelector(
+const mainDiv = document.querySelector(
   '.js_post-content #js_movable-ads-post-contents'
 )
 if (mainDiv) {

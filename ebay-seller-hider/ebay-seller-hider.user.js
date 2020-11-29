@@ -137,9 +137,9 @@ const filterSponsored = () => {
     var sellers = document.querySelectorAll('div.s-item__title--tagblock > span[role="text"]')
     sellers.forEach((seller) => {
         // look at children to determine text
-        let labels = {}
+        const labels = {}
         for (let i = 0; i < seller.children.length; i++) {
-            let node = seller.children[i]
+            const node = seller.children[i]
             // group by class
             if (!labels[node.className]) {
                 labels[node.className] = ''
