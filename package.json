@@ -1,0 +1,29 @@
+{
+  "name": "greasemonkeyscripts",
+  "version": "1.0.0",
+  "description": "My collection of GreaseMonkey scripts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bricemciver/GreasemonkeyScripts.git"
+  },
+  "author": "Brice McIver",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bricemciver/GreasemonkeyScripts/issues"
+  },
+  "homepage": "https://github.com/bricemciver/GreasemonkeyScripts#readme",
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
+  "devDependencies": {
+    "@types/greasemonkey": "^4.0.4",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.2.2",
+    "prettier": "^2.8.8",
+    "typescript": "^5.1.3"
+  }
+}
