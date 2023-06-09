@@ -1,3 +1,4 @@
+"use strict";
 // ==UserScript==
 // @name          Google Mail - Default to All Mail
 // @description   Redirects your initial Google Mail view to All Mail
@@ -6,7 +7,7 @@
 // @license       MIT
 // @author        Brice McIver
 // ==/UserScript==
-export {};
+Object.defineProperty(exports, "__esModule", { value: true });
 // if new tab or user is navigating to GMail, default to All Mail
 // if (!document.referrer) {
 //   window.location.hash = "#all";

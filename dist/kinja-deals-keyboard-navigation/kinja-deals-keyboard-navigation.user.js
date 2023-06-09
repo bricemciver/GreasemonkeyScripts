@@ -1,3 +1,4 @@
+"use strict";
 // ==UserScript==
 // @name Kinja Deals Keyboard Navigation
 // @description Use 'j' and 'k' keys for navigation of post content
@@ -7,6 +8,7 @@
 // @license MIT
 // @grant none
 // ==/UserScript==
+Object.defineProperty(exports, "__esModule", { value: true });
 const headTags = [];
 let pos = -1;
 const addGlobalStyle = (css) => {
@@ -93,5 +95,4 @@ if (mainDiv) {
     // add keyboard navigation
     addListeners(mainDiv);
 }
-export {};
 //# sourceMappingURL=kinja-deals-keyboard-navigation.user.js.map

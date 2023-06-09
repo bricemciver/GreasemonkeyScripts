@@ -1,3 +1,4 @@
+"use strict";
 // ==UserScript==
 // @name          Amazon - Goodreads metadata
 // @description   Shows the ratings from Goodreads on Amazon book pages
@@ -8,6 +9,7 @@
 // @author        Brice McIver
 // @grant         GM_xmlhttpRequest
 // ==/UserScript==
+Object.defineProperty(exports, "__esModule", { value: true });
 const asinRegex = /\/([A-Z0-9]{10})/;
 const findASIN = () => {
     const asinArray = [];
@@ -85,5 +87,4 @@ const main = () => {
     }
 };
 main();
-export {};
 //# sourceMappingURL=amazon-goodreads-meta.user.js.map

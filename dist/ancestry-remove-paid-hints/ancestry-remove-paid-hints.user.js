@@ -1,3 +1,4 @@
+"use strict";
 // ==UserScript==
 // @name Ancestry.com - Remove paid hints
 // @description Removes paid hints on the "All Hints" page and on individual person pages
@@ -9,6 +10,7 @@
 // @grant GM_xmlhttpRequest
 // @run-at document-end
 // ==/UserScript==
+Object.defineProperty(exports, "__esModule", { value: true });
 const findId = (href) => {
     let id = "";
     let dbid = RegExp(/dbid=(\d*)&/).exec(href);
@@ -103,5 +105,4 @@ const removePaidHints = () => {
 };
 addDbidFromJoinPage();
 removePaidHints();
-export {};
 //# sourceMappingURL=ancestry-remove-paid-hints.user.js.map

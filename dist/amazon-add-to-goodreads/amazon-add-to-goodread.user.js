@@ -1,3 +1,4 @@
+"use strict";
 // ==UserScript==
 // @name          Amazon - Add to Goodreads widget
 // @description   Places an "Add to Goodreads" widget on Amazon book pages
@@ -7,6 +8,7 @@
 // @license       MIT
 // @author        Brice McIver
 // ==/UserScript==
+Object.defineProperty(exports, "__esModule", { value: true });
 const asinRegex = /\/([A-Z0-9]{10})/;
 const findASIN = () => {
     const array = asinRegex.exec(document.location.pathname);
@@ -43,5 +45,4 @@ const main = () => {
     }
 };
 main();
-export {};
 //# sourceMappingURL=amazon-add-to-goodread.user.js.map

@@ -1,3 +1,4 @@
+"use strict";
 // ==UserScript==
 // @name eBay Seller Hider
 // @description Hide items from low/poor feedback eBay sellers and sponsored items
@@ -6,6 +7,7 @@
 // @author Brice McIver
 // @license MIT
 // ==/UserScript==
+Object.defineProperty(exports, "__esModule", { value: true });
 let filterReviews = true;
 let reviewMin = 10;
 let filterFeedback = true;
@@ -169,5 +171,4 @@ getPresets();
 addFilter();
 updateFilter();
 filterSponsored();
-export {};
 //# sourceMappingURL=ebay-seller-hider.user.js.map

@@ -1,3 +1,4 @@
+"use strict";
 // ==UserScript==
 // @name         Wirecutter Anti-modal
 // @description  Stop modals asking you to register before viewing articles
@@ -7,6 +8,7 @@
 // @license      MIT
 // @grant        none
 // ==/UserScript==
+Object.defineProperty(exports, "__esModule", { value: true });
 // keep track of actions so we can disable observer at some point
 let modalRemoved = false;
 let overflowFixed = false;
@@ -55,5 +57,4 @@ const startObserver = () => {
     }
 };
 startObserver();
-export {};
 //# sourceMappingURL=wirecutter-anti-modal.user.js.map

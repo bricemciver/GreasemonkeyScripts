@@ -1,3 +1,4 @@
+"use strict";
 // ==UserScript==
 // @name         Facebook Hide Marketplace Deals
 // @version      0.0.1
@@ -7,6 +8,7 @@
 // @author       Brice McIver
 // @license      MIT
 // ==/UserScript==
+Object.defineProperty(exports, "__esModule", { value: true });
 // Options for the observer (which mutations to observe)
 const config = {
     childList: true,
@@ -39,5 +41,4 @@ const callback = (mutationsList, observer) => {
 };
 // Create an observer instance linked to the callback function and observe
 new MutationObserver(callback).observe(document, config);
-export {};
 //# sourceMappingURL=facebook-hide-marketplace-deals.user.js.map
