@@ -8,6 +8,6 @@
 // ==/UserScript==
 
 // if new tab or user is navigating to GMail, default to All Mail
-if (!document.referrer) {
-  window.location.hash = "#all";
-}
+// if (!document.referrer) {
+//   window.location.hash = "#all";
+// }

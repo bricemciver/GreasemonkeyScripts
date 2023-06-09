@@ -6,9 +6,9 @@
 // @license       MIT
 // @author        Brice McIver
 // ==/UserScript==
-// if new tab or user is navigating to GMail, default to All Mail
-if (!document.referrer) {
-    window.location.hash = "#all";
-}
 export {};
+// if new tab or user is navigating to GMail, default to All Mail
+// if (!document.referrer) {
+//   window.location.hash = "#all";
+// }
 //# sourceMappingURL=google-mail-default-to-all-mail.user.js.map
