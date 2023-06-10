@@ -1,14 +1,15 @@
 "use strict";
 // ==UserScript==
-// @name          Amazon - Goodreads metadata
-// @namespace     bricemciver
-// @description   Shows the ratings from Goodreads on Amazon book pages
-// @license       MIT
-// @version       0.0.2
-// @match         *://amazon.tld/*
-// @include       *://*.amazon.tld/*
-// @grant         GM_xmlhttpRequest
-// @grant         GM.xmlHttpRequest
+// @name         Amazon - Goodreads metadata
+// @namespace    bricemciver
+// @description  Shows the ratings from Goodreads on Amazon book pages
+// @license      MIT
+// @version      0.0.2
+// @match        *://amazon.tld/*
+// @match        *://*.amazon.tld/*
+// @grant        GM_xmlhttpRequest
+// @grant        GM.xmlHttpRequest
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=amazon.com
 // ==/UserScript==
 Object.defineProperty(exports, "__esModule", { value: true });
 const asinRegex = /\/([A-Z0-9]{10})/;

@@ -1,12 +1,14 @@
 "use strict";
 // ==UserScript==
-// @name          Amazon - Add to Goodreads widget
-// @description   Places an "Add to Goodreads" widget on Amazon book pages
-// @version       0.0.5
-// @include       *://amazon.tld/*
-// @include       *://*.amazon.tld/*
-// @license       MIT
-// @author        Brice McIver
+// @name         Amazon - Add to Goodreads widget
+// @namespace    bricemciver
+// @description  Places an "Add to Goodreads" widget on Amazon book pages
+// @license      MIT
+// @version      0.0.5
+// @match        *://amazon.tld/*
+// @match        *://*.amazon.tld/*
+// @grant        none
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=amazon.com
 // ==/UserScript==
 Object.defineProperty(exports, "__esModule", { value: true });
 const asinRegex = /\/([A-Z0-9]{10})/;

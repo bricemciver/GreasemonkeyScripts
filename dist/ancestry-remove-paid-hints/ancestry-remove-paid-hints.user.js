@@ -10,7 +10,7 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM.xmlHttpRequest
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=ancestry.com
-// @run-at document-end
+// @run-at       document-end
 // ==/UserScript==
 Object.defineProperty(exports, "__esModule", { value: true });
 const findId = (href) => {
