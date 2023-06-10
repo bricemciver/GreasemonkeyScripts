@@ -1,3 +1,4 @@
+"use strict";
 // ==UserScript==
 // @name         WME Drive End Times
 // @namespace    bricemciver
@@ -8,18 +9,6 @@
 // @grant        none
 // @run-at       document-idle
 // ==/UserScript==
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports"], factory);
-    }
-})(function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
-});
 // (function () {
 //   'use strict';
 //   // find the function in the Waze javascript and replace
@@ -81,4 +70,3 @@
 //     };
 //   }
 // })();
-//# sourceMappingURL=WME%20Drive%20End%20Times.user.js.map

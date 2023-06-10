@@ -1,3 +1,4 @@
+"use strict";
 // ==UserScript==
 // @name         eBay Seller Hider
 // @namespace    bricemciver
@@ -7,17 +8,7 @@
 // @match        *://*.ebay.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=ebay.com
 // ==/UserScript==
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports"], factory);
-    }
-})(function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
+{
     let filterReviews = true;
     let reviewMin = 10;
     let filterFeedback = true;
@@ -178,5 +169,4 @@
     addFilter();
     updateFilter();
     filterSponsored();
-});
-//# sourceMappingURL=ebay-seller-hider.user.js.map
+}

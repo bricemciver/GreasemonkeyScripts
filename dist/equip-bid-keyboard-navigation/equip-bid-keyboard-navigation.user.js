@@ -1,3 +1,5 @@
+"use strict";
+var _a;
 // ==UserScript==
 // @name         Equip-Bid Keyboard Nav
 // @namespace    bricemciver
@@ -10,18 +12,7 @@
 // @grant        GM.xmlHttpRequest
 // @connect      equip-bid.com
 // ==/UserScript==
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports"], factory);
-    }
-})(function (require, exports) {
-    "use strict";
-    var _a;
-    Object.defineProperty(exports, "__esModule", { value: true });
+{
     const lotList = document.querySelector('div.lot-list');
     const lots = Array.from((_a = lotList === null || lotList === void 0 ? void 0 : lotList.querySelectorAll('h4[id^="itemTitle"]')) !== null && _a !== void 0 ? _a : []);
     const prevLink = document.querySelector('li.previous a');
@@ -157,7 +148,7 @@
         });
         return helpDiv;
     };
-    function createElement(type, config, text) {
+    const createElement = (type, config, text) => {
         const theElement = document.createElement(type);
         if (config) {
             for (const [key, value] of Object.entries(config)) {
@@ -173,7 +164,7 @@
             theElement.insertAdjacentText('afterbegin', text);
         }
         return theElement;
-    }
+    };
     const initScript = () => {
         // load new styles
         const head = document.getElementsByTagName('head')[0];
@@ -252,5 +243,4 @@
         document.body.appendChild(helpDiv);
     };
     initScript();
-});
-//# sourceMappingURL=equip-bid-keyboard-navigation.user.js.map
+}

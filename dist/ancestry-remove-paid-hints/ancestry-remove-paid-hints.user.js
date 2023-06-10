@@ -1,3 +1,4 @@
+"use strict";
 // ==UserScript==
 // @name         Ancestry.com - Remove paid hints
 // @namespace    bricemcvier
@@ -11,17 +12,7 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=ancestry.com
 // @run-at       document-end
 // ==/UserScript==
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports"], factory);
-    }
-})(function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
+{
     const findId = (href) => {
         let id = '';
         let dbid = RegExp(/dbid=(\d*)&/).exec(href);
@@ -113,5 +104,4 @@
     };
     addDbidFromJoinPage();
     removePaidHints();
-});
-//# sourceMappingURL=ancestry-remove-paid-hints.user.js.map
+}

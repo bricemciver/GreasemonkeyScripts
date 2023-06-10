@@ -1,3 +1,4 @@
+"use strict";
 // ==UserScript==
 // @name         Wirecutter Anti-modal
 // @namespace    bricemciver
@@ -8,17 +9,7 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=nytimes.com
 // @grant        none
 // ==/UserScript==
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports"], factory);
-    }
-})(function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
+{
     // keep track of actions so we can disable observer at some point
     let modalRemoved = false;
     let overflowFixed = false;
@@ -65,5 +56,4 @@
         }
     };
     startObserver();
-});
-//# sourceMappingURL=wirecutter-anti-modal.user.js.map
+}

@@ -1,3 +1,4 @@
+"use strict";
 // ==UserScript==
 // @name         Facebook Hide Marketplace Deals
 // @namespace    bricemciver
@@ -8,17 +9,7 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=facebook.com
 // @grant        none
 // ==/UserScript==
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports"], factory);
-    }
-})(function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
+{
     // Options for the observer (which mutations to observe)
     const config = {
         childList: true,
@@ -51,5 +42,4 @@
     };
     // Create an observer instance linked to the callback function and observe
     new MutationObserver(callback).observe(document, config);
-});
-//# sourceMappingURL=facebook-hide-marketplace-deals.user.js.map
+}

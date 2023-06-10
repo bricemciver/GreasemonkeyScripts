@@ -1,18 +1,14 @@
 {
-  "extends": ["@tsconfig/recommended/tsconfig.json"],
   "compilerOptions": {
-    "module": "umd",
-    "lib": ["es2018", "dom"],
-    "downlevelIteration": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
+    "target": "es2015",
+    "module": "es2015",
     "isolatedModules": true,
-    "moduleDetection": "force",
-    "moduleResolution": "node",
     "outDir": "dist",
+    "lib": ["es2017", "dom"],
     "removeComments": false,
-    "rootDir": "./src/main/",
-    "sourceMap": true
+    "strict": true,
+    "rootDir": "./src/main/"
   },
-  "include": ["src/main/**/*.ts"]
+  "include": ["src/main/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

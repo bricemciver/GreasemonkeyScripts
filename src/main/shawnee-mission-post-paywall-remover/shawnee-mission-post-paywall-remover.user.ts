@@ -9,5 +9,6 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=shawneemissionpost.com
 // @grant        none
 // ==/UserScript==
-
-Array.from(document.getElementsByClassName('not-logged-in')).forEach(element => element.classList.remove('not-logged-in'));
+{
+  Array.from(document.getElementsByClassName('not-logged-in')).forEach(element => element.classList.remove('not-logged-in'));
+}

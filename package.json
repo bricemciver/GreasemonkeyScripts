@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "My collection of GreaseMonkey scripts",
   "scripts": {
-    "lint": "eslint ./src --ext .js,.ts",
+    "lint": "eslint ./src/main --ext .js,.ts",
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky install",
-    "prettier:check": "prettier --check \"*.{md,json,yml,html,ts}\"",
-    "prettier:format": "prettier --write \"*.{md,json,yml,html,ts}\"",
+    "prettier:check": "prettier --check \"**/*.{md,json,yml,html,ts}\"",
+    "prettier:format": "prettier --write \"**/*.{md,json,yml,html,ts}\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,7 +22,6 @@
   "homepage": "https://github.com/bricemciver/GreasemonkeyScripts#readme",
   "devDependencies": {
     "@angular-eslint/eslint-plugin": "^16.0.3",
-    "@tsconfig/recommended": "^1.0.2",
     "@types/greasemonkey": "^4.0.4",
     "@typescript-eslint/eslint-plugin": "^5.59.9",
     "eslint": "^8.42.0",

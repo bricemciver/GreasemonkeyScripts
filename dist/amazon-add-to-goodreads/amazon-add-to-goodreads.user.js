@@ -1,3 +1,4 @@
+"use strict";
 // ==UserScript==
 // @name         Amazon - Add to Goodreads widget
 // @namespace    bricemciver
@@ -33,17 +34,7 @@
 // @grant        none
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=amazon.com
 // ==/UserScript==
-(function (factory) {
-    if (typeof module === "object" && typeof module.exports === "object") {
-        var v = factory(require, exports);
-        if (v !== undefined) module.exports = v;
-    }
-    else if (typeof define === "function" && define.amd) {
-        define(["require", "exports"], factory);
-    }
-})(function (require, exports) {
-    "use strict";
-    Object.defineProperty(exports, "__esModule", { value: true });
+{
     const asinRegex = /\/([A-Z0-9]{10})/;
     const findASIN = () => {
         const array = asinRegex.exec(document.location.pathname);
@@ -78,5 +69,4 @@
         }
     };
     main();
-});
-//# sourceMappingURL=amazon-add-to-goodreads.user.js.map
+}
