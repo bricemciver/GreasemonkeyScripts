@@ -1,11 +1,12 @@
 "use strict";
 // ==UserScript==
 // @name         Wirecutter Anti-modal
+// @namespace    bricemciver
 // @description  Stop modals asking you to register before viewing articles
-// @version      0.0.1
-// @author       Brice McIver
-// @match        https://www.nytimes.com/wirecutter/*
 // @license      MIT
+// @version      0.0.2
+// @match        https://www.nytimes.com/wirecutter/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=nytimes.com
 // @grant        none
 // ==/UserScript==
 Object.defineProperty(exports, "__esModule", { value: true });
@@ -17,12 +18,12 @@ const config = {
     childList: true,
     subtree: true,
 };
-const elementToObserve = document.querySelector("body");
+const elementToObserve = document.querySelector('body');
 const removePaywallModal = (mutation) => {
-    if (!modalRemoved && mutation.type === "childList") {
-        mutation.addedNodes.forEach((item) => {
+    if (!modalRemoved && mutation.type === 'childList') {
+        mutation.addedNodes.forEach(item => {
             const element = item;
-            if (element.id === "modal-portal-regiwall") {
+            if (element.id === 'modal-portal-regiwall') {
                 element.remove();
                 modalRemoved = true;
             }
@@ -30,19 +31,17 @@ const removePaywallModal = (mutation) => {
     }
 };
 const removeScrollLock = (mutation) => {
-    if (!overflowFixed &&
-        mutation.type === "attributes" &&
-        mutation.attributeName === "class") {
+    if (!overflowFixed && mutation.type === 'attributes' && mutation.attributeName === 'class') {
         const element = mutation.target;
-        if (element.tagName === "BODY") {
-            element.className = "";
+        if (element.tagName === 'BODY') {
+            element.className = '';
             overflowFixed = true;
         }
     }
 };
 const startObserver = () => {
     const callback = (mutationsList, observer) => {
-        mutationsList.forEach((mutation) => {
+        mutationsList.forEach(mutation => {
             removePaywallModal(mutation);
             removeScrollLock(mutation);
             // if we've fixed the issues, stop observing

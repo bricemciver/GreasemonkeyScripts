@@ -1,18 +1,20 @@
 "use strict";
 // ==UserScript==
-// @name Ancestry.com - Remove paid hints
-// @description Removes paid hints on the "All Hints" page and on individual person pages
-// @version 0.0.3
-// @match *://*.ancestry.com/*
-// @match *://*.ancestry.de/*
-// @author Brice McIver
-// @license MIT
-// @grant GM_xmlhttpRequest
+// @name         Ancestry.com - Remove paid hints
+// @namespace    bricemcvier
+// @description  Removes paid hints on the "All Hints" page and on individual person pages
+// @license      MIT
+// @version      0.0.3
+// @match        *://*.ancestry.com/*
+// @match        *://*.ancestry.de/*
+// @grant        GM_xmlhttpRequest
+// @grant        GM.xmlHttpRequest
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=ancestry.com
 // @run-at document-end
 // ==/UserScript==
 Object.defineProperty(exports, "__esModule", { value: true });
 const findId = (href) => {
-    let id = "";
+    let id = '';
     let dbid = RegExp(/dbid=(\d*)&/).exec(href);
     if (dbid && dbid.length > 1) {
         id = dbid[1];
@@ -30,10 +32,7 @@ const findId = (href) => {
 };
 const removeTreeByClass = (targetNode, className1, className2) => {
     let pNode = targetNode.parentElement;
-    while (pNode &&
-        (!pNode.className ||
-            (pNode.className.indexOf(className1) === -1 &&
-                pNode.className.indexOf(className2) === -1))) {
+    while (pNode && (!pNode.className || (pNode.className.indexOf(className1) === -1 && pNode.className.indexOf(className2) === -1))) {
         pNode = pNode.parentElement;
     }
     if (pNode) {
@@ -42,9 +41,9 @@ const removeTreeByClass = (targetNode, className1, className2) => {
 };
 const addDbidFromJoinPage = () => {
     // If we do end up on join page, add that dbid to the list of paid databases
-    if (window.location.pathname.indexOf("join") !== -1) {
+    if (window.location.pathname.indexOf('join') !== -1) {
         const dbid = findId(window.location.href);
-        localStorage.setItem(dbid, "true");
+        localStorage.setItem(dbid, 'true');
     }
 };
 const removeFromLocalStorage = (response) => {
@@ -59,12 +58,12 @@ const addLinkToDb = (response) => {
     const link = (_a = response.context) === null || _a === void 0 ? void 0 : _a.href;
     if (link) {
         const dbid = findId(link);
-        if (response.finalUrl.includes("join")) {
-            removeTreeByClass(response.context, "typeContent", "hntTabHintCard");
-            localStorage.setItem(dbid, "true");
+        if (response.finalUrl.includes('join')) {
+            removeTreeByClass(response.context, 'typeContent', 'hntTabHintCard');
+            localStorage.setItem(dbid, 'true');
         }
         else {
-            localStorage.setItem(dbid, "false");
+            localStorage.setItem(dbid, 'false');
         }
     }
 };
@@ -74,26 +73,26 @@ const removePaidHints = () => {
     // Callback function to execute when mutations are observed
     const callback = (mutationsList) => {
         for (const mutation of mutationsList) {
-            if (mutation.attributeName === "href") {
+            if (mutation.attributeName === 'href') {
                 const element = mutation.target;
-                if (element.href.includes("phstart=default&usePUBJs=true") &&
-                    element.className.includes("ancBtn")) {
+                if (element.href.includes('phstart=default&usePUBJs=true') && element.className.includes('ancBtn')) {
                     // check if we have seen this database before before trying network call
-                    let dbid = findId(element.href);
+                    const dbid = findId(element.href);
                     const paidInd = localStorage.getItem(dbid);
-                    if ("true" === paidInd) {
-                        removeTreeByClass(element, "typeContent", "hntTabHintCard");
+                    if ('true' === paidInd) {
+                        removeTreeByClass(element, 'typeContent', 'hntTabHintCard');
                     }
                     else if (paidInd == null) {
-                        GM.xmlHttpRequest({
-                            method: "GET",
+                        const req = {
+                            method: 'GET',
                             url: element.href,
                             context: element,
-                            onload: (response) => addLinkToDb(response),
-                            ontimeout: (response) => removeFromLocalStorage(response),
-                            onerror: (response) => removeFromLocalStorage(response),
-                            onabort: (response) => removeFromLocalStorage(response),
-                        });
+                            onload: response => addLinkToDb(response),
+                            ontimeout: response => removeFromLocalStorage(response),
+                            onerror: response => removeFromLocalStorage(response),
+                            onabort: response => removeFromLocalStorage(response),
+                        };
+                        GM.xmlHttpRequest(req);
                     }
                 }
             }

@@ -1,10 +1,11 @@
 // ==UserScript==
 // @name         Wirecutter Anti-modal
+// @namespace    bricemciver
 // @description  Stop modals asking you to register before viewing articles
-// @version      0.0.1
-// @author       Brice McIver
-// @match        https://www.nytimes.com/wirecutter/*
 // @license      MIT
+// @version      0.0.2
+// @match        https://www.nytimes.com/wirecutter/*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=nytimes.com
 // @grant        none
 // ==/UserScript==
 
@@ -18,13 +19,13 @@ const config: MutationObserverInit = {
   subtree: true,
 };
 
-const elementToObserve = document.querySelector<HTMLBodyElement>("body");
+const elementToObserve = document.querySelector<HTMLBodyElement>('body');
 
-const removePaywallModal = (mutation: MutationRecord) => {
-  if (!modalRemoved && mutation.type === "childList") {
-    mutation.addedNodes.forEach((item) => {
+const removePaywallModal = (mutation: MutationRecord): void => {
+  if (!modalRemoved && mutation.type === 'childList') {
+    mutation.addedNodes.forEach(item => {
       const element = item as Element;
-      if (element.id === "modal-portal-regiwall") {
+      if (element.id === 'modal-portal-regiwall') {
         element.remove();
         modalRemoved = true;
       }
@@ -32,23 +33,19 @@ const removePaywallModal = (mutation: MutationRecord) => {
   }
 };
 
-const removeScrollLock = (mutation: MutationRecord) => {
-  if (
-    !overflowFixed &&
-    mutation.type === "attributes" &&
-    mutation.attributeName === "class"
-  ) {
+const removeScrollLock = (mutation: MutationRecord): void => {
+  if (!overflowFixed && mutation.type === 'attributes' && mutation.attributeName === 'class') {
     const element = mutation.target as Element;
-    if (element.tagName === "BODY") {
-      element.className = "";
+    if (element.tagName === 'BODY') {
+      element.className = '';
       overflowFixed = true;
     }
   }
 };
 
-const startObserver = () => {
+const startObserver = (): void => {
   const callback: MutationCallback = (mutationsList, observer) => {
-    mutationsList.forEach((mutation) => {
+    mutationsList.forEach(mutation => {
       removePaywallModal(mutation);
       removeScrollLock(mutation);
       // if we've fixed the issues, stop observing
