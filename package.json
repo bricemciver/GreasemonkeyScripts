@@ -22,6 +22,7 @@
   "homepage": "https://github.com/bricemciver/GreasemonkeyScripts#readme",
   "devDependencies": {
     "@angular-eslint/eslint-plugin": "^16.0.3",
+    "@tsconfig/recommended": "^1.0.2",
     "@types/greasemonkey": "^4.0.4",
     "@typescript-eslint/eslint-plugin": "^5.59.9",
     "eslint": "^8.42.0",

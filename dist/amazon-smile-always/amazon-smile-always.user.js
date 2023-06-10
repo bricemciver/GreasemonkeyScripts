@@ -1,4 +1,3 @@
-"use strict";
 // ==UserScript==
 // @name         Amazon Smile Always
 // @namespace    bricem.scripts
@@ -15,7 +14,18 @@
 // @grant        none
 // @run-at       document-start
 // ==/UserScript==
-Object.defineProperty(exports, "__esModule", { value: true });
+(function (factory) {
+    if (typeof module === "object" && typeof module.exports === "object") {
+        var v = factory(require, exports);
+        if (v !== undefined) module.exports = v;
+    }
+    else if (typeof define === "function" && define.amd) {
+        define(["require", "exports"], factory);
+    }
+})(function (require, exports) {
+    "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
+});
 // const getRelativeRedirectUrl = (amazonurl, url) => {
 //   const relativeUrl = url.split(amazonurl)[1];
 //   const noRedirectIndicator = "sa-no-redirect=1";
