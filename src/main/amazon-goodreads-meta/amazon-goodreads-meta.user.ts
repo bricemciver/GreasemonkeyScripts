@@ -54,11 +54,15 @@
 
       const coverImages = Array.from(images).filter(item => item.classList.contains('cover-image'));
       coverImages.forEach(image => {
-        const ciArray = asinRegex.exec(image.src);
-        const ciAsin = ciArray && ciArray.length > 1 ? ciArray[1] : '';
-        // eslint-disable-next-line no-console
-        console.log(`ASIN on book image: ${ciAsin}`);
-        asinArray.push(ciAsin);
+        const parentElem = image.parentElement;
+        if (parentElem instanceof HTMLAnchorElement) {
+          const link = parentElem.href;
+          const ciArray = asinRegex.exec(link);
+          const ciAsin = ciArray && ciArray.length > 1 ? ciArray[1] : '';
+          // eslint-disable-next-line no-console
+          console.log(`ASIN on book image: ${ciAsin}`);
+          asinArray.push(ciAsin);
+        }
       });
     }
 
@@ -88,15 +92,44 @@
         // get styles we need
         const head = document.getElementsByTagName('head')[0];
         const styles = Array.from(node.getElementsByTagName('link')).filter(item => item.rel === 'stylesheet');
-        styles.forEach(item => head.appendChild(item));
-        const meta = node.getElementById('bookMeta');
+        styles.forEach(item => {
+          // add goodreads to links
+          item.href = item.href.replace('amazon', 'goodreads');
+          head.appendChild(item);
+        });
+        const meta = node.getElementById('ReviewsSection');
         if (meta) {
-          // replace links
-          Array.from(meta.getElementsByTagName('a')).forEach(item => {
-            item.href = response.finalUrl + item.href.replace(item.baseURI, '');
-            return item;
-          });
-          insertPoint.appendChild(meta);
+          // find our div
+          const rating = meta.querySelector('div.RatingStatistics');
+          if (rating) {
+            // replace links
+            Array.from(rating.getElementsByTagName('a')).forEach(item => {
+              item.href = response.finalUrl + item.href.replace(item.baseURI, '');
+              return item;
+            });
+            // replace styles
+            Array.from(rating.getElementsByTagName('span')).forEach(item => {
+              item.classList.replace('RatingStar--medium', 'RatingStar--small');
+              item.classList.replace('RatingStars__medium', 'RatingStars__small');
+            });
+            Array.from(rating.getElementsByTagName('div'))
+              .filter(item => item.classList.contains('RatingStatistics__rating'))
+              .forEach(item => {
+                item.style.marginBottom = '-0.8rem';
+                item.style.fontSize = '2.2rem';
+              });
+            // create label div
+            const labelCol = document.createElement('div');
+            labelCol.classList.add('a-column', 'a-span12', 'a-spacing-top-small');
+            const labelRow = document.createElement('div');
+            labelRow.classList.add('a-row', 'a-spacing-small');
+            labelRow.textContent = 'Goodreads';
+            const lineBreak = document.createElement('br');
+            labelCol.appendChild(labelRow);
+            labelRow.appendChild(lineBreak);
+            labelRow.appendChild(rating);
+            insertPoint.appendChild(labelCol);
+          }
         }
       },
     });
