@@ -14,7 +14,9 @@
     let filterFeedback = true;
     let feedbackMin = 95.0;
     let hideSponsored = true;
+    let sponsorClass = '';
     const hideItem = (seller) => {
+        var _a, _b;
         const itemRegExp = RegExp(/\((.*)\) (.*)%/).exec(seller.innerText);
         if (itemRegExp) {
             const [, reviews, feedback] = itemRegExp;
@@ -27,6 +29,18 @@
             if (parent) {
                 parent.style.display =
                     (filterReviews && reviewsNum < reviewMin) || (filterFeedback && feedbackNum < feedbackMin) ? 'none' : 'list-item';
+                // don't bother looking for sponsored posts if already hidden
+                if (hideSponsored && parent.style.display === 'list-item') {
+                    let hideSponsoredPost = false;
+                    const sponsoredSpan = Array.from(parent.querySelectorAll('span')).find(item => item.textContent === 'Sponsored');
+                    if (sponsoredSpan) {
+                        const labelAttr = (_b = (_a = sponsoredSpan.parentElement) === null || _a === void 0 ? void 0 : _a.parentElement) === null || _b === void 0 ? void 0 : _b.getAttribute('aria-labelledBy');
+                        if (labelAttr && labelAttr === sponsorClass) {
+                            hideSponsoredPost = true;
+                        }
+                    }
+                    parent.style.display = hideSponsoredPost ? 'none' : 'list-item';
+                }
             }
         }
     };
@@ -49,7 +63,7 @@
         }
         if (valueName === 'hideSponsored') {
             localStorage.setItem('hideSponsored', checkbox.checked ? 'true' : 'false');
-            filterSponsored();
+            updateFilter();
         }
     };
     const createCheckbox = (text, valueName) => {
@@ -111,7 +125,7 @@
         listHeader.style.clear = 'both';
         listHeader.append(createListItem('# of Reviews over ', 'reviewMin', reviewMin.toString()));
         listHeader.append(createListItem('Feedback over ', 'feedbackMin', feedbackMin.toString()));
-        listHeader.append(createListItem('Hide sponsored', 'hideSponsored', 'false'));
+        listHeader.append(createListItem('Hide sponsored', 'hideSponsored'));
         group.append(listHeader);
         return group;
     };
@@ -140,33 +154,26 @@
             hideItem(seller);
         }
     };
-    const filterSponsored = () => {
-        getPresets();
-        const sellers = document.querySelectorAll('div.s-item__title--tagblock > span[role="text"]');
-        sellers.forEach(seller => {
-            // look at children to determine text
-            const labels = {};
-            for (const element of Array.from(seller.children)) {
-                const node = element;
-                // group by class
-                if (!labels[node.className]) {
-                    labels[node.className] = '';
-                }
-                labels[node.className] += node.innerText;
-            }
-            if (Object.values(labels).some(label => label.startsWith('SPONSORED'))) {
-                let parent = seller.parentElement;
-                while (parent && parent.tagName !== 'LI') {
-                    parent = parent.parentElement;
-                }
-                if (parent) {
-                    parent.style.display = hideSponsored ? 'none' : 'list-item';
+    const findSponsoredClass = () => {
+        var _a;
+        // get inserted style
+        const styleBlock = Array.from(document.head.getElementsByTagName('style')).find(item => item.type === 'text/css');
+        if (styleBlock) {
+            const cssRuleList = (_a = styleBlock.sheet) === null || _a === void 0 ? void 0 : _a.cssRules;
+            if (cssRuleList) {
+                const rule = Array.from(cssRuleList).find(item => item.cssText.includes('inline') && item.cssText.includes('span.'));
+                if (rule) {
+                    const regex = /\.([a-zA-Z0-9_-]+)\s*\{/;
+                    const match = regex.exec(rule.cssText);
+                    if (match) {
+                        sponsorClass = match[1];
+                    }
                 }
             }
-        });
+        }
     };
     getPresets();
     addFilter();
     updateFilter();
-    filterSponsored();
+    findSponsoredClass();
 }
