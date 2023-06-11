@@ -38,25 +38,26 @@
             }
             headTags[pos].className = headTags[pos].className + ' selected';
             headTags[pos].scrollIntoView();
-            window.scrollBy(0, -17);
         }
     };
     const removeCruft = () => {
         document.querySelectorAll('.js_movable_ad_slot').forEach(element => element.remove());
         document.querySelectorAll('.connatix-container').forEach(element => element.remove());
-        document.querySelectorAll(":contains('G/O Media may get a commission')").forEach(element => { var _a; return (_a = element.closest('aside')) === null || _a === void 0 ? void 0 : _a.remove(); });
+        Array.from(document.getElementsByTagName('span'))
+            .filter(item => item.textContent === 'G/O Media may get a commission')
+            .forEach(element => { var _a; return (_a = element.closest('aside')) === null || _a === void 0 ? void 0 : _a.remove(); });
         document.querySelectorAll('#sidebar_wrapper').forEach(element => { var _a; return (_a = element.closest('aside')) === null || _a === void 0 ? void 0 : _a.remove(); });
     };
     const createEntries = (containerDiv) => {
         let newElement = null;
         Array.from(containerDiv.children).forEach(element => {
+            var _a;
             // this is the beginning or end or a section
-            if (element.tagName === 'HR' || element.tagName === 'H3') {
-                if (newElement) {
-                    element.insertAdjacentElement('beforebegin', newElement);
-                }
+            if (element.tagName === 'H2' && ((_a = element.textContent) === null || _a === void 0 ? void 0 : _a.length) && element.textContent.length > 0) {
                 newElement = document.createElement('div');
                 newElement.className = 'inlineFrame';
+                element.insertAdjacentElement('beforebegin', newElement);
+                newElement.append(element);
             }
             else if (newElement) {
                 newElement.append(element);
@@ -72,15 +73,17 @@
     // remove unneeded content
     removeCruft();
     // find main content
-    const mainDiv = document.querySelector('.js_post-content #js_movable-ads-post-contents');
+    const mainDiv = document.querySelector('.js_post-content .js_commerce-inset-grid');
     if (mainDiv) {
         // add necessary styles
         addGlobalStyle('div.inlineFrame { margin-top:17px; margin-bottom:17px; padding:33px; border-radius:3px; border: 1px solid rgba(0,0,0,0.05) }');
         addGlobalStyle('div.inlineFrame.selected { border: 1px solid rgba(0, 0, 0, 0.15) }');
         addGlobalStyle('main { width:100% !important }');
-        // create entries
-        createEntries(mainDiv);
-        // add keyboard navigation
-        addListeners(mainDiv);
+        if (mainDiv.parentElement) {
+            // create entries
+            createEntries(mainDiv.parentElement);
+            // add keyboard navigation
+            addListeners(mainDiv.parentElement);
+        }
     }
 }

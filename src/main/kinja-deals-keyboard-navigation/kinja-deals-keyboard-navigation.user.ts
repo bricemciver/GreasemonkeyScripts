@@ -39,14 +39,15 @@
       }
       headTags[pos].className = headTags[pos].className + ' selected';
       headTags[pos].scrollIntoView();
-      window.scrollBy(0, -17);
     }
   };
 
   const removeCruft = (): void => {
     document.querySelectorAll('.js_movable_ad_slot').forEach(element => element.remove());
     document.querySelectorAll('.connatix-container').forEach(element => element.remove());
-    document.querySelectorAll(":contains('G/O Media may get a commission')").forEach(element => element.closest('aside')?.remove());
+    Array.from(document.getElementsByTagName('span'))
+      .filter(item => item.textContent === 'G/O Media may get a commission')
+      .forEach(element => element.closest('aside')?.remove());
     document.querySelectorAll('#sidebar_wrapper').forEach(element => element.closest('aside')?.remove());
   };
 
@@ -54,12 +55,11 @@
     let newElement: Element | null = null;
     Array.from(containerDiv.children).forEach(element => {
       // this is the beginning or end or a section
-      if (element.tagName === 'HR' || element.tagName === 'H3') {
-        if (newElement) {
-          element.insertAdjacentElement('beforebegin', newElement);
-        }
+      if (element.tagName === 'H2' && element.textContent?.length && element.textContent.length > 0) {
         newElement = document.createElement('div');
         newElement.className = 'inlineFrame';
+        element.insertAdjacentElement('beforebegin', newElement);
+        newElement.append(element);
       } else if (newElement) {
         newElement.append(element);
       }
@@ -77,7 +77,7 @@
   removeCruft();
 
   // find main content
-  const mainDiv = document.querySelector('.js_post-content #js_movable-ads-post-contents');
+  const mainDiv = document.querySelector('.js_post-content .js_commerce-inset-grid');
   if (mainDiv) {
     // add necessary styles
     addGlobalStyle(
@@ -86,10 +86,12 @@
     addGlobalStyle('div.inlineFrame.selected { border: 1px solid rgba(0, 0, 0, 0.15) }');
     addGlobalStyle('main { width:100% !important }');
 
-    // create entries
-    createEntries(mainDiv);
+    if (mainDiv.parentElement) {
+      // create entries
+      createEntries(mainDiv.parentElement);
 
-    // add keyboard navigation
-    addListeners(mainDiv);
+      // add keyboard navigation
+      addListeners(mainDiv.parentElement);
+    }
   }
 }
