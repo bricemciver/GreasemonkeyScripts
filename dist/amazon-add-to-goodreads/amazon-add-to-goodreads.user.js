@@ -3,6 +3,7 @@
 // @name         Amazon - Add to Goodreads widget
 // @namespace    bricemciver
 // @description  Places an "Add to Goodreads" widget on Amazon book pages
+// @author       Brice McIver
 // @license      MIT
 // @version      0.0.5
 // @match        https://amazon.com/*

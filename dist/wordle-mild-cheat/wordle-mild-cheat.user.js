@@ -3,9 +3,9 @@
 // @name         Wordle Mild Cheat
 // @namespace    bricemciver
 // @description  Will show you all of the valid words that still exist based on your guesses
+// @author       Brice McIver
 // @license      MIT
 // @version      0.1
-// @author       Brice McIver
 // @match        https://www.nytimes.com/games/wordle/index.html
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=nytimes.com
 // @grant        GM.xmlHttpRequest

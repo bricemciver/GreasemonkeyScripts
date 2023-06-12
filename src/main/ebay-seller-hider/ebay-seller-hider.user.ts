@@ -2,6 +2,7 @@
 // @name         eBay Seller Hider
 // @namespace    bricemciver
 // @description  Hide items from low/poor feedback eBay sellers and sponsored items
+// @author       Brice McIver
 // @license      MIT
 // @version      0.0.5
 // @match        *://*.ebay.com/*

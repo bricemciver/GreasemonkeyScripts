@@ -2,6 +2,7 @@
 // @name         Amazon - Goodreads metadata
 // @namespace    bricemciver
 // @description  Shows the ratings from Goodreads on Amazon book pages
+// @author       Brice McIver
 // @license      MIT
 // @version      0.0.2
 // @match        https://amazon.com/*

@@ -2,6 +2,7 @@
 // @name         Wirecutter Anti-modal
 // @namespace    bricemciver
 // @description  Stop modals asking you to register before viewing articles
+// @author       Brice McIver
 // @license      MIT
 // @version      0.0.2
 // @match        https://www.nytimes.com/wirecutter/*

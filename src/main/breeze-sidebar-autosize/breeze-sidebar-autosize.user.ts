@@ -2,6 +2,7 @@
 // @name         Breeze Sidebar Auto-size
 // @namespace    bricemciver
 // @description  Size the sidebar to fit the width of the content
+// @author       Brice McIver
 // @license      MIT
 // @version      0.2
 // @match        https://*.breezechms.com/*

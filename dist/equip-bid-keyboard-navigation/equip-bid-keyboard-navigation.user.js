@@ -4,6 +4,7 @@ var _a;
 // @name         Equip-Bid Keyboard Nav
 // @namespace    bricemciver
 // @description  Use Feedly-style navigation on Equip Bid auctions
+// @author       Brice McIver
 // @license      MIT
 // @version      0.2
 // @match        https://www.equip-bid.com/*

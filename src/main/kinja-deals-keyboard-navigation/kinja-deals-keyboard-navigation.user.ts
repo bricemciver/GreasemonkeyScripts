@@ -2,6 +2,7 @@
 // @name         Kinja Deals Keyboard Navigation
 // @namespace    bricemciver
 // @description  Use 'j' and 'k' keys for navigation of post content
+// @author       Brice McIver
 // @license      MIT
 // @version      0.0.8
 // @match        *://*.theinventory.com/*

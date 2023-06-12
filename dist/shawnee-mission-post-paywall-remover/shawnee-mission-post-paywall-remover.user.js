@@ -3,6 +3,7 @@
 // @name         Shawnee Mission Post Paywall Remover
 // @namespace    bricemciver
 // @description  Removes paywall restrictions from Shawnee Mission Post website
+// @author       Brice McIver
 // @license      MIT
 // @version      0.1
 // @match        https://shawneemissionpost.com/*

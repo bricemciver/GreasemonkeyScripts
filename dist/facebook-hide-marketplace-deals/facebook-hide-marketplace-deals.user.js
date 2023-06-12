@@ -3,6 +3,7 @@
 // @name         Facebook Hide Marketplace Deals
 // @namespace    bricemciver
 // @description  Hide the sponsored deals that show up in marketplace searches
+// @author       Brice McIver
 // @license      MIT
 // @version      0.0.2
 // @match        *://*.facebook.com/marketplace/*

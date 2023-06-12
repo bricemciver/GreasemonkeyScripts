@@ -3,6 +3,7 @@
 // @name         Ancestry.com - Remove paid hints
 // @namespace    bricemcvier
 // @description  Removes paid hints on the "All Hints" page and on individual person pages
+// @author       Brice McIver
 // @license      MIT
 // @version      0.0.3
 // @match        *://*.ancestry.com/*
