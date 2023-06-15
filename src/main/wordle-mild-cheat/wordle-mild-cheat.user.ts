@@ -84,7 +84,7 @@
       currentWordList = new Array(...fullWordList);
       // filter out words by each letter position
       for (let i = 0; i < 5; i++) {
-        currentWordList = currentWordList.filter(word => wordState[i].includes(word.charAt(i)));
+        currentWordList = currentWordList.filter(word => wordState[i].indexOf(word.charAt(i)) !== -1);
       }
       // filter out words with letter in invalid position
       for (const entry in letterMap) {
@@ -235,6 +235,9 @@
                 }
               }
               break;
+            }
+            default: {
+              // Nothing to do here
             }
           }
         }

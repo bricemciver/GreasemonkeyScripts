@@ -10,9 +10,9 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=breezechms.com
 // ==/UserScript==
 {
-    const replaceCss = () => {
-        const head = document.getElementsByTagName('head')[0];
-        const style = document.createElement('style');
+    var replaceCss = function () {
+        var head = document.getElementsByTagName('head')[0];
+        var style = document.createElement('style');
         style.setAttribute('type', 'text/css');
         style.textContent =
             '@media (min-width: 992px) { .mainsail-ui .mainsail-side-nav.extra-wide { flex-basis: fit-content; max-width: fit-content; }}';

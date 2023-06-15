@@ -36,19 +36,19 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=amazon.com
 // ==/UserScript==
 {
-    const asinRegex = /\/([A-Z0-9]{10})/;
-    const findASIN = () => {
-        const array = asinRegex.exec(document.location.pathname);
-        const asin = array && array.length > 1 ? array[1] : '';
+    var asinRegex_1 = /\/([A-Z0-9]{10})/;
+    var findASIN_1 = function () {
+        var array = asinRegex_1.exec(document.location.pathname);
+        var asin = array && array.length > 1 ? array[1] : '';
         // eslint-disable-next-line no-console
-        console.log(`ASIN in pathname: ${asin}`);
+        console.log("ASIN in pathname: ".concat(asin));
         // determine if book
-        const dp = document.getElementById('dp');
+        var dp = document.getElementById('dp');
         return (dp === null || dp === void 0 ? void 0 : dp.className.includes('book')) ? asin : '';
     };
-    const findInsertPoint = () => document.getElementById('averageCustomerReviews');
-    const insertElement = (isbn, insertPoint) => {
-        const elem = document.createElement('div');
+    var findInsertPoint_1 = function () { return document.getElementById('averageCustomerReviews'); };
+    var insertElement_1 = function (isbn, insertPoint) {
+        var elem = document.createElement('div');
         elem.id = 'gr_add_to_books';
         elem.innerHTML = [
             '<div class="gr_custom_each_container_">',
@@ -57,16 +57,16 @@
             '"><img src="https://www.goodreads.com/images/atmb_add_book-70x25.png" /></a>',
             '</div>',
         ].join('');
-        const script = document.createElement('script');
+        var script = document.createElement('script');
         script.src = 'https://www.goodreads.com/book/add_to_books_widget_frame/' + isbn + '?atmb_widget%5Glutton%5D=atmb_widget_1.png';
         insertPoint.appendChild(elem);
         insertPoint.appendChild(script);
     };
-    const main = () => {
-        const ASIN = findASIN();
-        const insertPoint = findInsertPoint();
+    var main = function () {
+        var ASIN = findASIN_1();
+        var insertPoint = findInsertPoint_1();
         if (ASIN && insertPoint) {
-            insertElement(ASIN, insertPoint);
+            insertElement_1(ASIN, insertPoint);
         }
     };
     main();

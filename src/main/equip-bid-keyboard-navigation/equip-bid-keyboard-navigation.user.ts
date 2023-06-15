@@ -184,11 +184,13 @@
   ): HTMLElementTagNameMap[K] => {
     const theElement = document.createElement(type);
     if (config) {
-      for (const [key, value] of Object.entries(config)) {
-        if (key.toLowerCase() === 'classname') {
-          theElement.setAttribute('class', value);
-        } else {
-          theElement.setAttribute(key, value);
+      for (const key in config) {
+        if (Object.prototype.hasOwnProperty.call(config, key)) {
+          let name = key.toLowerCase();
+          if (key.toLowerCase() === 'classname') {
+            name = 'class';
+          }
+          theElement.setAttribute(name, config[name]);
         }
       }
     }

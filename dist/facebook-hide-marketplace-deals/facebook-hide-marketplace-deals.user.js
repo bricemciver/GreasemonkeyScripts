@@ -12,29 +12,30 @@
 // ==/UserScript==
 {
     // Options for the observer (which mutations to observe)
-    const config = {
+    var config = {
         childList: true,
         attributes: true,
         subtree: true,
     };
-    const removeTracking = (node) => {
+    var removeTracking_1 = function (node) {
         var _a;
         if (node.nodeType === Node.ELEMENT_NODE) {
-            const dealsLink = node.querySelector("a[href*='tracking']");
+            var dealsLink = node.querySelector("a[href*='tracking']");
             if (dealsLink) {
                 (_a = dealsLink.parentElement) === null || _a === void 0 ? void 0 : _a.remove();
             }
         }
     };
     // Callback function to execute when mutations are observed
-    const callback = mutationsList => {
+    var callback = function (mutationsList) {
         var _a;
-        for (const mutation of mutationsList) {
+        for (var _i = 0, mutationsList_1 = mutationsList; _i < mutationsList_1.length; _i++) {
+            var mutation = mutationsList_1[_i];
             if (mutation.type === 'childList' && mutation.addedNodes.length) {
-                mutation.addedNodes.forEach(node => removeTracking(node));
+                mutation.addedNodes.forEach(function (node) { return removeTracking_1(node); });
             }
             if (mutation.type === 'attributes' && mutation.attributeName === 'href' && mutation.target.nodeType === Node.ELEMENT_NODE) {
-                const link = mutation.target;
+                var link = mutation.target;
                 if (link.href.includes('tracking')) {
                     (_a = link.parentElement) === null || _a === void 0 ? void 0 : _a.remove();
                 }

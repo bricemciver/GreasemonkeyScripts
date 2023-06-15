@@ -12,5 +12,5 @@
 // @grant        none
 // ==/UserScript==
 {
-    Array.from(document.getElementsByClassName('not-logged-in')).forEach(element => element.classList.remove('not-logged-in'));
+    Array.from(document.getElementsByClassName('not-logged-in')).forEach(function (element) { return element.classList.remove('not-logged-in'); });
 }

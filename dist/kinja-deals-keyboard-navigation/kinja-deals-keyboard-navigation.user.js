@@ -11,47 +11,47 @@
 // @grant        none
 // ==/UserScript==
 {
-    const headTags = [];
-    let pos = -1;
-    const addGlobalStyle = (css) => {
-        const head = document.getElementsByTagName('head')[0];
-        const style = document.createElement('style');
+    var headTags_1 = [];
+    var pos_1 = -1;
+    var addGlobalStyle = function (css) {
+        var head = document.getElementsByTagName('head')[0];
+        var style = document.createElement('style');
         style.innerHTML = css;
         head.appendChild(style);
     };
-    const keyPressed = (event) => {
+    var keyPressed_1 = function (event) {
         if (event.code === 'KeyK' || event.code === 'KeyJ') {
-            if (headTags[pos]) {
-                headTags[pos].className = headTags[pos].className.replace(' selected', '');
+            if (headTags_1[pos_1]) {
+                headTags_1[pos_1].className = headTags_1[pos_1].className.replace(' selected', '');
             }
             if ('KeyK' === event.code) {
-                pos--;
+                pos_1--;
             }
             if ('KeyJ' === event.code) {
-                pos++;
+                pos_1++;
             }
             // wrap around
-            if (pos >= headTags.length) {
-                pos = 0;
+            if (pos_1 >= headTags_1.length) {
+                pos_1 = 0;
             }
-            if (pos < 0) {
-                pos = headTags.length - 1;
+            if (pos_1 < 0) {
+                pos_1 = headTags_1.length - 1;
             }
-            headTags[pos].className = headTags[pos].className + ' selected';
-            headTags[pos].scrollIntoView();
+            headTags_1[pos_1].className = headTags_1[pos_1].className + ' selected';
+            headTags_1[pos_1].scrollIntoView();
         }
     };
-    const removeCruft = () => {
-        document.querySelectorAll('.js_movable_ad_slot').forEach(element => element.remove());
-        document.querySelectorAll('.connatix-container').forEach(element => element.remove());
+    var removeCruft = function () {
+        document.querySelectorAll('.js_movable_ad_slot').forEach(function (element) { return element.remove(); });
+        document.querySelectorAll('.connatix-container').forEach(function (element) { return element.remove(); });
         Array.from(document.getElementsByTagName('span'))
-            .filter(item => item.textContent === 'G/O Media may get a commission')
-            .forEach(element => { var _a; return (_a = element.closest('aside')) === null || _a === void 0 ? void 0 : _a.remove(); });
-        document.querySelectorAll('#sidebar_wrapper').forEach(element => { var _a; return (_a = element.closest('aside')) === null || _a === void 0 ? void 0 : _a.remove(); });
+            .filter(function (item) { return item.textContent === 'G/O Media may get a commission'; })
+            .forEach(function (element) { var _a; return (_a = element.closest('aside')) === null || _a === void 0 ? void 0 : _a.remove(); });
+        document.querySelectorAll('#sidebar_wrapper').forEach(function (element) { var _a; return (_a = element.closest('aside')) === null || _a === void 0 ? void 0 : _a.remove(); });
     };
-    const createEntries = (containerDiv) => {
-        let newElement = null;
-        Array.from(containerDiv.children).forEach(element => {
+    var createEntries = function (containerDiv) {
+        var newElement = null;
+        Array.from(containerDiv.children).forEach(function (element) {
             var _a;
             // this is the beginning or end or a section
             if (element.tagName === 'H2' && ((_a = element.textContent) === null || _a === void 0 ? void 0 : _a.length) && element.textContent.length > 0) {
@@ -65,16 +65,16 @@
             }
         });
     };
-    const addListeners = (containerDiv) => {
+    var addListeners = function (containerDiv) {
         // get all section headers
-        headTags.push(containerDiv);
-        headTags.push(...Array.from(containerDiv.querySelectorAll('div.inlineFrame, h3, h4')));
-        document.addEventListener('keydown', keyPressed);
+        headTags_1.push(containerDiv);
+        headTags_1.push.apply(headTags_1, Array.from(containerDiv.querySelectorAll('div.inlineFrame, h3, h4')));
+        document.addEventListener('keydown', keyPressed_1);
     };
     // remove unneeded content
     removeCruft();
     // find main content
-    const mainDiv = document.querySelector('.js_post-content .js_commerce-inset-grid');
+    var mainDiv = document.querySelector('.js_post-content .js_commerce-inset-grid');
     if (mainDiv) {
         // add necessary styles
         addGlobalStyle('div.inlineFrame { margin-top:17px; margin-bottom:17px; padding:33px; border-radius:3px; border: 1px solid rgba(0,0,0,0.05) }');

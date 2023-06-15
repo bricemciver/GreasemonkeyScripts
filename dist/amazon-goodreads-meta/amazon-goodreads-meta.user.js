@@ -37,92 +37,92 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=amazon.com
 // ==/UserScript==
 {
-    const asinRegex = /\/([A-Z0-9]{10})/;
-    const findASIN = () => {
-        const asinArray = [];
-        const array = asinRegex.exec(document.location.pathname);
-        const asin = array && array.length > 1 ? array[1] : '';
+    var asinRegex_1 = /\/([A-Z0-9]{10})/;
+    var findASIN_1 = function () {
+        var asinArray = [];
+        var array = asinRegex_1.exec(document.location.pathname);
+        var asin = array && array.length > 1 ? array[1] : '';
         // eslint-disable-next-line no-console
-        console.log(`ASIN in pathname: ${asin}`);
+        console.log("ASIN in pathname: ".concat(asin));
         // determine if book
-        const dp = document.getElementById('dp');
+        var dp = document.getElementById('dp');
         if (dp === null || dp === void 0 ? void 0 : dp.className.includes('book')) {
             asinArray.push(asin);
         }
         else {
             // see if we are on a page with multiple books
-            const images = document.getElementsByTagName('img');
-            const coverImages = Array.from(images).filter(item => item.classList.contains('cover-image'));
-            coverImages.forEach(image => {
-                const parentElem = image.parentElement;
+            var images = document.getElementsByTagName('img');
+            var coverImages = Array.from(images).filter(function (item) { return item.classList.contains('cover-image'); });
+            coverImages.forEach(function (image) {
+                var parentElem = image.parentElement;
                 if (parentElem instanceof HTMLAnchorElement) {
-                    const link = parentElem.href;
-                    const ciArray = asinRegex.exec(link);
-                    const ciAsin = ciArray && ciArray.length > 1 ? ciArray[1] : '';
+                    var link = parentElem.href;
+                    var ciArray = asinRegex_1.exec(link);
+                    var ciAsin = ciArray && ciArray.length > 1 ? ciArray[1] : '';
                     // eslint-disable-next-line no-console
-                    console.log(`ASIN on book image: ${ciAsin}`);
+                    console.log("ASIN on book image: ".concat(ciAsin));
                     asinArray.push(ciAsin);
                 }
             });
         }
         return asinArray;
     };
-    const findInsertPoint = () => {
+    var findInsertPoint_1 = function () {
         // on book page
-        const insertPoint = [];
-        const reviewElement = document.getElementById('averageCustomerReviews');
+        var insertPoint = [];
+        var reviewElement = document.getElementById('averageCustomerReviews');
         if (reviewElement) {
             insertPoint.push(reviewElement);
         }
         else {
             // check for SHOP NOW button with review stars above. Return array
-            const reviewArray = document.getElementsByClassName('pf-image-w');
-            insertPoint.push(...Array.from(reviewArray));
+            var reviewArray = document.getElementsByClassName('pf-image-w');
+            insertPoint.push.apply(insertPoint, Array.from(reviewArray));
         }
         return insertPoint;
     };
-    const insertElement = (isbn, insertPoint) => {
+    var insertElement_1 = function (isbn, insertPoint) {
         GM.xmlHttpRequest({
             method: 'GET',
-            url: `https://www.goodreads.com/book/isbn/${isbn}`,
-            onload(response) {
-                const node = new DOMParser().parseFromString(response.responseText, 'text/html');
+            url: "https://www.goodreads.com/book/isbn/".concat(isbn),
+            onload: function (response) {
+                var node = new DOMParser().parseFromString(response.responseText, 'text/html');
                 // get styles we need
-                const head = document.getElementsByTagName('head')[0];
-                const styles = Array.from(node.getElementsByTagName('link')).filter(item => item.rel === 'stylesheet');
-                styles.forEach(item => {
+                var head = document.getElementsByTagName('head')[0];
+                var styles = Array.from(node.getElementsByTagName('link')).filter(function (item) { return item.rel === 'stylesheet'; });
+                styles.forEach(function (item) {
                     // add goodreads to links
                     item.href = item.href.replace('amazon', 'goodreads');
                     head.appendChild(item);
                 });
-                const meta = node.getElementById('ReviewsSection');
+                var meta = node.getElementById('ReviewsSection');
                 if (meta) {
                     // find our div
-                    const rating = meta.querySelector('div.RatingStatistics');
+                    var rating = meta.querySelector('div.RatingStatistics');
                     if (rating) {
                         // replace links
-                        Array.from(rating.getElementsByTagName('a')).forEach(item => {
+                        Array.from(rating.getElementsByTagName('a')).forEach(function (item) {
                             item.href = response.finalUrl + item.href.replace(item.baseURI, '');
                             return item;
                         });
                         // replace styles
-                        Array.from(rating.getElementsByTagName('span')).forEach(item => {
+                        Array.from(rating.getElementsByTagName('span')).forEach(function (item) {
                             item.classList.replace('RatingStar--medium', 'RatingStar--small');
                             item.classList.replace('RatingStars__medium', 'RatingStars__small');
                         });
                         Array.from(rating.getElementsByTagName('div'))
-                            .filter(item => item.classList.contains('RatingStatistics__rating'))
-                            .forEach(item => {
+                            .filter(function (item) { return item.classList.contains('RatingStatistics__rating'); })
+                            .forEach(function (item) {
                             item.style.marginBottom = '-0.8rem';
                             item.style.fontSize = '2.2rem';
                         });
                         // create label div
-                        const labelCol = document.createElement('div');
+                        var labelCol = document.createElement('div');
                         labelCol.classList.add('a-column', 'a-span12', 'a-spacing-top-small');
-                        const labelRow = document.createElement('div');
+                        var labelRow = document.createElement('div');
                         labelRow.classList.add('a-row', 'a-spacing-small');
                         labelRow.textContent = 'Goodreads';
-                        const lineBreak = document.createElement('br');
+                        var lineBreak = document.createElement('br');
                         labelCol.appendChild(labelRow);
                         labelRow.appendChild(lineBreak);
                         labelRow.appendChild(rating);
@@ -132,13 +132,13 @@
             },
         });
     };
-    const main = () => {
-        const ASIN = findASIN();
-        const insertPoint = findInsertPoint();
-        for (let i = 0; i < ASIN.length && i < insertPoint.length; i++) {
-            const insertPointElement = insertPoint[i].parentElement;
+    var main = function () {
+        var ASIN = findASIN_1();
+        var insertPoint = findInsertPoint_1();
+        for (var i = 0; i < ASIN.length && i < insertPoint.length; i++) {
+            var insertPointElement = insertPoint[i].parentElement;
             if (insertPointElement) {
-                insertElement(ASIN[i], insertPointElement);
+                insertElement_1(ASIN[i], insertPointElement);
             }
         }
     };

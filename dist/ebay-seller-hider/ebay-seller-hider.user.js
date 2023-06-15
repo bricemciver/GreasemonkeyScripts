@@ -10,65 +10,65 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=ebay.com
 // ==/UserScript==
 {
-    let filterReviews = true;
-    let reviewMin = 10;
-    let filterFeedback = true;
-    let feedbackMin = 95.0;
-    let hideSponsored = true;
-    let sponsorClass = '';
-    const hideItem = (seller) => {
+    var filterReviews_1 = true;
+    var reviewMin_1 = 10;
+    var filterFeedback_1 = true;
+    var feedbackMin_1 = 95.0;
+    var hideSponsored_1 = true;
+    var sponsorClass_1 = '';
+    var hideItem_1 = function (seller) {
         var _a, _b;
-        const itemRegExp = RegExp(/\((.*)\) (.*)%/).exec(seller.innerText);
+        var itemRegExp = RegExp(/\((.*)\) (.*)%/).exec(seller.innerText);
         if (itemRegExp) {
-            const [, reviews, feedback] = itemRegExp;
-            const reviewsNum = parseInt(reviews.replace(',', ''), 10);
-            const feedbackNum = parseFloat(feedback);
-            let parent = seller.parentElement;
-            while (parent && parent.tagName !== 'LI') {
-                parent = parent.parentElement;
+            var reviews = itemRegExp[1], feedback = itemRegExp[2];
+            var reviewsNum = parseInt(reviews.replace(',', ''), 10);
+            var feedbackNum = parseFloat(feedback);
+            var parent_1 = seller.parentElement;
+            while (parent_1 && parent_1.tagName !== 'LI') {
+                parent_1 = parent_1.parentElement;
             }
-            if (parent) {
-                parent.style.display =
-                    (filterReviews && reviewsNum < reviewMin) || (filterFeedback && feedbackNum < feedbackMin) ? 'none' : 'list-item';
+            if (parent_1) {
+                parent_1.style.display =
+                    (filterReviews_1 && reviewsNum < reviewMin_1) || (filterFeedback_1 && feedbackNum < feedbackMin_1) ? 'none' : 'list-item';
                 // don't bother looking for sponsored posts if already hidden
-                if (hideSponsored && parent.style.display === 'list-item') {
-                    let hideSponsoredPost = false;
-                    const sponsoredSpan = Array.from(parent.querySelectorAll('span')).find(item => item.textContent === 'Sponsored');
+                if (hideSponsored_1 && parent_1.style.display === 'list-item') {
+                    var hideSponsoredPost = false;
+                    var sponsoredSpan = Array.from(parent_1.querySelectorAll('span')).find(function (item) { return item.textContent === 'Sponsored'; });
                     if (sponsoredSpan) {
-                        const labelAttr = (_b = (_a = sponsoredSpan.parentElement) === null || _a === void 0 ? void 0 : _a.parentElement) === null || _b === void 0 ? void 0 : _b.getAttribute('aria-labelledBy');
-                        if (labelAttr && labelAttr === sponsorClass) {
+                        var labelAttr = (_b = (_a = sponsoredSpan.parentElement) === null || _a === void 0 ? void 0 : _a.parentElement) === null || _b === void 0 ? void 0 : _b.getAttribute('aria-labelledBy');
+                        if (labelAttr && labelAttr === sponsorClass_1) {
                             hideSponsoredPost = true;
                         }
                     }
-                    parent.style.display = hideSponsoredPost ? 'none' : 'list-item';
+                    parent_1.style.display = hideSponsoredPost ? 'none' : 'list-item';
                 }
             }
         }
     };
-    const createHeader = () => {
-        const header = document.createElement('div');
-        const headerTitle = document.createElement('h3');
+    var createHeader_1 = function () {
+        var header = document.createElement('div');
+        var headerTitle = document.createElement('h3');
         headerTitle.classList.add('x-refine__item');
         headerTitle.textContent = 'Sellers';
         header.append(headerTitle);
         return header;
     };
-    const createCheckboxEventListener = (valueName, checkbox) => {
+    var createCheckboxEventListener_1 = function (valueName, checkbox) {
         if (valueName === 'reviewMin') {
             localStorage.setItem('filterReviews', checkbox.checked ? 'true' : 'false');
-            updateFilter();
+            updateFilter_1();
         }
         if (valueName === 'feedbackMin') {
             localStorage.setItem('filterFeedback', checkbox.checked ? 'true' : 'false');
-            updateFilter();
+            updateFilter_1();
         }
         if (valueName === 'hideSponsored') {
             localStorage.setItem('hideSponsored', checkbox.checked ? 'true' : 'false');
-            updateFilter();
+            updateFilter_1();
         }
     };
-    const createCheckbox = (text, valueName) => {
-        const checkbox = document.createElement('input');
+    var createCheckbox_1 = function (text, valueName) {
+        var checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
         checkbox.ariaLabel = text;
         checkbox.classList.add('cbx', 'x-refine__multi-select-checkbox');
@@ -76,33 +76,33 @@
         checkbox.ariaHidden = 'true';
         checkbox.tabIndex = -1;
         checkbox.role = 'presentation';
-        if ((valueName === 'reviewMin' && filterReviews) ||
-            (valueName === 'feedbackMin' && filterFeedback) ||
-            (valueName === 'hideSponsored' && hideSponsored)) {
+        if ((valueName === 'reviewMin' && filterReviews_1) ||
+            (valueName === 'feedbackMin' && filterFeedback_1) ||
+            (valueName === 'hideSponsored' && hideSponsored_1)) {
             checkbox.setAttribute('checked', 'true');
         }
-        checkbox.addEventListener('input', () => createCheckboxEventListener(valueName, checkbox));
+        checkbox.addEventListener('input', function () { return createCheckboxEventListener_1(valueName, checkbox); });
         return checkbox;
     };
-    const createListItem = (text, valueName, value) => {
-        const listItem = document.createElement('li');
+    var createListItem_1 = function (text, valueName, value) {
+        var listItem = document.createElement('li');
         listItem.classList.add('x-refine__main__list--value');
-        const selectItem = document.createElement('div');
+        var selectItem = document.createElement('div');
         selectItem.classList.add('x-refine__multi-select');
-        const checkbox = createCheckbox(text, valueName);
-        const checkboxText = document.createElement('span');
+        var checkbox = createCheckbox_1(text, valueName);
+        var checkboxText = document.createElement('span');
         checkboxText.classList.add('cbx', 'x-refine__multi-select-cbx');
         checkboxText.innerText = text;
         if (value) {
-            const input = document.createElement('input');
+            var input = document.createElement('input');
             input.type = 'text';
             input.pattern = 'd*';
             input.value = value;
-            input.addEventListener('change', evt => {
-                const target = evt.target;
+            input.addEventListener('change', function (evt) {
+                var target = evt.target;
                 if (target) {
                     localStorage.setItem(valueName, target.value);
-                    updateFilter();
+                    updateFilter_1();
                 }
             });
             input.style.height = '22px';
@@ -118,63 +118,64 @@
         listItem.append(selectItem);
         return listItem;
     };
-    const createGroup = () => {
-        const group = document.createElement('div');
+    var createGroup_1 = function () {
+        var group = document.createElement('div');
         group.classList.add('x-refine__group');
-        const listHeader = document.createElement('ul');
+        var listHeader = document.createElement('ul');
         listHeader.classList.add('x-refine__main__value');
         listHeader.style.clear = 'both';
-        listHeader.append(createListItem('# of Reviews over ', 'reviewMin', reviewMin.toString()));
-        listHeader.append(createListItem('Feedback over ', 'feedbackMin', feedbackMin.toString()));
-        listHeader.append(createListItem('Hide sponsored', 'hideSponsored'));
+        listHeader.append(createListItem_1('# of Reviews over ', 'reviewMin', reviewMin_1.toString()));
+        listHeader.append(createListItem_1('Feedback over ', 'feedbackMin', feedbackMin_1.toString()));
+        listHeader.append(createListItem_1('Hide sponsored', 'hideSponsored'));
         group.append(listHeader);
         return group;
     };
-    const getPresets = () => {
+    var getPresets_1 = function () {
         var _a, _b;
-        filterReviews = localStorage.getItem('filterReviews') !== 'false';
-        reviewMin = parseInt((_a = localStorage.getItem('reviewMin')) !== null && _a !== void 0 ? _a : '10', 10);
-        filterFeedback = localStorage.getItem('filterFeedback') !== 'false';
-        feedbackMin = parseFloat((_b = localStorage.getItem('feedbackMin')) !== null && _b !== void 0 ? _b : '95.0');
-        hideSponsored = localStorage.getItem('hideSponsored') !== 'false';
+        filterReviews_1 = localStorage.getItem('filterReviews') !== 'false';
+        reviewMin_1 = parseInt((_a = localStorage.getItem('reviewMin')) !== null && _a !== void 0 ? _a : '10', 10);
+        filterFeedback_1 = localStorage.getItem('filterFeedback') !== 'false';
+        feedbackMin_1 = parseFloat((_b = localStorage.getItem('feedbackMin')) !== null && _b !== void 0 ? _b : '95.0');
+        hideSponsored_1 = localStorage.getItem('hideSponsored') !== 'false';
     };
-    const addFilter = () => {
-        const menu = document.querySelector('.x-refine__left__nav');
+    var addFilter = function () {
+        var menu = document.querySelector('.x-refine__left__nav');
         if (menu) {
-            const list = document.createElement('li');
+            var list = document.createElement('li');
             list.classList.add('x-refine__main__list');
-            list.append(createHeader());
-            list.append(createGroup());
+            list.append(createHeader_1());
+            list.append(createGroup_1());
             menu.prepend(list);
         }
     };
-    const updateFilter = () => {
-        getPresets();
-        const sellers = document.querySelectorAll('span.s-item__seller-info-text');
-        for (const seller of Array.from(sellers)) {
-            hideItem(seller);
+    var updateFilter_1 = function () {
+        getPresets_1();
+        var sellers = document.querySelectorAll('span.s-item__seller-info-text');
+        for (var _i = 0, _a = Array.from(sellers); _i < _a.length; _i++) {
+            var seller = _a[_i];
+            hideItem_1(seller);
         }
     };
-    const findSponsoredClass = () => {
+    var findSponsoredClass = function () {
         var _a;
         // get inserted style
-        const styleBlock = Array.from(document.head.getElementsByTagName('style')).find(item => item.type === 'text/css');
+        var styleBlock = Array.from(document.head.getElementsByTagName('style')).find(function (item) { return item.type === 'text/css'; });
         if (styleBlock) {
-            const cssRuleList = (_a = styleBlock.sheet) === null || _a === void 0 ? void 0 : _a.cssRules;
+            var cssRuleList = (_a = styleBlock.sheet) === null || _a === void 0 ? void 0 : _a.cssRules;
             if (cssRuleList) {
-                const rule = Array.from(cssRuleList).find(item => item.cssText.includes('inline') && item.cssText.includes('span.'));
+                var rule = Array.from(cssRuleList).find(function (item) { return item.cssText.includes('inline') && item.cssText.includes('span.'); });
                 if (rule) {
-                    const regex = /\.([a-zA-Z0-9_-]+)\s*\{/;
-                    const match = regex.exec(rule.cssText);
+                    var regex = /\.([a-zA-Z0-9_-]+)\s*\{/;
+                    var match = regex.exec(rule.cssText);
                     if (match) {
-                        sponsorClass = match[1];
+                        sponsorClass_1 = match[1];
                     }
                 }
             }
         }
     };
-    getPresets();
+    getPresets_1();
     addFilter();
-    updateFilter();
+    updateFilter_1();
     findSponsoredClass();
 }
