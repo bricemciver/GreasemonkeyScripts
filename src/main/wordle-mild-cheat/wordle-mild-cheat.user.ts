@@ -14,21 +14,41 @@
 
 {
   enum State {
-    unknown,
-    absent,
-    present,
     correct,
+    diff,
+    none,
   }
 
+  type ProcessedCell = {
+    letter: string;
+    position: number;
+    status: State;
+  };
+
   const fullWordList: string[] = [];
-  let currentWordList: string[] = [];
-  const letterMap: Record<string, number[]> = {};
-  const wordState: Record<number, string[]> = {
-    0: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
-    1: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
-    2: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
-    3: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
-    4: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
+
+  /**
+   * Set an item into storage
+   * @param key key to set
+   * @param value value to set
+   */
+  const setItem = (key: string, value: any) => {
+    window.sessionStorage.setItem(key, JSON.stringify(value));
+  };
+
+  /**
+   * Get an item from session storage
+   * @param key key to get
+   * @param defaultVal value to return if key doesnt exist
+   */
+  const getItem = (key: string, defaultVal: any) => {
+    const val = window.sessionStorage.getItem(key);
+    if (!val || val === 'undefined') return defaultVal;
+    try {
+      return JSON.parse(val);
+    } catch (e) {
+      return val;
+    }
   };
 
   const callback: MutationCallback = (mutationList, mutationObserver) => {
@@ -65,34 +85,10 @@
     }
   };
 
-  const strToState = (value: string | null): State => {
-    switch (value) {
-      case 'absent':
-        return State.absent;
-      case 'present':
-        return State.present;
-      case 'correct':
-        return State.correct;
-      default:
-        return State.unknown;
-    }
-  };
-
-  const filterWordList = (): void => {
-    // make sure we have a word list
-    if (fullWordList.length > 0) {
-      currentWordList = new Array(...fullWordList);
-      // filter out words by each letter position
-      for (let i = 0; i < 5; i++) {
-        currentWordList = currentWordList.filter(word => wordState[i].indexOf(word.charAt(i)) !== -1);
-      }
-      // filter out words with letter in invalid position
-      for (const entry in letterMap) {
-        if (Object.prototype.hasOwnProperty.call(letterMap, entry)) {
-          currentWordList = currentWordList.filter(word => letterMap[entry].some(pos => word.charAt(pos) === entry));
-        }
-      }
-    }
+  const strToState: Record<string, State> = {
+    absent: State.none,
+    present: State.diff,
+    correct: State.correct,
   };
 
   const createWordlistDialog = (): HTMLDialogElement => {
@@ -108,7 +104,7 @@
     return wordlist;
   };
 
-  const showWordlist = (): void => {
+  const showWordlist = (curWords: string[]): void => {
     let wordList = document.getElementById('wordList');
     if (!wordList) {
       // load new styles
@@ -168,7 +164,7 @@
     }
     if (wordList) {
       wordList.innerHTML = '';
-      currentWordList.forEach(word => {
+      curWords.forEach(word => {
         const listItem = document.createElement('li');
         listItem.textContent = word;
         wordList?.appendChild(listItem);
@@ -181,68 +177,84 @@
     document.querySelector<HTMLDialogElement>('dialog#dialog')?.close();
   };
 
-  const buildLetterState = (): void => {
-    // examine board for letter state
-    const board = document.querySelector("div[class^='Board-module_board__']");
-    if (board) {
-      const tiles = board.querySelectorAll("div[class^='Tile-module_tile__']");
-      tiles.forEach(tile => {
-        const state = strToState(tile.getAttribute('data-state'));
-        const letter = tile.textContent;
-        let pos: number | null = null;
-        const delay = tile.parentElement?.style.animationDelay;
+  /**
+   * Examples of text found:
+   * - 'A' (letter 1) is in a different spot
+   * - 'S' (letter 1) is correct
+   * - 'N' (letter 3) is incorrect
+   */
+  const processCell = (element: HTMLDivElement): ProcessedCell | null => {
+    const label = element.ariaLabel;
+    if (label) {
+      // get letter and status from label
+      const [letter, status] = label.split(' ');
+      if (letter && letter !== 'empty') {
+        let position = 0;
+        const delay = element.parentElement?.style.animationDelay;
         if (delay) {
           const delayStr = RegExp(/\d+/).exec(delay);
           if (delayStr) {
             // convert to num
-            pos = parseInt(delayStr[0], 10) / 100;
+            position = parseInt(delayStr[0], 10) / 100;
           }
         }
-        if (letter) {
-          switch (state) {
-            case State.absent: {
-              // remove this letter for all positions
-              for (let i = 0; i < 5; i++) {
-                wordState[i] = wordState[i].filter(item => item !== letter);
-              }
-              break;
-            }
-            case State.correct: {
-              // remove all other letters for current position
-              if (pos !== null) {
-                wordState[pos] = wordState[pos].filter(item => item === letter);
-              }
-              // remove from letter map
-              for (const entry in letterMap) {
-                if (Object.prototype.hasOwnProperty.call(letterMap, entry)) {
-                  letterMap[entry] = letterMap[entry].filter(item => item !== pos);
-                }
-              }
-              delete letterMap[letter];
-              break;
-            }
-            case State.present: {
-              // remove this letter for current position and keep track of possible positions
-              if (pos !== null) {
-                wordState[pos] = wordState[pos].filter(item => item !== letter);
-              }
-              for (let i = 0; i < 5; i++) {
-                if (wordState[i].some(item => item === letter)) {
-                  if (!(letter in letterMap)) {
-                    letterMap[letter] = [];
-                  }
-                  letterMap[letter].push(i);
-                }
-              }
-              break;
-            }
-            default: {
-              // Nothing to do here
-            }
-          }
+        return {
+          letter,
+          position,
+          status: strToState[status],
+        };
+      }
+    }
+    return null;
+  };
+
+  const extractGameBoard = () => {
+    const boardState: ProcessedCell[] = [];
+    const board = document.querySelector<HTMLDivElement>("div[class^='Board-module_board__']");
+    if (board) {
+      const tiles = board.querySelectorAll<HTMLDivElement>("div[class^='Tile-module_tile__']");
+      tiles.forEach(tile => {
+        // get the letter, position, and status
+        const processedCell = processCell(tile);
+        if (processedCell !== null) {
+          boardState.push(processedCell);
         }
       });
     }
+    return boardState;
+  };
+
+  const sortProcessedCells = (cells: ProcessedCell[]): ProcessedCell[] => {
+    return cells.sort((a, b) => a.status - b.status);
+  };
+
+  const processGameBoard = (boardState: ProcessedCell[]) => {
+    let tempWordList: string[] = [...fullWordList];
+
+    // sort boardState so all correct answers are handled first, then diff, then none
+    sortProcessedCells(boardState);
+
+    boardState.forEach(item => {
+      if (item.status === State.correct) {
+        // process all the correct answers first to shrink word list
+        tempWordList = tempWordList.filter(word => word.charAt(item.position - 1).toUpperCase() === item.letter.toUpperCase());
+      } else if (item.status === State.diff) {
+        // now eliminate words where 'diff' items appear in that spot
+        // and where 'diff' item doesn't appear at all
+        tempWordList = tempWordList.filter(
+          word =>
+            word.charAt(item.position - 1).toUpperCase() !== item.letter.toUpperCase() && word.indexOf(item.letter.toUpperCase()) !== -1
+        );
+      } else if (
+        item.status === State.none &&
+        !boardState.some(({ letter, status }) => (status === State.correct || status === State.diff) && letter === item.letter)
+      ) {
+        // need to be careful here, only remove 'none' if it wasn't previously 'correct' or 'diff' (since it could be a second occurance)
+        tempWordList = tempWordList.filter(word => word.indexOf(item.letter.toUpperCase()) === -1);
+      }
+    });
+
+    return tempWordList;
   };
 
   // create a new instance of `MutationObserver` named `observer`,
@@ -262,9 +274,7 @@
 
       if (event.key === '?') {
         event.preventDefault();
-        buildLetterState();
-        filterWordList();
-        showWordlist();
+        showWordlist(processGameBoard(extractGameBoard()));
       }
       if (event.key === 'Escape') {
         event.preventDefault();

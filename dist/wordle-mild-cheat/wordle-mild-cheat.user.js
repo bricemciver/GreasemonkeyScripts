@@ -24,20 +24,34 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
 {
     var State = void 0;
     (function (State) {
-        State[State["unknown"] = 0] = "unknown";
-        State[State["absent"] = 1] = "absent";
-        State[State["present"] = 2] = "present";
-        State[State["correct"] = 3] = "correct";
+        State[State["correct"] = 0] = "correct";
+        State[State["diff"] = 1] = "diff";
+        State[State["none"] = 2] = "none";
     })(State || (State = {}));
     var fullWordList_1 = [];
-    var currentWordList_1 = [];
-    var letterMap_1 = {};
-    var wordState_1 = {
-        0: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
-        1: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
-        2: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
-        3: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
-        4: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'],
+    /**
+     * Set an item into storage
+     * @param key key to set
+     * @param value value to set
+     */
+    var setItem = function (key, value) {
+        window.sessionStorage.setItem(key, JSON.stringify(value));
+    };
+    /**
+     * Get an item from session storage
+     * @param key key to get
+     * @param defaultVal value to return if key doesnt exist
+     */
+    var getItem = function (key, defaultVal) {
+        var val = window.sessionStorage.getItem(key);
+        if (!val || val === 'undefined')
+            return defaultVal;
+        try {
+            return JSON.parse(val);
+        }
+        catch (e) {
+            return val;
+        }
     };
     var callback = function (mutationList, mutationObserver) {
         for (var _i = 0, mutationList_1 = mutationList; _i < mutationList_1.length; _i++) {
@@ -71,39 +85,10 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
             }
         }
     };
-    var strToState_1 = function (value) {
-        switch (value) {
-            case 'absent':
-                return State.absent;
-            case 'present':
-                return State.present;
-            case 'correct':
-                return State.correct;
-            default:
-                return State.unknown;
-        }
-    };
-    var filterWordList_1 = function () {
-        // make sure we have a word list
-        if (fullWordList_1.length > 0) {
-            currentWordList_1 = new (Array.bind.apply(Array, __spreadArray([void 0], fullWordList_1, false)))();
-            var _loop_1 = function (i) {
-                currentWordList_1 = currentWordList_1.filter(function (word) { return wordState_1[i].indexOf(word.charAt(i)) !== -1; });
-            };
-            // filter out words by each letter position
-            for (var i = 0; i < 5; i++) {
-                _loop_1(i);
-            }
-            var _loop_2 = function (entry) {
-                if (Object.prototype.hasOwnProperty.call(letterMap_1, entry)) {
-                    currentWordList_1 = currentWordList_1.filter(function (word) { return letterMap_1[entry].some(function (pos) { return word.charAt(pos) === entry; }); });
-                }
-            };
-            // filter out words with letter in invalid position
-            for (var entry in letterMap_1) {
-                _loop_2(entry);
-            }
-        }
+    var strToState_1 = {
+        absent: State.none,
+        present: State.diff,
+        correct: State.correct,
     };
     var createWordlistDialog_1 = function () {
         var wordlist = document.createElement('dialog');
@@ -117,7 +102,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         wordlist.appendChild(list);
         return wordlist;
     };
-    var showWordlist_1 = function () {
+    var showWordlist_1 = function (curWords) {
         var _a, _b, _c, _d, _e;
         var wordList = document.getElementById('wordList');
         if (!wordList) {
@@ -138,7 +123,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         }
         if (wordList) {
             wordList.innerHTML = '';
-            currentWordList_1.forEach(function (word) {
+            curWords.forEach(function (word) {
                 var listItem = document.createElement('li');
                 listItem.textContent = word;
                 wordList === null || wordList === void 0 ? void 0 : wordList.appendChild(listItem);
@@ -150,69 +135,81 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         var _a;
         (_a = document.querySelector('dialog#dialog')) === null || _a === void 0 ? void 0 : _a.close();
     };
-    var buildLetterState_1 = function () {
-        // examine board for letter state
-        var board = document.querySelector("div[class^='Board-module_board__']");
-        if (board) {
-            var tiles = board.querySelectorAll("div[class^='Tile-module_tile__']");
-            tiles.forEach(function (tile) {
-                var _a;
-                var state = strToState_1(tile.getAttribute('data-state'));
-                var letter = tile.textContent;
-                var pos = null;
-                var delay = (_a = tile.parentElement) === null || _a === void 0 ? void 0 : _a.style.animationDelay;
+    /**
+     * Examples of text found:
+     * - 'A' (letter 1) is in a different spot
+     * - 'S' (letter 1) is correct
+     * - 'N' (letter 3) is incorrect
+     */
+    var processCell_1 = function (element) {
+        var _a;
+        var label = element.ariaLabel;
+        if (label) {
+            // get letter and status from label
+            var _b = label.split(' '), letter = _b[0], status_1 = _b[1];
+            if (letter && letter !== 'empty') {
+                var position = 0;
+                var delay = (_a = element.parentElement) === null || _a === void 0 ? void 0 : _a.style.animationDelay;
                 if (delay) {
                     var delayStr = RegExp(/\d+/).exec(delay);
                     if (delayStr) {
                         // convert to num
-                        pos = parseInt(delayStr[0], 10) / 100;
+                        position = parseInt(delayStr[0], 10) / 100;
                     }
                 }
-                if (letter) {
-                    switch (state) {
-                        case State.absent: {
-                            // remove this letter for all positions
-                            for (var i = 0; i < 5; i++) {
-                                wordState_1[i] = wordState_1[i].filter(function (item) { return item !== letter; });
-                            }
-                            break;
-                        }
-                        case State.correct: {
-                            // remove all other letters for current position
-                            if (pos !== null) {
-                                wordState_1[pos] = wordState_1[pos].filter(function (item) { return item === letter; });
-                            }
-                            // remove from letter map
-                            for (var entry in letterMap_1) {
-                                if (Object.prototype.hasOwnProperty.call(letterMap_1, entry)) {
-                                    letterMap_1[entry] = letterMap_1[entry].filter(function (item) { return item !== pos; });
-                                }
-                            }
-                            delete letterMap_1[letter];
-                            break;
-                        }
-                        case State.present: {
-                            // remove this letter for current position and keep track of possible positions
-                            if (pos !== null) {
-                                wordState_1[pos] = wordState_1[pos].filter(function (item) { return item !== letter; });
-                            }
-                            for (var i = 0; i < 5; i++) {
-                                if (wordState_1[i].some(function (item) { return item === letter; })) {
-                                    if (!(letter in letterMap_1)) {
-                                        letterMap_1[letter] = [];
-                                    }
-                                    letterMap_1[letter].push(i);
-                                }
-                            }
-                            break;
-                        }
-                        default: {
-                            // Nothing to do here
-                        }
-                    }
+                return {
+                    letter: letter,
+                    position: position,
+                    status: strToState_1[status_1],
+                };
+            }
+        }
+        return null;
+    };
+    var extractGameBoard_1 = function () {
+        var boardState = [];
+        var board = document.querySelector("div[class^='Board-module_board__']");
+        if (board) {
+            var tiles = board.querySelectorAll("div[class^='Tile-module_tile__']");
+            tiles.forEach(function (tile) {
+                // get the letter, position, and status
+                var processedCell = processCell_1(tile);
+                if (processedCell !== null) {
+                    boardState.push(processedCell);
                 }
             });
         }
+        return boardState;
+    };
+    var sortProcessedCells_1 = function (cells) {
+        return cells.sort(function (a, b) { return a.status - b.status; });
+    };
+    var processGameBoard_1 = function (boardState) {
+        var tempWordList = __spreadArray([], fullWordList_1, true);
+        // sort boardState so all correct answers are handled first, then diff, then none
+        sortProcessedCells_1(boardState);
+        boardState.forEach(function (item) {
+            if (item.status === State.correct) {
+                // process all the correct answers first to shrink word list
+                tempWordList = tempWordList.filter(function (word) { return word.charAt(item.position - 1).toUpperCase() === item.letter.toUpperCase(); });
+            }
+            else if (item.status === State.diff) {
+                // now eliminate words where 'diff' items appear in that spot
+                // and where 'diff' item doesn't appear at all
+                tempWordList = tempWordList.filter(function (word) {
+                    return word.charAt(item.position - 1).toUpperCase() !== item.letter.toUpperCase() && word.indexOf(item.letter.toUpperCase()) !== -1;
+                });
+            }
+            else if (item.status === State.none &&
+                !boardState.some(function (_a) {
+                    var letter = _a.letter, status = _a.status;
+                    return (status === State.correct || status === State.diff) && letter === item.letter;
+                })) {
+                // need to be careful here, only remove 'none' if it wasn't previously 'correct' or 'diff' (since it could be a second occurance)
+                tempWordList = tempWordList.filter(function (word) { return word.indexOf(item.letter.toUpperCase()) === -1; });
+            }
+        });
+        return tempWordList;
     };
     // create a new instance of `MutationObserver` named `observer`,
     // passing it a callback function
@@ -226,9 +223,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         }
         if (event.key === '?') {
             event.preventDefault();
-            buildLetterState_1();
-            filterWordList_1();
-            showWordlist_1();
+            showWordlist_1(processGameBoard_1(extractGameBoard_1()));
         }
         if (event.key === 'Escape') {
             event.preventDefault();
