@@ -76,6 +76,7 @@
               // Convert to an array object
               const tempArray = JSON.parse(wordListStr) as string[];
               fullWordList.push(...tempArray);
+              setItem('wordList', fullWordList);
             },
           });
           mutationObserver.disconnect();
@@ -237,50 +238,66 @@
     boardState.forEach(item => {
       if (item.status === State.correct) {
         // process all the correct answers first to shrink word list
-        tempWordList = tempWordList.filter(word => word.charAt(item.position - 1).toUpperCase() === item.letter.toUpperCase());
+        tempWordList = tempWordList.filter(word => word.charAt(item.position).toLowerCase() === item.letter.toLowerCase());
       } else if (item.status === State.diff) {
         // now eliminate words where 'diff' items appear in that spot
         // and where 'diff' item doesn't appear at all
         tempWordList = tempWordList.filter(
-          word =>
-            word.charAt(item.position - 1).toUpperCase() !== item.letter.toUpperCase() && word.indexOf(item.letter.toUpperCase()) !== -1
+          word => word.charAt(item.position).toLowerCase() !== item.letter.toLowerCase() && word.indexOf(item.letter.toLowerCase()) !== -1
         );
       } else if (
         item.status === State.none &&
         !boardState.some(({ letter, status }) => (status === State.correct || status === State.diff) && letter === item.letter)
       ) {
         // need to be careful here, only remove 'none' if it wasn't previously 'correct' or 'diff' (since it could be a second occurance)
-        tempWordList = tempWordList.filter(word => word.indexOf(item.letter.toUpperCase()) === -1);
+        tempWordList = tempWordList.filter(word => word.indexOf(item.letter.toLowerCase()) === -1);
       }
     });
 
     return tempWordList;
   };
 
-  // create a new instance of `MutationObserver` named `observer`,
-  // passing it a callback function
-  const observer = new MutationObserver(callback);
+  const findAllowedWords = () => {
+    fullWordList.push(...getItem('wordList', []));
+    if (fullWordList.length === 0) {
+      // create a new instance of `MutationObserver` named `observer`,
+      // passing it a callback function
+      const observer = new MutationObserver(callback);
 
-  // call `observe()` on that MutationObserver instance,
-  // passing it the element to observe, and the options object
-  observer.observe(document, { subtree: true, childList: true });
+      // call `observe()` on that MutationObserver instance,
+      // passing it the element to observe, and the options object
+      observer.observe(document, { subtree: true, childList: true });
+    }
+  };
 
-  document.addEventListener(
-    'keydown',
-    event => {
-      if (event.defaultPrevented) {
-        return; // Do nothing if the event was already processed
-      }
+  const addListeners = () => {
+    document.addEventListener(
+      'keydown',
+      event => {
+        if (event.defaultPrevented) {
+          return; // Do nothing if the event was already processed
+        }
 
-      if (event.key === '?') {
-        event.preventDefault();
-        showWordlist(processGameBoard(extractGameBoard()));
-      }
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        hideWordlist();
-      }
-    },
-    true
-  );
+        if (event.key === '?') {
+          event.preventDefault();
+          showWordlist(processGameBoard(extractGameBoard()));
+        }
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          hideWordlist();
+        }
+      },
+      true
+    );
+  };
+
+  (function () {
+    'use strict';
+
+    // Retrieve (locally or from site) the word lists
+    findAllowedWords();
+
+    // add listeners
+    addListeners();
+  })();
 }

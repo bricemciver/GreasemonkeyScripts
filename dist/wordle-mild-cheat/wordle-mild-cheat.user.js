@@ -34,7 +34,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
      * @param key key to set
      * @param value value to set
      */
-    var setItem = function (key, value) {
+    var setItem_1 = function (key, value) {
         window.sessionStorage.setItem(key, JSON.stringify(value));
     };
     /**
@@ -42,7 +42,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
      * @param key key to get
      * @param defaultVal value to return if key doesnt exist
      */
-    var getItem = function (key, defaultVal) {
+    var getItem_1 = function (key, defaultVal) {
         var val = window.sessionStorage.getItem(key);
         if (!val || val === 'undefined')
             return defaultVal;
@@ -53,7 +53,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
             return val;
         }
     };
-    var callback = function (mutationList, mutationObserver) {
+    var callback_1 = function (mutationList, mutationObserver) {
         for (var _i = 0, mutationList_1 = mutationList; _i < mutationList_1.length; _i++) {
             var mutation = mutationList_1[_i];
             if (mutation.addedNodes.length > 0 &&
@@ -77,6 +77,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
                             // Convert to an array object
                             var tempArray = JSON.parse(wordListStr);
                             fullWordList_1.push.apply(fullWordList_1, tempArray);
+                            setItem_1('wordList', fullWordList_1);
                         },
                     });
                     mutationObserver.disconnect();
@@ -191,14 +192,12 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         boardState.forEach(function (item) {
             if (item.status === State.correct) {
                 // process all the correct answers first to shrink word list
-                tempWordList = tempWordList.filter(function (word) { return word.charAt(item.position - 1).toUpperCase() === item.letter.toUpperCase(); });
+                tempWordList = tempWordList.filter(function (word) { return word.charAt(item.position).toLowerCase() === item.letter.toLowerCase(); });
             }
             else if (item.status === State.diff) {
                 // now eliminate words where 'diff' items appear in that spot
                 // and where 'diff' item doesn't appear at all
-                tempWordList = tempWordList.filter(function (word) {
-                    return word.charAt(item.position - 1).toUpperCase() !== item.letter.toUpperCase() && word.indexOf(item.letter.toUpperCase()) !== -1;
-                });
+                tempWordList = tempWordList.filter(function (word) { return word.charAt(item.position).toLowerCase() !== item.letter.toLowerCase() && word.indexOf(item.letter.toLowerCase()) !== -1; });
             }
             else if (item.status === State.none &&
                 !boardState.some(function (_a) {
@@ -206,28 +205,42 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
                     return (status === State.correct || status === State.diff) && letter === item.letter;
                 })) {
                 // need to be careful here, only remove 'none' if it wasn't previously 'correct' or 'diff' (since it could be a second occurance)
-                tempWordList = tempWordList.filter(function (word) { return word.indexOf(item.letter.toUpperCase()) === -1; });
+                tempWordList = tempWordList.filter(function (word) { return word.indexOf(item.letter.toLowerCase()) === -1; });
             }
         });
         return tempWordList;
     };
-    // create a new instance of `MutationObserver` named `observer`,
-    // passing it a callback function
-    var observer = new MutationObserver(callback);
-    // call `observe()` on that MutationObserver instance,
-    // passing it the element to observe, and the options object
-    observer.observe(document, { subtree: true, childList: true });
-    document.addEventListener('keydown', function (event) {
-        if (event.defaultPrevented) {
-            return; // Do nothing if the event was already processed
+    var findAllowedWords_1 = function () {
+        fullWordList_1.push.apply(fullWordList_1, getItem_1('wordList', []));
+        if (fullWordList_1.length === 0) {
+            // create a new instance of `MutationObserver` named `observer`,
+            // passing it a callback function
+            var observer = new MutationObserver(callback_1);
+            // call `observe()` on that MutationObserver instance,
+            // passing it the element to observe, and the options object
+            observer.observe(document, { subtree: true, childList: true });
         }
-        if (event.key === '?') {
-            event.preventDefault();
-            showWordlist_1(processGameBoard_1(extractGameBoard_1()));
-        }
-        if (event.key === 'Escape') {
-            event.preventDefault();
-            hideWordlist_1();
-        }
-    }, true);
+    };
+    var addListeners_1 = function () {
+        document.addEventListener('keydown', function (event) {
+            if (event.defaultPrevented) {
+                return; // Do nothing if the event was already processed
+            }
+            if (event.key === '?') {
+                event.preventDefault();
+                showWordlist_1(processGameBoard_1(extractGameBoard_1()));
+            }
+            if (event.key === 'Escape') {
+                event.preventDefault();
+                hideWordlist_1();
+            }
+        }, true);
+    };
+    (function () {
+        'use strict';
+        // Retrieve (locally or from site) the word lists
+        findAllowedWords_1();
+        // add listeners
+        addListeners_1();
+    })();
 }
