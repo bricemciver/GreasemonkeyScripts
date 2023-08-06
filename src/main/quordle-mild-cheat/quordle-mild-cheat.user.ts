@@ -2,6 +2,7 @@
 // @name         Quordle Mild Cheat
 // @namespace    https://github.com/bricemciver/
 // @version      0.1
+// @license      MIT
 // @description  Get hints based on the words you've already tried
 // @author       bricemciver
 // @match        https://www.merriam-webster.com/games/quordle/*
