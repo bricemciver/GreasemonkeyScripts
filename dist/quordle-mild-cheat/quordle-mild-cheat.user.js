@@ -251,6 +251,15 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
                 // need to be careful here, only remove 'none' if it wasn't previously 'correct' or 'diff' (since it could be a second occurance)
                 tempWordList = tempWordList.filter(function (word) { return word.indexOf(item.letter.toUpperCase()) === -1; });
             }
+            else if (item.status === 'none' &&
+                boardState.some(function (_a) {
+                    var letter = _a.letter, status = _a.status;
+                    return (status === 'correct' || status === 'diff') && letter === item.letter;
+                })) {
+                // edge case; remove words with duplicate letters if status is none but other status of diff or correct exists
+                // this will not handle words with 3 of the same letter correctly
+                tempWordList = tempWordList.filter(function (word) { return word.indexOf(item.letter.toUpperCase()) === word.lastIndexOf(item.letter.toUpperCase()); });
+            }
         });
         return tempWordList;
     };

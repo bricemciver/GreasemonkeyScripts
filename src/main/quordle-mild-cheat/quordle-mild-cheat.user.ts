@@ -58,7 +58,7 @@
         GM.xmlHttpRequest({
           method: 'GET',
           url: script.src,
-          onload (response) {
+          onload(response) {
             const text = response.responseText;
             // get wordBank words
             const wordBankMatches = RegExp(wordBankRegEx).exec(text);
@@ -301,6 +301,13 @@
       ) {
         // need to be careful here, only remove 'none' if it wasn't previously 'correct' or 'diff' (since it could be a second occurance)
         tempWordList = tempWordList.filter(word => word.indexOf(item.letter.toUpperCase()) === -1);
+      } else if (
+        item.status === 'none' &&
+        boardState.some(({ letter, status }) => (status === 'correct' || status === 'diff') && letter === item.letter)
+      ) {
+        // edge case; remove words with duplicate letters if status is none but other status of diff or correct exists
+        // this will not handle words with 3 of the same letter correctly
+        tempWordList = tempWordList.filter(word => word.indexOf(item.letter.toUpperCase()) === word.lastIndexOf(item.letter.toUpperCase()));
       }
     });
 
