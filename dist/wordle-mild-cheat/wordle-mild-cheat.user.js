@@ -88,7 +88,7 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
     };
     var strToState_1 = {
         absent: State.none,
-        present: State.diff,
+        'present in another position': State.diff,
         correct: State.correct,
     };
     var createWordlistDialog_1 = function () {
@@ -143,24 +143,14 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
      * - 'N' (letter 3) is incorrect
      */
     var processCell_1 = function (element) {
-        var _a;
         var label = element.ariaLabel;
         if (label) {
-            // get letter and status from label
-            var _b = label.split(' '), letter = _b[0], status_1 = _b[1];
+            // get letter, status, position from label
+            var _a = label.split(', '), position = _a[0], letter = _a[1], status_1 = _a[2];
             if (letter && letter !== 'empty') {
-                var position = 0;
-                var delay = (_a = element.parentElement) === null || _a === void 0 ? void 0 : _a.style.animationDelay;
-                if (delay) {
-                    var delayStr = RegExp(/\d+/).exec(delay);
-                    if (delayStr) {
-                        // convert to num
-                        position = parseInt(delayStr[0], 10) / 100;
-                    }
-                }
                 return {
                     letter: letter,
-                    position: position,
+                    position: parseInt(position.charAt(0), 10),
                     status: strToState_1[status_1],
                 };
             }
@@ -173,7 +163,6 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         if (board) {
             var tiles = board.querySelectorAll("div[class^='Tile-module_tile__']");
             tiles.forEach(function (tile) {
-                // get the letter, position, and status
                 var processedCell = processCell_1(tile);
                 if (processedCell !== null) {
                     boardState.push(processedCell);
@@ -192,17 +181,19 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from, pack) {
         boardState.forEach(function (item) {
             if (item.status === State.correct) {
                 // process all the correct answers first to shrink word list
-                tempWordList = tempWordList.filter(function (word) { return word.charAt(item.position).toLowerCase() === item.letter.toLowerCase(); });
+                tempWordList = tempWordList.filter(function (word) { return word.charAt(item.position - 1).toLowerCase() === item.letter.toLowerCase(); });
             }
             else if (item.status === State.diff) {
                 // now eliminate words where 'diff' items appear in that spot
                 // and where 'diff' item doesn't appear at all
-                tempWordList = tempWordList.filter(function (word) { return word.charAt(item.position).toLowerCase() !== item.letter.toLowerCase() && word.indexOf(item.letter.toLowerCase()) !== -1; });
+                tempWordList = tempWordList.filter(function (word) {
+                    return word.charAt(item.position - 1).toLowerCase() !== item.letter.toLowerCase() && word.indexOf(item.letter.toLowerCase()) !== -1;
+                });
             }
             else if (item.status === State.none &&
                 !boardState.some(function (_a) {
                     var letter = _a.letter, status = _a.status;
-                    return (status === State.correct || status === State.diff) && letter === item.letter;
+                    return (status === State.correct || status === State.diff) && letter.toLowerCase() === item.letter.toLowerCase();
                 })) {
                 // need to be careful here, only remove 'none' if it wasn't previously 'correct' or 'diff' (since it could be a second occurance)
                 tempWordList = tempWordList.filter(function (word) { return word.indexOf(item.letter.toLowerCase()) === -1; });

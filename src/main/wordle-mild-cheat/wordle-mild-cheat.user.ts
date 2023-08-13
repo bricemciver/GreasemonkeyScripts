@@ -88,7 +88,7 @@
 
   const strToState: Record<string, State> = {
     absent: State.none,
-    present: State.diff,
+    'present in another position': State.diff,
     correct: State.correct,
   };
 
@@ -187,21 +187,12 @@
   const processCell = (element: HTMLDivElement): ProcessedCell | null => {
     const label = element.ariaLabel;
     if (label) {
-      // get letter and status from label
-      const [letter, status] = label.split(' ');
+      // get letter, status, position from label
+      const [position, letter, status] = label.split(', ');
       if (letter && letter !== 'empty') {
-        let position = 0;
-        const delay = element.parentElement?.style.animationDelay;
-        if (delay) {
-          const delayStr = RegExp(/\d+/).exec(delay);
-          if (delayStr) {
-            // convert to num
-            position = parseInt(delayStr[0], 10) / 100;
-          }
-        }
         return {
           letter,
-          position,
+          position: parseInt(position.charAt(0), 10),
           status: strToState[status],
         };
       }
@@ -215,7 +206,6 @@
     if (board) {
       const tiles = board.querySelectorAll<HTMLDivElement>("div[class^='Tile-module_tile__']");
       tiles.forEach(tile => {
-        // get the letter, position, and status
         const processedCell = processCell(tile);
         if (processedCell !== null) {
           boardState.push(processedCell);
@@ -238,16 +228,19 @@
     boardState.forEach(item => {
       if (item.status === State.correct) {
         // process all the correct answers first to shrink word list
-        tempWordList = tempWordList.filter(word => word.charAt(item.position).toLowerCase() === item.letter.toLowerCase());
+        tempWordList = tempWordList.filter(word => word.charAt(item.position - 1).toLowerCase() === item.letter.toLowerCase());
       } else if (item.status === State.diff) {
         // now eliminate words where 'diff' items appear in that spot
         // and where 'diff' item doesn't appear at all
         tempWordList = tempWordList.filter(
-          word => word.charAt(item.position).toLowerCase() !== item.letter.toLowerCase() && word.indexOf(item.letter.toLowerCase()) !== -1
+          word =>
+            word.charAt(item.position - 1).toLowerCase() !== item.letter.toLowerCase() && word.indexOf(item.letter.toLowerCase()) !== -1
         );
       } else if (
         item.status === State.none &&
-        !boardState.some(({ letter, status }) => (status === State.correct || status === State.diff) && letter === item.letter)
+        !boardState.some(
+          ({ letter, status }) => (status === State.correct || status === State.diff) && letter.toLowerCase() === item.letter.toLowerCase()
+        )
       ) {
         // need to be careful here, only remove 'none' if it wasn't previously 'correct' or 'diff' (since it could be a second occurance)
         tempWordList = tempWordList.filter(word => word.indexOf(item.letter.toLowerCase()) === -1);
