@@ -1,24 +1,30 @@
 // ==UserScript==
-// @name         Quordle Mild Cheat
-// @namespace    https://github.com/bricemciver/
+// @name         Octordle Mild Cheat
+// @namespace    bricemciver
 // @version      0.1
-// @license      MIT
-// @description  Get hints based on the words you've already tried
+// @description  Give you hints for each game board based on valid remaining words
 // @author       bricemciver
-// @match        https://www.merriam-webster.com/games/quordle/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=merriam-webster.com
+// @match        https://www.britannica.com/games/octordle*
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=britannica.com
 // @grant        GM.xmlHttpRequest
 // @grant        GM_xmlhttpRequest
+// @run-at       document-start
 // ==/UserScript==
 {
+  enum State {
+    correct,
+    diff,
+    none,
+  }
+
   type ProcessedCell = {
     letter: string;
     position: number;
-    status: 'diff' | 'correct' | 'none';
+    status: State;
   };
 
-  const wordBankRegEx = /wordBank:\s*"([^"]*)"/;
-  const allowedRegEx = /allowed:\s*"([^"]*)"/;
+  const wordBankRegEx = /"([^"]*\bsonic\b[^"]*)"/;
+  const allowedRegEx = /"([^"]*\bcorky\b[^"]*)"/;
   const wordBankWords: string[] = [];
   const allowedWords: string[] = [];
 
@@ -46,36 +52,55 @@
     }
   };
 
+  const callback: MutationCallback = (mutationList, mutationObserver) => {
+    for (const mutation of mutationList) {
+      if (
+        mutation.addedNodes.length > 0 &&
+        mutation.addedNodes[0].nodeType === Node.ELEMENT_NODE &&
+        mutation.addedNodes[0].nodeName === 'SCRIPT'
+      ) {
+        const element = mutation.addedNodes[0] as HTMLScriptElement;
+        if (element.type === 'module') {
+          // Get the script
+          GM.xmlHttpRequest({
+            method: 'GET',
+            url: element.src,
+            onload(response) {
+              const text = response.responseText;
+              // get wordBank words
+              const wordBankMatches = RegExp(wordBankRegEx).exec(text);
+              if (wordBankMatches && wordBankMatches.length > 1) {
+                wordBankWords.push(...wordBankMatches[1].split(' ').map(word => word.toUpperCase()));
+              }
+              // get allowed words
+              const allowedMatches = RegExp(allowedRegEx).exec(text);
+              if (allowedMatches && allowedMatches.length > 1) {
+                allowedWords.push(...allowedMatches[1].split(' ').map(word => word.toUpperCase()));
+              }
+              // store in session so we don't retrieve every time
+              setItem('wordBank', wordBankWords);
+              setItem('allowed', allowedWords);
+            },
+          });
+          mutationObserver.disconnect();
+          break;
+        }
+      }
+    }
+  };
+
   const findAllowedWords = () => {
     // see if we need to retrieve
     wordBankWords.push(...getItem('wordBank', []));
     allowedWords.push(...getItem('allowed', []));
     if (!wordBankWords.length || !allowedWords.length) {
-      const script = document.querySelector<HTMLScriptElement>("script[type='module']");
+      // create a new instance of `MutationObserver` named `observer`,
+      // passing it a callback function
+      const observer = new MutationObserver(callback);
 
-      // Get the script
-      if (script) {
-        GM.xmlHttpRequest({
-          method: 'GET',
-          url: script.src,
-          onload(response) {
-            const text = response.responseText;
-            // get wordBank words
-            const wordBankMatches = RegExp(wordBankRegEx).exec(text);
-            if (wordBankMatches && wordBankMatches.length > 1) {
-              wordBankWords.push(...wordBankMatches[1].split(' '));
-            }
-            // get allowed words
-            const allowedMatches = RegExp(allowedRegEx).exec(text);
-            if (allowedMatches && allowedMatches.length > 1) {
-              allowedWords.push(...allowedMatches[1].split(' '));
-            }
-            // store in session so we don't retrieve every time
-            setItem('wordBank', wordBankWords);
-            setItem('allowed', allowedWords);
-          },
-        });
-      }
+      // call `observe()` on that MutationObserver instance,
+      // passing it the element to observe, and the options object
+      observer.observe(document, { subtree: true, childList: true });
     }
   };
 
@@ -101,7 +126,7 @@
       const listItem = document.createElement('li');
       listItem.textContent = word;
       if (wordBankWords.some(item => item === word)) {
-        listItem.classList.add('font-bold');
+        listItem.attributeStyleMap.set('font-weight', 700);
       }
       list.appendChild(listItem);
     });
@@ -192,6 +217,58 @@
     }
   };
 
+  const processCell = (pos: number, element: HTMLDivElement): ProcessedCell | null => {
+    const letter = element.children[0].textContent ?? '';
+    if (element.classList.contains('exact-match')) {
+      // letter is in correct spot
+      return {
+        letter: letter.trim(),
+        position: pos,
+        status: State.correct,
+      };
+    }
+    if (element.classList.contains('word-match')) {
+      // letter is in word, not in that place
+      return {
+        letter: letter.trim(),
+        position: pos,
+        status: State.diff,
+      };
+    }
+    if (letter.length > 0 && letter === letter.toUpperCase() && letter !== letter.toLowerCase()) {
+      // if we have a letter, it doesn't belong
+      return {
+        letter: letter.trim(),
+        position: pos,
+        status: State.none,
+      };
+    }
+    return null;
+  };
+
+  const extractGameBoard = (boardNum: number) => {
+    const boardState: ProcessedCell[] = [];
+    const board = document.getElementById(`board-${boardNum}`);
+    // get rows
+    if (board) {
+      const rows = board.querySelectorAll<HTMLDivElement>("div[class~='board-row']");
+      rows.forEach(row => {
+        // get all cells in a row
+        const cells = row.querySelectorAll<HTMLDivElement>("div[class~='letter']");
+        let index = 0;
+        cells.forEach(cell => {
+          // get the letter, position, and status
+          const processedCell = processCell(index, cell);
+          if (processedCell !== null) {
+            boardState.push(processedCell);
+          }
+          index++;
+        });
+      });
+    }
+    return boardState;
+  };
+
   const addListeners = () => {
     document.addEventListener(
       'keydown',
@@ -201,8 +278,8 @@
         }
         if (event.key === '?') {
           event.preventDefault();
-          const boardArray: string[][] = [];
-          for (let i = 1; i < 5; i++) {
+          const boardArray = [];
+          for (let i = 1; i < 9; i++) {
             boardArray.push(processGameBoard(extractGameBoard(i)));
           }
           showWordlist(...boardArray);
@@ -216,94 +293,35 @@
     );
   };
 
-  /**
-   * Examples of text found:
-   * - 'A' (letter 1) is in a different spot
-   * - 'S' (letter 1) is correct
-   * - 'N' (letter 3) is incorrect
-   */
-  const cellRegEx = /'(\w+)' \(letter (\d+)\) is (in a different spot|correct|incorrect)/;
-  const processCell = (element: HTMLDivElement): ProcessedCell | null => {
-    const label = element.ariaLabel;
-    if (label) {
-      const match = RegExp(cellRegEx).exec(label);
-      if (match && match.length > 3) {
-        const letter = match[1];
-        const position = parseInt(match[2], 10);
-        const status = match[3];
-        return {
-          letter,
-          position,
-          status: statusToBasic[status],
-        };
-      }
-    }
-    return null;
-  };
-
-  const statusToBasic: Record<string, 'diff' | 'correct' | 'none'> = {
-    'in a different spot': 'diff',
-    correct: 'correct',
-    incorrect: 'none',
-  };
-
-  const extractGameBoard = (boardNum: number) => {
-    const boardState: ProcessedCell[] = [];
-    const board = document.querySelector<HTMLDivElement>(`div[role="table"][aria-label="Game Board ${boardNum}"]`);
-    // get rows
-    if (board) {
-      const rows = board.querySelectorAll<HTMLDivElement>('div[role="row"]');
-      rows.forEach(row => {
-        // get all cells in a row
-        const cells = row.querySelectorAll<HTMLDivElement>('div[role="cell"]');
-        cells.forEach(cell => {
-          // get the letter, position, and status
-          const processedCell = processCell(cell);
-          if (processedCell !== null) {
-            boardState.push(processedCell);
-          }
-        });
-      });
-    }
-    return boardState;
-  };
-
   const sortProcessedCells = (cells: ProcessedCell[]): ProcessedCell[] => {
-    const statusOrder: Record<string, number> = {
-      correct: 0,
-      diff: 1,
-      none: 2,
-    };
-
-    return cells.sort((a, b) => statusOrder[a.status] - statusOrder[b.status]);
+    return cells.sort((a, b) => a.status - b.status);
   };
 
   const processGameBoard = (boardState: ProcessedCell[]) => {
-    let tempWordList: string[] = [...wordBankWords, ...allowedWords];
+    let tempWordList = [...wordBankWords, ...allowedWords];
 
     // sort boardState so all correct answers are handled first, then diff, then none
     sortProcessedCells(boardState);
 
     boardState.forEach(item => {
-      if (item.status === 'correct') {
+      if (item.status === State.correct) {
         // process all the correct answers first to shrink word list
-        tempWordList = tempWordList.filter(word => word.charAt(item.position - 1).toUpperCase() === item.letter.toUpperCase());
-      } else if (item.status === 'diff') {
+        tempWordList = tempWordList.filter(word => word.charAt(item.position).toUpperCase() === item.letter.toUpperCase());
+      } else if (item.status === State.diff) {
         // now eliminate words where 'diff' items appear in that spot
         // and where 'diff' item doesn't appear at all
         tempWordList = tempWordList.filter(
-          word =>
-            word.charAt(item.position - 1).toUpperCase() !== item.letter.toUpperCase() && word.indexOf(item.letter.toUpperCase()) !== -1
+          word => word.charAt(item.position).toUpperCase() !== item.letter.toUpperCase() && word.indexOf(item.letter.toUpperCase()) !== -1
         );
       } else if (
-        item.status === 'none' &&
-        !boardState.some(({ letter, status }) => (status === 'correct' || status === 'diff') && letter === item.letter)
+        item.status === State.none &&
+        !boardState.some(({ letter, status }) => (status === State.correct || status === State.diff) && letter === item.letter)
       ) {
         // need to be careful here, only remove 'none' if it wasn't previously 'correct' or 'diff' (since it could be a second occurance)
         tempWordList = tempWordList.filter(word => word.indexOf(item.letter.toUpperCase()) === -1);
       } else if (
-        item.status === 'none' &&
-        boardState.some(({ letter, status }) => (status === 'correct' || status === 'diff') && letter === item.letter)
+        item.status === State.none &&
+        boardState.some(({ letter, status }) => (status === State.correct || status === State.diff) && letter === item.letter)
       ) {
         // edge case; remove words with duplicate letters if status is none but other status of diff or correct exists
         // this will not handle words with 3 of the same letter correctly
@@ -316,7 +334,6 @@
 
   (function () {
     'use strict';
-
     // Retrieve (locally or from site) the word lists
     findAllowedWords();
 
