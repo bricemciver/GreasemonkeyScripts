@@ -12,13 +12,198 @@
 // @connect      equip-bid.com
 // ==/UserScript==
 {
+  const indexAction = (action: 'plus' | 'minus'): void => {
+    // auto page navigation
+    if (index === 0 && prevLink && action === 'minus') {
+      // go to previous page (if available)
+      prevLink.click();
+    } else if (index > lots.length - 2 && nextLink && action === 'plus') {
+      // go to next page (if available)
+      nextLink.click();
+    } else if (action === 'plus') {
+      lots[index].classList.remove('row_selected');
+      index++;
+      lots[index].classList.add('row_selected');
+      lots[index].scrollIntoView({
+        block: 'center',
+      });
+    } else if (action === 'minus') {
+      lots[index].classList.remove('row_selected');
+      index--;
+      lots[index].classList.add('row_selected');
+      lots[index].scrollIntoView({
+        block: 'center',
+      });
+    }
+  };
+
+  const addToWatchList = (): void => {
+    // find the right watchlist button
+    const watchlistButton = lots[index].querySelector<HTMLAnchorElement>('a.item-watch-up');
+    if (watchlistButton) {
+      watchlistButton.click();
+    }
+  };
+
+  const openInNewTab = (): void => {
+    // find the url
+    const url = lots[index].getAttribute('data-url');
+    if (url) {
+      window.open(url, '_blank');
+    }
+  };
+
+  const showHelp = (): void => {
+    document.querySelector<HTMLDialogElement>('dialog.ShortcutsHelp')?.showModal();
+  };
+
+  const hideHelp = (): void => {
+    document.querySelector<HTMLDialogElement>('dialog.ShortcutsHelp')?.close();
+  };
+
+  const createHelp = (): HTMLDialogElement => {
+    const helpDiv = document.createElement('dialog');
+    helpDiv.classList.add('ShortcutsHelp');
+    const hintDiv = document.createElement('div');
+    hintDiv.classList.add('ShortcutsHelp__hint');
+    hintDiv.insertAdjacentText('afterbegin', 'ESC to close');
+    const title = document.createElement('div');
+    title.classList.add('ShortcutsHelp__title');
+    title.insertAdjacentText('afterbegin', 'Keyboard Shortcuts Help');
+    helpDiv.appendChild(hintDiv);
+    helpDiv.appendChild(title);
+    helpTopics.forEach(topic => {
+      const section = document.createElement('div');
+      section.classList.add('ShortcutsHelp__section');
+      const sectionTitle = document.createElement('div');
+      sectionTitle.classList.add('ShortcutsHelp__section-title');
+      sectionTitle.insertAdjacentText('afterbegin', topic.section);
+      section.appendChild(sectionTitle);
+      helpDiv.appendChild(section);
+      topic.items.forEach(item => {
+        const itemDiv = document.createElement('div');
+        const itemKey = document.createElement('span');
+        itemKey.classList.add('ShortcutsHelp__shortcut');
+        itemKey.insertAdjacentText('afterbegin', item.key);
+        const itemValue = document.createTextNode(item.description);
+        itemDiv.appendChild(itemKey);
+        itemDiv.appendChild(itemValue);
+        section.appendChild(itemDiv);
+      });
+    });
+    return helpDiv;
+  };
+
+  const initScript = (): void => {
+    // load new styles
+    const head = document.getElementsByTagName('head')[0];
+    const style = document.createElement('style');
+    style.setAttribute('type', 'text/css');
+    head.appendChild(style);
+    if (style.sheet) {
+      style.sheet.insertRule(`.ShortcutsHelp {
+        animation: shortcuts-help-fade-in .25s ease-in-out;
+        background-color: #111;
+        border-radius: .25rem;
+        color: #fff;
+        font-size: 1.25rem;
+        left: 50%;
+        line-height: 17px;
+        padding: 20px;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 350px;
+        z-index: 99999
+    }`);
+      style.sheet.insertRule(`.ShortcutsHelp__title {
+      border-bottom: 1px solid #444;
+      color: #999;
+      font-weight: 700;
+      margin-bottom: 9px;
+      padding-bottom: 9px
+  }`);
+      style.sheet.insertRule(`.ShortcutsHelp__hint {
+    color: #999;
+    float: right;
+}`);
+      style.sheet.insertRule(`.ShortcutsHelp__section {
+    margin-bottom: 17px;
+    margin-top: 0
+}`);
+      style.sheet.insertRule(`.ShortcutsHelp__section-title {
+    color: #999;
+    margin-bottom: 8px;
+    margin-top: 9px
+}`);
+      style.sheet.insertRule(`.ShortcutsHelp__shortcut {
+    color: #2bb24c;
+    display: inline-block;
+    padding-right: 6px;
+    width: 55px
+}`);
+      style.sheet.insertRule(`@keyframes shortcuts-help-fade-in {
+    from {
+        opacity: 0
+    }
+
+    to {
+        opacity: 1
+    }
+}`);
+      style.sheet.insertRule(`@keyframes shortcuts-help-fade-out {
+    from {
+        opacity: 1
+    }
+
+    to {
+        opacity: 0
+    }
+}`);
+    }
+
+    // create help div
+    const helpDiv = createHelp();
+
+    // attach to body
+    document.body.appendChild(helpDiv);
+
+    if (lotList) {
+      makeLotItemsIntoCards(lotList);
+    }
+  };
+
   type HelpTopic = {
     section: string;
     items: { key: string; description: string }[];
   };
 
+  const makeLotItemsIntoCards = (lotList: HTMLDivElement) => {
+    let newNode: HTMLDivElement | null = null;
+    for (const child of Array.from(lotList.children)) {
+      if (child.tagName === 'HR' || child.classList.contains('lot-divider')) {
+        // this is the boundary for our content
+        // create a new node and insert it after the boundary
+        newNode = document.createElement('div');
+        newNode.classList.add('well');
+        child.after(newNode);
+      } else if (newNode) {
+        // if we have a node, move content from the lotList into the well
+        // add href to wrapper div
+        if (!newNode.getAttribute('data-url') && newNode.querySelector<HTMLAnchorElement>('a[href]')) {
+          const url = newNode.querySelector<HTMLAnchorElement>('a[href]');
+          if (url) {
+            newNode.setAttribute('data-url', url.href);
+          }
+        }
+        newNode.appendChild(child);
+      }
+    }
+    lots = Array.from(document.querySelectorAll<HTMLDivElement>('div.well'));
+  };
+
   const lotList = document.querySelector<HTMLDivElement>('div.lot-list');
-  const lots = Array.from(lotList?.querySelectorAll<HTMLHeadingElement>('h4[id^="itemTitle"]') ?? []);
+  let lots: HTMLDivElement[] = [];
   const prevLink = document.querySelector<HTMLLIElement>('li.previous a');
   const nextLink = document.querySelector<HTMLLIElement>('li.next a');
   const helpTopics: HelpTopic[] = [
@@ -38,247 +223,28 @@
       ],
     },
   ];
-  let index = -1;
+  let index = 0;
 
-  window.addEventListener(
-    'keydown',
-    event => {
-      if (event.defaultPrevented) {
-        return; // Do nothing if the event was already processed
-      }
-
-      switch (event.key) {
-        case 'J':
-        case 'j':
-          index++;
-          // Cancel the default action to avoid it being handled twice
-          event.preventDefault();
-          indexAction();
-          break;
-        case 'K':
-        case 'k':
-          index--;
-          // Cancel the default action to avoid it being handled twice
-          event.preventDefault();
-          indexAction();
-          break;
-        case 'W':
-        case 'w':
-          event.preventDefault();
-          addToWatchList();
-          break;
-        case 'V':
-        case 'v':
-          event.preventDefault();
-          openInNewTab();
-          break;
-        case '?':
-          event.preventDefault();
-          showHelp();
-          break;
-        case 'Escape':
-          event.preventDefault();
-          hideHelp();
-          break;
-        default:
-          // eslint-disable-next-line no-console
-          console.log('Key pressed ' + event.key);
-      }
-    },
-    true
-  );
-
-  const indexAction = (): void => {
-    // auto page navigation
-    if (index < 0 && prevLink) {
-      // go to previous page (if available)
-      prevLink.click();
-    } else if (index > lots.length - 1 && nextLink) {
-      // go to next page (if available)
-      nextLink.click();
-    } else {
-      lots[index].scrollIntoView();
+  window.addEventListener('keydown', event => {
+    if (event.code === 'KeyJ') {
+      indexAction('plus');
     }
-  };
-
-  const addToWatchList = (): void => {
-    // find the right watchlist button
-    const watchlistButton =
-      lots[index].parentElement?.parentElement?.nextElementSibling?.querySelector<HTMLAnchorElement>('a.item-watch-up');
-    if (watchlistButton) {
-      watchlistButton.click();
+    if (event.code === 'KeyK') {
+      indexAction('minus');
     }
-  };
-
-  const openInNewTab = (): void => {
-    // find the url
-    const url = lots[index].querySelector<HTMLAnchorElement>('a');
-    if (url) {
-      window.open(url.href, '_blank');
+    if (event.code === 'KeyW') {
+      addToWatchList();
     }
-  };
-
-  const showHelp = (): void => {
-    document.querySelector<HTMLDialogElement>('dialog.ShortcutsHelp')?.showModal();
-  };
-
-  const hideHelp = (): void => {
-    document.querySelector<HTMLDialogElement>('dialog.ShortcutsHelp')?.close();
-  };
-
-  const createHelp = (): HTMLDialogElement => {
-    const helpDiv = createElement('dialog', {
-      className: 'ShortcutsHelp',
-    });
-    const hintDiv = createElement(
-      'div',
-      {
-        className: 'ShortcutsHelp__hint',
-      },
-      'ESC to close'
-    );
-    const title = createElement(
-      'div',
-      {
-        className: 'ShortcutsHelp__title',
-      },
-      'Keyboard Shortcuts Help'
-    );
-    helpDiv.appendChild(hintDiv);
-    helpDiv.appendChild(title);
-    helpTopics.forEach(topic => {
-      const section = createElement('div', {
-        className: 'ShortcutsHelp__section',
-      });
-      const sectionTitle = createElement(
-        'div',
-        {
-          className: 'ShortcutsHelp__section-title',
-        },
-        topic.section
-      );
-      section.appendChild(sectionTitle);
-      helpDiv.appendChild(section);
-      topic.items.forEach(item => {
-        const itemDiv = createElement('div');
-        const itemKey = createElement(
-          'span',
-          {
-            className: 'ShortcutsHelp__shortcut',
-          },
-          item.key
-        );
-        const itemValue = document.createTextNode(item.description);
-        itemDiv.appendChild(itemKey);
-        itemDiv.appendChild(itemValue);
-        section.appendChild(itemDiv);
-      });
-    });
-    return helpDiv;
-  };
-
-  const createElement = <K extends keyof HTMLElementTagNameMap>(
-    type: K,
-    config?: Record<string, string>,
-    text?: string
-  ): HTMLElementTagNameMap[K] => {
-    const theElement = document.createElement(type);
-    if (config) {
-      for (const key in config) {
-        if (Object.prototype.hasOwnProperty.call(config, key)) {
-          let name = key.toLowerCase();
-          if (key.toLowerCase() === 'classname') {
-            name = 'class';
-          }
-          theElement.setAttribute(name, config[name]);
-        }
-      }
+    if (event.code === 'KeyV') {
+      openInNewTab();
     }
-    if (text) {
-      theElement.insertAdjacentText('afterbegin', text);
+    if (event.code === 'Slash' && event.shiftKey) {
+      showHelp();
     }
-    return theElement;
-  };
-
-  const initScript = (): void => {
-    // load new styles
-    const head = document.getElementsByTagName('head')[0];
-    const style = document.createElement('style');
-    style.setAttribute('type', 'text/css');
-    style.textContent = `.ShortcutsHelp {
-    animation: shortcuts-help-fade-in .25s ease-in-out;
-    background-color: #111;
-    border-radius: .25rem;
-    color: #fff;
-    font-size: 1.25rem;
-    left: 50%;
-    line-height: 17px;
-    padding: 20px;
-    position: absolute;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 350px;
-    z-index: 99999
-}
-
-.ShortcutsHelp__title {
-    border-bottom: 1px solid #444;
-    color: #999;
-    font-weight: 700;
-    margin-bottom: 9px;
-    padding-bottom: 9px
-}
-
-.ShortcutsHelp__hint {
-    color: #999;
-    float: right;
-}
-
-.ShortcutsHelp__section {
-    margin-bottom: 17px;
-    margin-top: 0
-}
-
-.ShortcutsHelp__section-title {
-    color: #999;
-    margin-bottom: 8px;
-    margin-top: 9px
-}
-
-.ShortcutsHelp__shortcut {
-    color: #2bb24c;
-    display: inline-block;
-    padding-right: 6px;
-    width: 55px
-}
-
-@keyframes shortcuts-help-fade-in {
-    from {
-        opacity: 0
+    if (event.code === 'Escape') {
+      hideHelp();
     }
-
-    to {
-        opacity: 1
-    }
-}
-
-@keyframes shortcuts-help-fade-out {
-    from {
-        opacity: 1
-    }
-
-    to {
-        opacity: 0
-    }
-}`;
-    head.appendChild(style);
-
-    // create help div
-    const helpDiv = createHelp();
-
-    // attach to body
-    document.body.appendChild(helpDiv);
-  };
+  });
 
   initScript();
 }
