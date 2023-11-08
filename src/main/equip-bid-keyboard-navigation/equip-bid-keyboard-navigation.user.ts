@@ -21,16 +21,16 @@
       // go to next page (if available)
       nextLink.click();
     } else if (action === 'plus') {
-      lots[index].classList.remove('row_selected');
+      lots[index].classList.toggle('selected_lot', false);
       index++;
-      lots[index].classList.add('row_selected');
+      lots[index].classList.toggle('selected_lot', true);
       lots[index].scrollIntoView({
         block: 'center',
       });
     } else if (action === 'minus') {
-      lots[index].classList.remove('row_selected');
+      lots[index].classList.toggle('selected_lot', false);
       index--;
-      lots[index].classList.add('row_selected');
+      lots[index].classList.toggle('selected_lot', true);
       lots[index].scrollIntoView({
         block: 'center',
       });
@@ -160,6 +160,20 @@
         opacity: 0
     }
 }`);
+      style.sheet.insertRule(`.lot {
+    margin-bottom: 34px;
+    min-height: 136px;
+    padding: 33px;
+    color: #333;
+    border: 1px solid rgba(0,0,0,.05);
+    border-radius: 3px;
+    position: relative;
+    z-index: 2
+}`);
+      style.sheet.insertRule(`.selected_lot {
+      outline: 5px auto -webkit-focus-ring-color;
+      outline-offset: -2px
+}`);
     }
 
     // create help div
@@ -180,26 +194,34 @@
 
   const makeLotItemsIntoCards = (lotList: HTMLDivElement) => {
     let newNode: HTMLDivElement | null = null;
-    for (const child of Array.from(lotList.children)) {
-      if (child.tagName === 'HR' || child.classList.contains('lot-divider')) {
-        // this is the boundary for our content
-        // create a new node and insert it after the boundary
+    // copy list of children
+    const children = Array.from(lotList.children);
+    for (let i = 4; i < children.length; i++) {
+      // find blocks of divs we want to enclose
+      // search backwards to avoid out of index
+      const row1 = children[i - 4];
+      const row2 = children[i - 3];
+      const row3 = children[i - 2];
+      const row4 = children[i - 1];
+      const row5 = children[i];
+      if (
+        row1.classList.contains('row') &&
+        row2.classList.contains('row') &&
+        row3.classList.contains('row') &&
+        row4.classList.contains('hidden-md') &&
+        row5.classList.contains('hidden-xs')
+      ) {
+        // we found our block
         newNode = document.createElement('div');
-        newNode.classList.add('well');
-        child.after(newNode);
-      } else if (newNode) {
-        // if we have a node, move content from the lotList into the well
-        // add href to wrapper div
-        if (!newNode.getAttribute('data-url') && newNode.querySelector<HTMLAnchorElement>('a[href]')) {
-          const url = newNode.querySelector<HTMLAnchorElement>('a[href]');
-          if (url) {
-            newNode.setAttribute('data-url', url.href);
-          }
-        }
-        newNode.appendChild(child);
+        newNode.classList.add('lot');
+        children.splice(i - 4, 5, newNode);
+        newNode.append(row1, row2, row3);
+        i = i - 4;
       }
     }
-    lots = Array.from(document.querySelectorAll<HTMLDivElement>('div.well'));
+    // replace lotlist children with new list
+    lotList.replaceChildren(...children);
+    lots = Array.from(document.querySelectorAll<HTMLDivElement>('div.lot'));
   };
 
   const lotList = document.querySelector<HTMLDivElement>('div.lot-list');

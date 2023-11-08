@@ -24,17 +24,17 @@
             nextLink_1.click();
         }
         else if (action === 'plus') {
-            lots_1[index_1].classList.remove('row_selected');
+            lots_1[index_1].classList.toggle('selected_lot', false);
             index_1++;
-            lots_1[index_1].classList.add('row_selected');
+            lots_1[index_1].classList.toggle('selected_lot', true);
             lots_1[index_1].scrollIntoView({
                 block: 'center',
             });
         }
         else if (action === 'minus') {
-            lots_1[index_1].classList.remove('row_selected');
+            lots_1[index_1].classList.toggle('selected_lot', false);
             index_1--;
-            lots_1[index_1].classList.add('row_selected');
+            lots_1[index_1].classList.toggle('selected_lot', true);
             lots_1[index_1].scrollIntoView({
                 block: 'center',
             });
@@ -109,6 +109,8 @@
             style.sheet.insertRule(".ShortcutsHelp__shortcut {\n    color: #2bb24c;\n    display: inline-block;\n    padding-right: 6px;\n    width: 55px\n}");
             style.sheet.insertRule("@keyframes shortcuts-help-fade-in {\n    from {\n        opacity: 0\n    }\n\n    to {\n        opacity: 1\n    }\n}");
             style.sheet.insertRule("@keyframes shortcuts-help-fade-out {\n    from {\n        opacity: 1\n    }\n\n    to {\n        opacity: 0\n    }\n}");
+            style.sheet.insertRule(".lot {\n    margin-bottom: 34px;\n    min-height: 136px;\n    padding: 33px;\n    color: #333;\n    border: 1px solid rgba(0,0,0,.05);\n    border-radius: 3px;\n    position: relative;\n    z-index: 2\n}");
+            style.sheet.insertRule(".selected_lot {\n      outline: 5px auto -webkit-focus-ring-color;\n      outline-offset: -2px\n}");
         }
         // create help div
         var helpDiv = createHelp_1();
@@ -120,28 +122,32 @@
     };
     var makeLotItemsIntoCards_1 = function (lotList) {
         var newNode = null;
-        for (var _i = 0, _a = Array.from(lotList.children); _i < _a.length; _i++) {
-            var child = _a[_i];
-            if (child.tagName === 'HR' || child.classList.contains('lot-divider')) {
-                // this is the boundary for our content
-                // create a new node and insert it after the boundary
+        // copy list of children
+        var children = Array.from(lotList.children);
+        for (var i = 4; i < children.length; i++) {
+            // find blocks of divs we want to enclose
+            // search backwards to avoid out of index
+            var row1 = children[i - 4];
+            var row2 = children[i - 3];
+            var row3 = children[i - 2];
+            var row4 = children[i - 1];
+            var row5 = children[i];
+            if (row1.classList.contains('row') &&
+                row2.classList.contains('row') &&
+                row3.classList.contains('row') &&
+                row4.classList.contains('hidden-md') &&
+                row5.classList.contains('hidden-xs')) {
+                // we found our block
                 newNode = document.createElement('div');
-                newNode.classList.add('well');
-                child.after(newNode);
-            }
-            else if (newNode) {
-                // if we have a node, move content from the lotList into the well
-                // add href to wrapper div
-                if (!newNode.getAttribute('data-url') && newNode.querySelector('a[href]')) {
-                    var url = newNode.querySelector('a[href]');
-                    if (url) {
-                        newNode.setAttribute('data-url', url.href);
-                    }
-                }
-                newNode.appendChild(child);
+                newNode.classList.add('lot');
+                children.splice(i - 4, 5, newNode);
+                newNode.append(row1, row2, row3);
+                i = i - 4;
             }
         }
-        lots_1 = Array.from(document.querySelectorAll('div.well'));
+        // replace lotlist children with new list
+        lotList.replaceChildren.apply(lotList, children);
+        lots_1 = Array.from(document.querySelectorAll('div.lot'));
     };
     var lotList_1 = document.querySelector('div.lot-list');
     var lots_1 = [];
