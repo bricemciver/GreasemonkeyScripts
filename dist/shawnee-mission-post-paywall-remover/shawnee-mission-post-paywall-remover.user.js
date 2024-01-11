@@ -19,15 +19,15 @@
             var mutation = mutationsList_1[_i];
             if (mutation.type === 'childList') {
                 mutation.addedNodes.forEach(function (addedNode) {
-                    if (addedNode.nodeType === Node.ELEMENT_NODE && addedNode.id === 'content-paywall-block') {
+                    if (addedNode.nodeType === Node.ELEMENT_NODE && addedNode.id === 'wkwp-paywall') {
                         addedNode.remove();
                     }
                 });
             }
             if (mutation.type === 'attributes' &&
                 mutation.target.nodeType === Node.ELEMENT_NODE &&
-                mutation.target.classList.contains('not-logged-in')) {
-                mutation.target.classList.remove('not-logged-in');
+                mutation.target.classList.contains('wkwp-blur')) {
+                mutation.target.classList.remove('wkwp-blur');
             }
         }
     };
@@ -35,7 +35,7 @@
         // Create a new observer instance with the callback function
         var observer = new MutationObserver(mutationCallback_1);
         // Target a specific node
-        var entry = document.querySelector('div.entry-content');
+        var entry = document.querySelector('div.wpb_wrapper');
         if (entry) {
             // Start observing the target node for specified mutations
             observer.observe(entry, {

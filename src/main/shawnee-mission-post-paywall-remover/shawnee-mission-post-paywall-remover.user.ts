@@ -17,7 +17,7 @@
     for (const mutation of mutationsList) {
       if (mutation.type === 'childList') {
         mutation.addedNodes.forEach(addedNode => {
-          if (addedNode.nodeType === Node.ELEMENT_NODE && (addedNode as Element).id === 'content-paywall-block') {
+          if (addedNode.nodeType === Node.ELEMENT_NODE && (addedNode as Element).id === 'wkwp-paywall') {
             (addedNode as Element).remove();
           }
         });
@@ -25,9 +25,9 @@
       if (
         mutation.type === 'attributes' &&
         mutation.target.nodeType === Node.ELEMENT_NODE &&
-        (mutation.target as Element).classList.contains('not-logged-in')
+        (mutation.target as Element).classList.contains('wkwp-blur')
       ) {
-        (mutation.target as Element).classList.remove('not-logged-in');
+        (mutation.target as Element).classList.remove('wkwp-blur');
       }
     }
   };
@@ -37,7 +37,7 @@
     const observer = new MutationObserver(mutationCallback);
 
     // Target a specific node
-    const entry = document.querySelector<HTMLDivElement>('div.entry-content');
+    const entry = document.querySelector<HTMLDivElement>('div.wpb_wrapper');
 
     if (entry) {
       // Start observing the target node for specified mutations
