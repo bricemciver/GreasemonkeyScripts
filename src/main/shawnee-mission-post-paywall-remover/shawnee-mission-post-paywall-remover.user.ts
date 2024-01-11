@@ -6,6 +6,7 @@
 // @license      MIT
 // @version      0.1
 // @match        https://shawneemissionpost.com/*
+// @match        https://johnsoncountypost.com/*
 // @match        https://bluevalleypost.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=shawneemissionpost.com
 // @grant        none
