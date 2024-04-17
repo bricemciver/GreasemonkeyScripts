@@ -9,41 +9,41 @@
 // @match        https://shawneemissionpost.com/*
 // @match        https://johnsoncountypost.com/*
 // @match        https://bluevalleypost.com/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=shawneemissionpost.com
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=johnsoncountypost.com
 // @grant        none
 // ==/UserScript==
 {
-    // Callback function to handle mutations
-    var mutationCallback_1 = function (mutationsList, _observer) {
+    // Select the node that should be monitored
+    var targetNode = document.documentElement;
+    // Options for the observer (which mutations to observe)
+    var config = { childList: true, subtree: true, attributes: true };
+    // Callback function to execute when mutations are observed
+    var callback = function (mutationsList, observer) {
         for (var _i = 0, mutationsList_1 = mutationsList; _i < mutationsList_1.length; _i++) {
             var mutation = mutationsList_1[_i];
             if (mutation.type === 'childList') {
-                mutation.addedNodes.forEach(function (addedNode) {
-                    if (addedNode.nodeType === Node.ELEMENT_NODE && addedNode.id === 'wkwp-paywall') {
-                        addedNode.remove();
+                for (var _a = 0, _b = Array.from(mutation.addedNodes); _a < _b.length; _a++) {
+                    var node = _b[_a];
+                    if (node.nodeType === Node.ELEMENT_NODE) {
+                        var element = node;
+                        if (element.classList.contains('wkwp-paywall')) {
+                            element.setAttribute('style', 'display: none');
+                        }
                     }
-                });
+                }
             }
-            if (mutation.type === 'attributes' &&
-                mutation.target.nodeType === Node.ELEMENT_NODE &&
-                mutation.target.classList.contains('wkwp-blur')) {
-                mutation.target.classList.remove('wkwp-blur');
+            if (mutation.type === 'attributes') {
+                if (mutation.target.nodeType === Node.ELEMENT_NODE) {
+                    var element = mutation.target;
+                    if (element.classList.contains('wkwp-blur')) {
+                        element.classList.remove('wkwp-blur');
+                    }
+                }
             }
         }
     };
-    var initObserver = function () {
-        // Create a new observer instance with the callback function
-        var observer = new MutationObserver(mutationCallback_1);
-        // Target a specific node
-        var entry = document.querySelector('div.wpb_wrapper');
-        if (entry) {
-            // Start observing the target node for specified mutations
-            observer.observe(entry, {
-                childList: true,
-                subtree: true,
-                attributeFilter: ['class'],
-            });
-        }
-    };
-    initObserver();
+    // Create an observer instance linked to the callback function
+    var observer = new MutationObserver(callback);
+    // Start observing the target node for configured mutations
+    observer.observe(targetNode, config);
 }
