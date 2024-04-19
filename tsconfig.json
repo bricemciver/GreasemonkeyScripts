@@ -1,14 +1,26 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
-    "outDir": "dist",
-    "lib": ["dom", "es2015"],
-    "rootDir": "./src/main/",
-    "strict": true,
     "esModuleInterop": true,
-    "removeComments": false
+    "experimentalDecorators": true,
+    "extendedDiagnostics": true,
+    "isolatedModules": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "moduleDetection": "force",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outDir": "dist",
+    "removeComments": false,
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "ESNext",
+    "typeRoots": ["node_modules/@types"],
+    "types": ["tampermonkey"]
   },
-  "include": ["src/main/**/*.ts"],
-  "exclude": ["node_modules", "dist"]
+  "include": ["src/main/**/*.ts"]
 }

@@ -1,4 +1,3 @@
-"use strict";
 // ==UserScript==
 // @name         Shawnee Mission Post Paywall Remover
 // @namespace    bricemciver
@@ -12,38 +11,36 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=johnsoncountypost.com
 // @grant        none
 // ==/UserScript==
-{
-    // Select the node that should be monitored
-    var targetNode = document.documentElement;
-    // Options for the observer (which mutations to observe)
-    var config = { childList: true, subtree: true, attributes: true };
-    // Callback function to execute when mutations are observed
-    var callback = function (mutationsList, observer) {
-        for (var _i = 0, mutationsList_1 = mutationsList; _i < mutationsList_1.length; _i++) {
-            var mutation = mutationsList_1[_i];
-            if (mutation.type === 'childList') {
-                for (var _a = 0, _b = Array.from(mutation.addedNodes); _a < _b.length; _a++) {
-                    var node = _b[_a];
-                    if (node.nodeType === Node.ELEMENT_NODE) {
-                        var element = node;
-                        if (element.classList.contains('wkwp-paywall')) {
-                            element.setAttribute('style', 'display: none');
-                        }
-                    }
-                }
+
+"use strict";
+(() => {
+  // src/main/shawnee-mission-post-paywall-remover/shawnee-mission-post-paywall-remover.user.ts
+  var targetNode = document.documentElement;
+  var config = { childList: true, subtree: true, attributes: true };
+  var callback = function(mutationsList) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === "childList") {
+        for (const node of Array.from(mutation.addedNodes)) {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            const element = node;
+            if (element.classList.contains("wkwp-paywall")) {
+              element.setAttribute("style", "display: none");
             }
-            if (mutation.type === 'attributes') {
-                if (mutation.target.nodeType === Node.ELEMENT_NODE) {
-                    var element = mutation.target;
-                    if (element.classList.contains('wkwp-blur')) {
-                        element.classList.remove('wkwp-blur');
-                    }
-                }
-            }
+          }
         }
-    };
-    // Create an observer instance linked to the callback function
-    var observer = new MutationObserver(callback);
-    // Start observing the target node for configured mutations
-    observer.observe(targetNode, config);
-}
+      }
+      if (mutation.type === "attributes") {
+        if (mutation.target.nodeType === Node.ELEMENT_NODE) {
+          const element = mutation.target;
+          if (element.classList.contains("wkwp-blur")) {
+            element.classList.remove("wkwp-blur");
+          }
+        }
+      }
+    }
+  };
+  var observer = new MutationObserver(callback);
+  observer.observe(targetNode, config);
+})();
+// @license      MIT
+//# sourceMappingURL=shawnee-mission-post-paywall-remover.user.js.map

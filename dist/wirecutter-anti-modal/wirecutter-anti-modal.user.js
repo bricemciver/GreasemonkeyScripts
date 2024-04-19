@@ -1,4 +1,3 @@
-"use strict";
 // ==UserScript==
 // @name         Wirecutter Anti-modal
 // @namespace    bricemciver
@@ -10,51 +9,53 @@
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=nytimes.com
 // @grant        none
 // ==/UserScript==
-{
-    // keep track of actions so we can disable observer at some point
-    var modalRemoved_1 = false;
-    var overflowFixed_1 = false;
-    var config_1 = {
-        attributes: true,
-        childList: true,
-        subtree: true,
-    };
-    var elementToObserve_1 = document.querySelector('body');
-    var removePaywallModal_1 = function (mutation) {
-        if (!modalRemoved_1 && mutation.type === 'childList') {
-            mutation.addedNodes.forEach(function (item) {
-                var element = item;
-                if (element.id === 'modal-portal-regiwall') {
-                    element.remove();
-                    modalRemoved_1 = true;
-                }
-            });
+
+"use strict";
+(() => {
+  // src/main/wirecutter-anti-modal/wirecutter-anti-modal.user.ts
+  var modalRemoved = false;
+  var overflowFixed = false;
+  var config = {
+    attributes: true,
+    childList: true,
+    subtree: true
+  };
+  var elementToObserve = document.querySelector("body");
+  var removePaywallModal = (mutation) => {
+    if (!modalRemoved && mutation.type === "childList") {
+      mutation.addedNodes.forEach((item) => {
+        const element = item;
+        if (element.id === "modal-portal-regiwall") {
+          element.remove();
+          modalRemoved = true;
         }
-    };
-    var removeScrollLock_1 = function (mutation) {
-        if (!overflowFixed_1 && mutation.type === 'attributes' && mutation.attributeName === 'class') {
-            var element = mutation.target;
-            if (element.tagName === 'BODY') {
-                element.className = '';
-                overflowFixed_1 = true;
-            }
+      });
+    }
+  };
+  var removeScrollLock = (mutation) => {
+    if (!overflowFixed && mutation.type === "attributes" && mutation.attributeName === "class") {
+      const element = mutation.target;
+      if (element.tagName === "BODY") {
+        element.className = "";
+        overflowFixed = true;
+      }
+    }
+  };
+  var startObserver = () => {
+    const callback = (mutationsList, observer) => {
+      mutationsList.forEach((mutation) => {
+        removePaywallModal(mutation);
+        removeScrollLock(mutation);
+        if (modalRemoved && overflowFixed) {
+          observer.disconnect();
         }
+      });
     };
-    var startObserver = function () {
-        var callback = function (mutationsList, observer) {
-            mutationsList.forEach(function (mutation) {
-                removePaywallModal_1(mutation);
-                removeScrollLock_1(mutation);
-                // if we've fixed the issues, stop observing
-                if (modalRemoved_1 && overflowFixed_1) {
-                    observer.disconnect();
-                }
-            });
-        };
-        // Create an observer instance linked to the callback function and start observing the target node for configured mutations
-        if (elementToObserve_1) {
-            new MutationObserver(callback).observe(elementToObserve_1, config_1);
-        }
-    };
-    startObserver();
-}
+    if (elementToObserve) {
+      new MutationObserver(callback).observe(elementToObserve, config);
+    }
+  };
+  startObserver();
+})();
+// @license      MIT
+//# sourceMappingURL=wirecutter-anti-modal.user.js.map

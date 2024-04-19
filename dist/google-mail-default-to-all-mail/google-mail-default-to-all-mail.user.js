@@ -1,4 +1,3 @@
-"use strict";
 // ==UserScript==
 // @name          Google Mail - Default to All Mail
 // @namespace     bricemciver
@@ -7,7 +6,9 @@
 // @version       0.0.1
 // @match         *://mail.google.tld/*
 // ==/UserScript==
-// if new tab or user is navigating to GMail, default to All Mail
-// if (!document.referrer) {
-//   window.location.hash = "#all";
-// }
+
+"use strict";
+(() => {
+})();
+// @license       MIT
+//# sourceMappingURL=google-mail-default-to-all-mail.user.js.map
