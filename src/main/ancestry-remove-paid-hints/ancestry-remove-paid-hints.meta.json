@@ -1,0 +1,17 @@
+{
+  "UserScript": {
+    "name": [{ "value": "Ancestry.com - Remove paid hints" }],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
+    "description": [{ "value": "Removes paid hints on the \"All Hints\" page and on individual person pages" }],
+    "license": [{ "value": "MIT" }],
+    "version": [{ "value": "0.0.3" }],
+    "match": [
+      { "value": "https://*.ancestry.com/hints/tree/*" },
+      { "value": "https://*.ancestry.de/hints/tree/*" },
+      { "value": "https://*.ancestry.com/cs/offers/join*" }
+    ],
+    "grant": [{ "value": "GM_xmlhttpRequest" }, { "value": "GM.xmlHttpRequest" }],
+    "icon": [{ "value": "https://www.google.com/s2/favicons?sz=64&domain=ancestry.com" }],
+    "run-at": [{ "value": "document-start" }]
+  }
+}

@@ -1,15 +1,3 @@
-// ==UserScript==
-// @name         Wirecutter Anti-modal
-// @namespace    bricemciver
-// @description  Stop modals asking you to register before viewing articles
-// @author       Brice McIver
-// @license      MIT
-// @version      0.0.2
-// @match        https://www.nytimes.com/wirecutter/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=nytimes.com
-// @grant        none
-// ==/UserScript==
-
 // keep track of actions so we can disable observer at some point
 let modalRemoved = false;
 let overflowFixed = false;

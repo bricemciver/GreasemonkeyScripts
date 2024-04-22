@@ -1,17 +1,3 @@
-// ==UserScript==
-// @name         Shawnee Mission Post Paywall Remover
-// @namespace    bricemciver
-// @description  Removes paywall restrictions from Shawnee Mission Post website
-// @author       Brice McIver
-// @license      MIT
-// @version      0.1
-// @match        https://shawneemissionpost.com/*
-// @match        https://johnsoncountypost.com/*
-// @match        https://bluevalleypost.com/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=johnsoncountypost.com
-// @grant        none
-// ==/UserScript==
-
 // Select the node that should be monitored
 const targetNode = document.documentElement;
 

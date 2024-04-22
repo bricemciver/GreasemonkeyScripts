@@ -1,16 +1,3 @@
-// ==UserScript==
-// @name         Octordle Mild Cheat
-// @namespace    bricemciver
-// @version      0.1
-// @description  Give you hints for each game board based on valid remaining words
-// @author       bricemciver
-// @match        https://www.britannica.com/games/octordle*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=britannica.com
-// @grant        GM.xmlHttpRequest
-// @grant        GM_xmlhttpRequest
-// @run-at       document-start
-// ==/UserScript==
-
 "use strict";
 (() => {
   // src/main/octordle-mild-cheat/octordle-mild-cheat.user.ts

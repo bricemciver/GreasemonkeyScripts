@@ -1,14 +1,3 @@
-// ==UserScript==
-// @name         Convert HTML to Bootstrap List Group Items
-// @namespace    http://tampermonkey.net/
-// @version      2024-04-17
-// @description  Converts HTML entries to Bootstrap list group items
-// @author       You
-// @match        https://www.equip-bid.com/auction/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=equip-bid.com
-// @grant        none
-// ==/UserScript==
-
 "use strict";
 (() => {
   // src/main/equip-bid-redesign/equip-bid-redesign.user.ts

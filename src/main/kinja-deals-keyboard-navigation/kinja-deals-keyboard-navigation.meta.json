@@ -1,0 +1,12 @@
+{
+  "UserScript": {
+    "name": [{ "value": "Kinja Deals Keyboard Navigation" }],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
+    "description": [{ "value": "Use 'j' and 'k' keys for navigation of post content" }],
+    "license": [{ "value": "MIT" }],
+    "version": [{ "value": "0.0.8" }],
+    "match": [{ "value": "*://*.theinventory.com/*" }],
+    "icon": [{ "value": "https://www.google.com/s2/favicons?sz=64&domain=theinventory.com" }],
+    "grant": [{ "value": "none" }]
+  }
+}

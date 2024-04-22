@@ -1,0 +1,11 @@
+{
+  "UserScript": {
+    "name": [{ "value": "eBay Seller Hider" }],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
+    "description": [{ "value": "Hide items from low/poor feedback eBay sellers and sponsored items" }],
+    "license": [{ "value": "MIT" }],
+    "version": [{ "value": "0.0.5" }],
+    "match": [{ "value": "*://*.ebay.com/*" }],
+    "icon": [{ "value": "https://www.google.com/s2/favicons?sz=64&domain=ebay.com" }]
+  }
+}

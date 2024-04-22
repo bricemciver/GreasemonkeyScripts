@@ -1,0 +1,13 @@
+{
+  "UserScript": {
+    "name": [{ "value": "Wordle Mild Cheat" }],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
+    "description": [{ "value": "Will show you all of the valid words that still exist based on your guesses" }],
+    "license": [{ "value": "MIT" }],
+    "version": [{ "value": "0.1" }],
+    "match": [{ "value": "https://www.nytimes.com/games/wordle/index.html" }],
+    "icon": [{ "value": "https://www.google.com/s2/favicons?sz=64&domain=nytimes.com" }],
+    "grant": [{ "value": "GM.xmlHttpRequest" }, { "value": "GM_xmlhttpRequest" }],
+    "run-at": [{ "value": "document-start" }]
+  }
+}

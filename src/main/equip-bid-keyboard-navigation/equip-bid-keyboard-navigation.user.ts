@@ -1,17 +1,3 @@
-// ==UserScript==
-// @name         Equip-Bid Keyboard Nav
-// @namespace    bricemciver
-// @description  Use Feedly-style navigation on Equip Bid auctions
-// @author       Brice McIver
-// @license      MIT
-// @version      0.2
-// @match        https://www.equip-bid.com/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=equip-bid.com
-// @grant        GM_xmlhttpRequest
-// @grant        GM.xmlHttpRequest
-// @connect      equip-bid.com
-// ==/UserScript==
-
 const indexAction = (action: 'plus' | 'minus'): void => {
   // auto page navigation
   if (index === 0 && prevLink && action === 'minus') {

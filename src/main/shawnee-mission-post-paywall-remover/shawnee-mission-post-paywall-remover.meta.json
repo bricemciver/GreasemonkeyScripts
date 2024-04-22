@@ -1,0 +1,16 @@
+{
+  "UserScript": {
+    "name": [{ "value": "Shawnee Mission Post Paywall Remover" }],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
+    "description": [{ "value": "Removes paywall restrictions from Shawnee Mission Post website" }],
+    "license": [{ "value": "MIT" }],
+    "version": [{ "value": "0.1" }],
+    "match": [
+      { "value": "https://shawneemissionpost.com/*" },
+      { "value": "https://johnsoncountypost.com/*" },
+      { "value": "https://bluevalleypost.com/*" }
+    ],
+    "icon": [{ "value": "https://www.google.com/s2/favicons?sz=64&domain=johnsoncountypost.com" }],
+    "grant": [{ "value": "none" }]
+  }
+}

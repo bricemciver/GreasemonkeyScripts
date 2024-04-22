@@ -1,0 +1,39 @@
+{
+  "UserScript": {
+    "name": [{ "value": "Amazon - Goodreads metadata" }],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
+    "description": [{ "value": "Shows the ratings from Goodreads on Amazon book pages" }],
+    "license": [{ "value": "MIT" }],
+    "version": [{ "value": "0.0.2" }],
+    "match": [
+      { "value": "https://amazon.com/*" },
+      { "value": "https://*.amazon.com/*" },
+      { "value": "https://amazon.co.uk/*" },
+      { "value": "https://*.amazon.co.uk/*" },
+      { "value": "https://amazon.ca/*" },
+      { "value": "https://*.amazon.ca/*" },
+      { "value": "https://amazon.de/*" },
+      { "value": "https://*.amazon.de/*" },
+      { "value": "https://amazon.fr/*" },
+      { "value": "https://*.amazon.fr/*" },
+      { "value": "https://amazon.es/*" },
+      { "value": "https://*.amazon.es/*" },
+      { "value": "https://amazon.it/*" },
+      { "value": "https://*.amazon.it/*" },
+      { "value": "https://amazon.co.jp/*" },
+      { "value": "https://*.amazon.co.jp/*" },
+      { "value": "https://amazon.cn/*" },
+      { "value": "https://*.amazon.cn/*" },
+      { "value": "https://amazon.com.br/*" },
+      { "value": "https://*.amazon.com.br/*" },
+      { "value": "https://amazon.in/*" },
+      { "value": "https://*.amazon.in/*" },
+      { "value": "https://amazon.com.mx/*" },
+      { "value": "https://*.amazon.com.mx/*" },
+      { "value": "https://amazon.com.au/*" },
+      { "value": "https://*.amazon.com.au/*" }
+    ],
+    "grant": [{ "value": "GM_xmlhttpRequest" }, { "value": "GM.xmlHttpRequest" }],
+    "icon": [{ "value": "https://www.google.com/s2/favicons?sz=64&domain=amazon.com" }]
+  }
+}

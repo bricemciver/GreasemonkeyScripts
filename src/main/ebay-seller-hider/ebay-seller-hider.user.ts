@@ -1,14 +1,3 @@
-// ==UserScript==
-// @name         eBay Seller Hider
-// @namespace    bricemciver
-// @description  Hide items from low/poor feedback eBay sellers and sponsored items
-// @author       Brice McIver
-// @license      MIT
-// @version      0.0.5
-// @match        *://*.ebay.com/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=ebay.com
-// ==/UserScript==
-
 let filterReviews = true;
 let reviewMin = 10;
 let filterFeedback = true;

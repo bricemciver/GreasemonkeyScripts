@@ -1,14 +1,15 @@
 // ==UserScript==
-// @name         Kinja Deals Keyboard Navigation
-// @namespace    bricemciver
-// @description  Use 'j' and 'k' keys for navigation of post content
-// @author       Brice McIver
-// @license      MIT
-// @version      0.0.8
-// @match        *://*.theinventory.com/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=theinventory.com
-// @grant        none
+// @name Kinja Deals Keyboard Navigation
+// @namespace https://github.com/bricemciver/GreasemonekeyScripts
+// @description Use 'j' and 'k' keys for navigation of post content
+// @license MIT
+// @version 0.0.8
+// @match *://*.theinventory.com/*
+// @icon https://www.google.com/s2/favicons?sz=64&domain=theinventory.com
+// @grant none
 // ==/UserScript==
+
+
 
 "use strict";
 (() => {
@@ -80,5 +81,4 @@
     }
   }
 })();
-// @license      MIT
 //# sourceMappingURL=kinja-deals-keyboard-navigation.user.js.map

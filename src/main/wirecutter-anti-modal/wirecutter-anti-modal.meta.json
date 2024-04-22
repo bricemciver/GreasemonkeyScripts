@@ -1,0 +1,12 @@
+{
+  "UserScript": {
+    "name": [{ "value": "Wirecutter Anti-modal" }],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
+    "description": [{ "value": "Stop modals asking you to register before viewing articles" }],
+    "license": [{ "value": "MIT" }],
+    "version": [{ "value": "0.0.2" }],
+    "match": [{ "value": "https://www.nytimes.com/wirecutter/*" }],
+    "icon": [{ "value": "https://www.google.com/s2/favicons?sz=64&domain=nytimes.com" }],
+    "grant": [{ "value": "none" }]
+  }
+}

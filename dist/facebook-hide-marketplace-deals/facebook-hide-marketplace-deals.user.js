@@ -1,14 +1,15 @@
 // ==UserScript==
-// @name         Facebook Hide Marketplace Deals
-// @namespace    bricemciver
-// @description  Hide the sponsored deals that show up in marketplace searches
-// @author       Brice McIver
-// @license      MIT
-// @version      0.0.2
-// @match        *://*.facebook.com/marketplace/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=facebook.com
-// @grant        none
+// @name Facebook Hide Marketplace Deals
+// @namespace https://github.com/bricemciver/GreasemonekeyScripts
+// @description Hide the sponsored deals that show up in marketplace searches
+// @license MIT
+// @version 0.0.2
+// @match *://*.facebook.com/marketplace/*
+// @icon https://www.google.com/s2/favicons?sz=64&domain=facebook.com
+// @grant none
 // ==/UserScript==
+
+
 
 "use strict";
 (() => {
@@ -41,5 +42,4 @@
   };
   new MutationObserver(callback).observe(document, config);
 })();
-// @license      MIT
 //# sourceMappingURL=facebook-hide-marketplace-deals.user.js.map

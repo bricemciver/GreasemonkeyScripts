@@ -1,13 +1,14 @@
 // ==UserScript==
-// @name         Breeze Sidebar Auto-size
-// @namespace    bricemciver
-// @description  Size the sidebar to fit the width of the content
-// @author       Brice McIver
-// @license      MIT
-// @version      0.2
-// @match        https://*.breezechms.com/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=breezechms.com
+// @name Breeze Sidebar Auto-size
+// @namespace https://github.com/bricemciver/GreasemonekeyScripts
+// @description Size the sidebar to fit the width of the content
+// @license MIT
+// @version 0.2
+// @match https://*.breezechms.com/*
+// @icon https://www.google.com/s2/favicons?sz=64&domain=breezechms.com
 // ==/UserScript==
+
+
 
 "use strict";
 (() => {
@@ -21,5 +22,4 @@
   };
   replaceCss();
 })();
-// @license      MIT
 //# sourceMappingURL=breeze-sidebar-autosize.user.js.map

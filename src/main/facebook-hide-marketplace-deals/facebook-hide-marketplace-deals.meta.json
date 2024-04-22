@@ -1,0 +1,12 @@
+{
+  "UserScript": {
+    "name": [{ "value": "Facebook Hide Marketplace Deals" }],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
+    "description": [{ "value": "Hide the sponsored deals that show up in marketplace searches" }],
+    "license": [{ "value": "MIT" }],
+    "version": [{ "value": "0.0.2" }],
+    "match": [{ "value": "*://*.facebook.com/marketplace/*" }],
+    "icon": [{ "value": "https://www.google.com/s2/favicons?sz=64&domain=facebook.com" }],
+    "grant": [{ "value": "none" }]
+  }
+}

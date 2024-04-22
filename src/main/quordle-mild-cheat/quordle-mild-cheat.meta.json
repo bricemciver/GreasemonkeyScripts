@@ -1,0 +1,12 @@
+{
+  "UserScript": {
+    "name": [{ "value": "Quordle Mild Cheat" }],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
+    "version": [{ "value": "0.1" }],
+    "license": [{ "value": "MIT" }],
+    "description": [{ "value": "Get hints based on the words you've already tried" }],
+    "match": [{ "value": "https://www.merriam-webster.com/games/quordle/*" }],
+    "icon": [{ "value": "https://www.google.com/s2/favicons?sz=64&domain=merriam-webster.com" }],
+    "grant": [{ "value": "GM.xmlHttpRequest" }, { "value": "GM_xmlhttpRequest" }]
+  }
+}

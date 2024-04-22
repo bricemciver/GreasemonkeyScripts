@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "My collection of GreaseMonkey scripts",
   "scripts": {
-    "build": "esbuild ./src/main/**/*.ts --bundle --sourcemap --charset=utf8 --format=iife --log-level=warning --outdir=./dist && npm run copy-headers",
-    "copy-headers": "node ./src/scripts/copy-headers.js ./src/main/**/*.ts ./dist",
+    "build": "esbuild ./src/main/**/*.ts --bundle --sourcemap --charset=utf8 --format=iife --log-level=warning --outdir=./dist && npm run create-headers",
+    "create-headers": "npx ts-node ./src/scripts/create-headers.ts ./src/main/**/*.meta.json ./dist",
     "lint": "eslint ./src/main --ext .ts",
     "lint:fix": "npm run lint -- --fix",
     "prepare": "husky install",
@@ -23,7 +23,9 @@
   },
   "homepage": "https://github.com/bricemciver/GreasemonkeyScripts#readme",
   "devDependencies": {
+    "@types/glob": "^8.1.0",
     "@types/greasemonkey": "^4.0.4",
+    "@types/node": "^20.12.7",
     "@types/tampermonkey": "^5.0.2",
     "esbuild": "^0.20.2",
     "eslint": "^8.57.0",

@@ -1,0 +1,11 @@
+{
+  "UserScript": {
+    "name": [{ "value": "Breeze Sidebar Auto-size" }],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
+    "description": [{ "value": "Size the sidebar to fit the width of the content" }],
+    "license": [{ "value": "MIT" }],
+    "version": [{ "value": "0.2" }],
+    "match": [{ "value": "https://*.breezechms.com/*" }],
+    "icon": [{ "value": "https://www.google.com/s2/favicons?sz=64&domain=breezechms.com" }]
+  }
+}

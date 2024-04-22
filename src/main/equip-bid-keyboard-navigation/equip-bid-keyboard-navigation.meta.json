@@ -1,0 +1,13 @@
+{
+  "UserScript": {
+    "name": [{ "value": "Equip-Bid Keyboard Nav" }],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
+    "description": [{ "value": "Use Feedly-style navigation on Equip Bid auctions" }],
+    "license": [{ "value": "MIT" }],
+    "version": [{ "value": "0.2" }],
+    "match": [{ "value": "https://www.equip-bid.com/*" }],
+    "icon": [{ "value": "https://www.google.com/s2/favicons?sz=64&domain=equip-bid.com" }],
+    "grant": [{ "value": "GM_xmlhttpRequest" }, { "value": "GM.xmlHttpRequest" }],
+    "connect": [{ "value": "equip-bid.com" }]
+  }
+}
