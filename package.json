@@ -3,13 +3,12 @@
   "version": "1.0.0",
   "description": "My collection of GreaseMonkey scripts",
   "scripts": {
+    "format": "prettier --write \"**/*.{md,json,yml,html,ts}\"",
+    "format:check": "prettier --check \"**/*.{md,json,yml,html,ts}\"",
+    "lint": "eslint --fix src/**/*.ts",
+    "lint:check": "eslint src/**/*.ts",
+    "create-headers": "npx ts-node ./src/scripts/create-headers.ts \"./src/main/**/*.meta.json\" ./dist",
     "build": "esbuild ./src/main/**/*.ts --bundle --sourcemap --charset=utf8 --format=iife --log-level=warning --outdir=./dist && npm run create-headers",
-    "create-headers": "npx ts-node ./src/scripts/create-headers.ts ./src/main/**/*.meta.json ./dist",
-    "lint": "eslint ./src/main --ext .ts",
-    "lint:fix": "npm run lint -- --fix",
-    "prepare": "husky",
-    "prettier:check": "prettier --check \"**/*.{md,json,yml,html,ts}\"",
-    "prettier:format": "prettier --write \"**/*.{md,json,yml,html,ts}\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -30,8 +29,6 @@
     "esbuild": "^0.20.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "husky": "^9.0.11",
-    "lint-staged": "^15.2.2",
     "prettier": "^3.2.5",
     "typescript": "^5.0.4",
     "typescript-eslint": "^7.7.0"

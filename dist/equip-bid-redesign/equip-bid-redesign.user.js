@@ -1,3 +1,18 @@
+// ==UserScript==
+// @name Equip-Bid Redesign
+// @namespace https://github.com/bricemciver/GreasemonekeyScripts
+// @description Enhancements to the Equip Bid auction website
+// @license MIT
+// @version 0.1
+// @match https://www.equip-bid.com/*
+// @icon https://www.google.com/s2/favicons?sz=64&domain=equip-bid.com
+// @grant GM_xmlhttpRequest
+// @grant GM.xmlHttpRequest
+// @connect equip-bid.com
+// ==/UserScript==
+
+
+
 "use strict";
 (() => {
   // src/main/equip-bid-redesign/equip-bid-redesign.user.ts
