@@ -7,7 +7,7 @@
     "create-headers": "npx ts-node ./src/scripts/create-headers.ts ./src/main/**/*.meta.json ./dist",
     "lint": "eslint ./src/main --ext .ts",
     "lint:fix": "npm run lint -- --fix",
-    "prepare": "husky install",
+    "prepare": "husky",
     "prettier:check": "prettier --check \"**/*.{md,json,yml,html,ts}\"",
     "prettier:format": "prettier --write \"**/*.{md,json,yml,html,ts}\"",
     "test": "echo \"Error: no test specified\" && exit 1"
