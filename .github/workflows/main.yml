@@ -35,5 +35,3 @@ jobs:
           committer_name: GitHub Actions
           # https://github.blog/changelog/2021-02-08-github-actions-skip-pull-request-and-push-workflows-with-skip-ci/
           message: 'chore: [skip-ci] format code and generate build artifacts'
-          add: '.'
-          push: origin HEAD:${{ github.head_ref }}
