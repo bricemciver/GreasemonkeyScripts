@@ -14,7 +14,7 @@ let currentIndex = 0;
 const addFocusStyling = () => {
   const styleEl = document.createElement('style');
   document.head.appendChild(styleEl);
-  styleEl.sheet?.insertRule('li.list-group-item.focused{outline:-webkit-focus-ring-color auto 1px;}');
+  styleEl.sheet?.insertRule('li.list-group-item.focused{outline: Highlight auto 1px; outline:-webkit-focus-ring-color auto 1px;}');
 };
 
 const retrieveNextPage = (href: string) => {
