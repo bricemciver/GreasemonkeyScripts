@@ -1,3 +1,4 @@
+/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/octordle-mild-cheat/octordle-mild-cheat.user.ts
@@ -155,7 +156,8 @@
     }
   };
   var processCell = (pos, element) => {
-    const letter = element.children[0].textContent ?? "";
+    var _a;
+    const letter = (_a = element.children[0].textContent) != null ? _a : "";
     if (element.classList.contains("exact-match")) {
       return {
         letter: letter.trim(),

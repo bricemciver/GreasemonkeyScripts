@@ -13,6 +13,7 @@
 
 
 
+/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/shawnee-mission-post-paywall-remover/shawnee-mission-post-paywall-remover.user.ts

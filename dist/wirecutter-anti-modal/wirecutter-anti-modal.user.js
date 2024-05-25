@@ -11,6 +11,7 @@
 
 
 
+/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/wirecutter-anti-modal/wirecutter-anti-modal.user.ts

@@ -1,33 +1,10 @@
 {
   "compilerOptions": {
+    "target": "es5",
+    "module": "commonjs",
     "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "extendedDiagnostics": true,
-    "isolatedModules": true,
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
-    "moduleDetection": "force",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "noEmit": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "outDir": "dist",
-    "removeComments": false,
-    "resolveJsonModule": true,
-    "sourceMap": true,
-    "strict": true,
-    "target": "ESNext",
-    "typeRoots": ["node_modules/@types"],
-    "types": ["tampermonkey", "node"]
-  },
-  "ts-node": {
-    // these options are overrides used only by ts-node
-    // same as the --compilerOptions flag and the TS_NODE_COMPILER_OPTIONS environment variable
-    "compilerOptions": {
-      "module": "commonjs"
-    }
+    "forceConsistentCasingInFileNames": true,
+    "strict": true
   },
   "include": ["src/main/**/*.ts", "src/scripts/*.ts"]
 }

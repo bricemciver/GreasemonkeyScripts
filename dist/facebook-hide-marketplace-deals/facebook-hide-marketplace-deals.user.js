@@ -11,6 +11,7 @@
 
 
 
+/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/facebook-hide-marketplace-deals/facebook-hide-marketplace-deals.user.ts
@@ -20,14 +21,16 @@
     subtree: true
   };
   var removeTracking = (node) => {
+    var _a;
     if (node.nodeType === Node.ELEMENT_NODE) {
       const dealsLink = node.querySelector("a[href*='tracking']");
       if (dealsLink) {
-        dealsLink.parentElement?.remove();
+        (_a = dealsLink.parentElement) == null ? void 0 : _a.remove();
       }
     }
   };
   var callback = (mutationsList) => {
+    var _a;
     for (const mutation of mutationsList) {
       if (mutation.type === "childList" && mutation.addedNodes.length) {
         mutation.addedNodes.forEach((node) => removeTracking(node));
@@ -35,7 +38,7 @@
       if (mutation.type === "attributes" && mutation.attributeName === "href" && mutation.target.nodeType === Node.ELEMENT_NODE) {
         const link = mutation.target;
         if (link.href.includes("tracking")) {
-          link.parentElement?.remove();
+          (_a = link.parentElement) == null ? void 0 : _a.remove();
         }
       }
     }

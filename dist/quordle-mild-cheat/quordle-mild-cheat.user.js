@@ -12,6 +12,7 @@
 
 
 
+/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/quordle-mild-cheat/quordle-mild-cheat.user.ts

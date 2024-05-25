@@ -2,6 +2,6 @@
   "version": 3,
   "sources": ["../../src/main/breeze-sidebar-autosize/breeze-sidebar-autosize.user.ts"],
   "sourcesContent": ["const replaceCss = (): void => {\n  const head = document.getElementsByTagName('head')[0];\n  const style = document.createElement('style');\n  style.setAttribute('type', 'text/css');\n  style.textContent =\n    '@media (min-width: 992px) { .mainsail-ui .mainsail-side-nav.extra-wide { flex-basis: fit-content; max-width: fit-content; }}';\n  head.appendChild(style);\n};\n\nreplaceCss();\n"],
-  "mappings": ";;;AAAA,MAAM,aAAa,MAAY;AAC7B,UAAM,OAAO,SAAS,qBAAqB,MAAM,EAAE,CAAC;AACpD,UAAM,QAAQ,SAAS,cAAc,OAAO;AAC5C,UAAM,aAAa,QAAQ,UAAU;AACrC,UAAM,cACJ;AACF,SAAK,YAAY,KAAK;AAAA,EACxB;AAEA,aAAW;",
+  "mappings": ";;;;AAAA,MAAM,aAAa,MAAY;AAC7B,UAAM,OAAO,SAAS,qBAAqB,MAAM,EAAE,CAAC;AACpD,UAAM,QAAQ,SAAS,cAAc,OAAO;AAC5C,UAAM,aAAa,QAAQ,UAAU;AACrC,UAAM,cACJ;AACF,SAAK,YAAY,KAAK;AAAA,EACxB;AAEA,aAAW;",
   "names": []
 }

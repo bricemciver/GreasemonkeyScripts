@@ -37,6 +37,7 @@
 
 
 
+/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/amazon-goodreads-meta/amazon-goodreads-meta.user.ts
@@ -47,7 +48,7 @@
     const asin = array && array.length > 1 ? array[1] : "";
     console.log(`ASIN in pathname: ${asin}`);
     const dp = document.getElementById("dp");
-    if (dp?.className.includes("book")) {
+    if (dp == null ? void 0 : dp.className.includes("book")) {
       asinArray.push(asin);
     } else {
       const images = document.getElementsByTagName("img");

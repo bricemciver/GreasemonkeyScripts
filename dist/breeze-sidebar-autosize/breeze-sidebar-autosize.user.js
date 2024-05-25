@@ -10,6 +10,7 @@
 
 
 
+/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/breeze-sidebar-autosize/breeze-sidebar-autosize.user.ts

@@ -11,6 +11,7 @@
 
 
 
+/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/kinja-deals-keyboard-navigation/kinja-deals-keyboard-navigation.user.ts
@@ -46,13 +47,20 @@
   var removeCruft = () => {
     document.querySelectorAll(".js_movable_ad_slot").forEach((element) => element.remove());
     document.querySelectorAll(".connatix-container").forEach((element) => element.remove());
-    Array.from(document.getElementsByTagName("span")).filter((item) => item.textContent === "G/O Media may get a commission").forEach((element) => element.closest("aside")?.remove());
-    document.querySelectorAll("#sidebar_wrapper").forEach((element) => element.closest("aside")?.remove());
+    Array.from(document.getElementsByTagName("span")).filter((item) => item.textContent === "G/O Media may get a commission").forEach((element) => {
+      var _a;
+      return (_a = element.closest("aside")) == null ? void 0 : _a.remove();
+    });
+    document.querySelectorAll("#sidebar_wrapper").forEach((element) => {
+      var _a;
+      return (_a = element.closest("aside")) == null ? void 0 : _a.remove();
+    });
   };
   var createEntries = (containerDiv) => {
     let newElement = null;
     Array.from(containerDiv.children).forEach((element) => {
-      if (element.tagName === "H2" && element.textContent?.length && element.textContent.length > 0) {
+      var _a;
+      if (element.tagName === "H2" && ((_a = element.textContent) == null ? void 0 : _a.length) && element.textContent.length > 0) {
         newElement = document.createElement("div");
         newElement.className = "inlineFrame";
         element.insertAdjacentElement("beforebegin", newElement);

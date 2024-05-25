@@ -13,6 +13,7 @@
 
 
 
+/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/wordle-mild-cheat/wordle-mild-cheat.user.ts
@@ -72,23 +73,24 @@
     return wordlist;
   };
   var showWordlist = (curWords) => {
+    var _a, _b, _c, _d, _e;
     let wordList = document.getElementById("wordList");
     if (!wordList) {
       const head = document.getElementsByTagName("head")[0];
       const style = document.createElement("style");
       head.appendChild(style);
       style.setAttribute("type", "text/css");
-      style.sheet?.insertRule(`.dialog li {
+      (_a = style.sheet) == null ? void 0 : _a.insertRule(`.dialog li {
         display: block;
         padding: 2px 0px;
       }`);
-      style.sheet?.insertRule(`.dialog ul {
+      (_b = style.sheet) == null ? void 0 : _b.insertRule(`.dialog ul {
         list-style: none;
         margin: 4px 0px;
         position: relative;
         padding: 0px;
       }`);
-      style.sheet?.insertRule(`.dialog h2 {
+      (_c = style.sheet) == null ? void 0 : _c.insertRule(`.dialog h2 {
         font-size: 0.6875rem;
         line-height: 1.5;
         letter-spacing: 0.08rem;
@@ -106,7 +108,7 @@
         margin-top: 8px;
         text-transform: uppercase;
       }`);
-      style.sheet?.insertRule(`.dialog {
+      (_d = style.sheet) == null ? void 0 : _d.insertRule(`.dialog {
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
@@ -128,13 +130,14 @@
       curWords.forEach((word) => {
         const listItem = document.createElement("li");
         listItem.textContent = word;
-        wordList?.appendChild(listItem);
+        wordList == null ? void 0 : wordList.appendChild(listItem);
       });
     }
-    document.querySelector("dialog#dialog")?.showModal();
+    (_e = document.querySelector("dialog#dialog")) == null ? void 0 : _e.showModal();
   };
   var hideWordlist = () => {
-    document.querySelector("dialog#dialog")?.close();
+    var _a;
+    (_a = document.querySelector("dialog#dialog")) == null ? void 0 : _a.close();
   };
   var processCell = (element) => {
     const label = element.ariaLabel;

@@ -13,6 +13,7 @@
 
 
 
+/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/equip-bid-keyboard-navigation/equip-bid-keyboard-navigation.user.ts
@@ -50,10 +51,12 @@
     }
   };
   var showHelp = () => {
-    document.querySelector("dialog.ShortcutsHelp")?.showModal();
+    var _a;
+    (_a = document.querySelector("dialog.ShortcutsHelp")) == null ? void 0 : _a.showModal();
   };
   var hideHelp = () => {
-    document.querySelector("dialog.ShortcutsHelp")?.close();
+    var _a;
+    (_a = document.querySelector("dialog.ShortcutsHelp")) == null ? void 0 : _a.close();
   };
   var createHelp = () => {
     const helpDiv = document.createElement("dialog");

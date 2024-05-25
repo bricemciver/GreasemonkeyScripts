@@ -13,14 +13,16 @@
 
 
 
+/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/equip-bid-redesign/equip-bid-redesign.user.ts
   var currentIndex = 0;
   var addFocusStyling = () => {
+    var _a;
     const styleEl = document.createElement("style");
     document.head.appendChild(styleEl);
-    styleEl.sheet?.insertRule("li.list-group-item.focused{outline: Highlight auto 1px; outline:-webkit-focus-ring-color auto 1px;}");
+    (_a = styleEl.sheet) == null ? void 0 : _a.insertRule("li.list-group-item.focused{outline: Highlight auto 1px; outline:-webkit-focus-ring-color auto 1px;}");
   };
   var retrieveNextPage = (href) => {
     fetch(href).then((response) => response.text()).then((data) => {
@@ -33,18 +35,19 @@
       if (!listGroup)
         return;
       entries.forEach((entry) => {
+        var _a, _b, _c, _d, _e, _f, _g;
         const listGroupItem = document.createElement("li");
         listGroupItem.classList.add("list-group-item");
-        if (entry.previousElementSibling?.previousElementSibling?.previousElementSibling) {
-          listGroupItem.appendChild(entry.previousElementSibling?.previousElementSibling?.previousElementSibling);
+        if ((_b = (_a = entry.previousElementSibling) == null ? void 0 : _a.previousElementSibling) == null ? void 0 : _b.previousElementSibling) {
+          listGroupItem.appendChild((_d = (_c = entry.previousElementSibling) == null ? void 0 : _c.previousElementSibling) == null ? void 0 : _d.previousElementSibling);
         }
-        if (entry.previousElementSibling?.previousElementSibling) {
-          listGroupItem.appendChild(entry.previousElementSibling?.previousElementSibling);
+        if ((_e = entry.previousElementSibling) == null ? void 0 : _e.previousElementSibling) {
+          listGroupItem.appendChild((_f = entry.previousElementSibling) == null ? void 0 : _f.previousElementSibling);
         }
         if (entry.previousElementSibling) {
           listGroupItem.appendChild(entry.previousElementSibling);
         }
-        entry.nextElementSibling?.remove();
+        (_g = entry.nextElementSibling) == null ? void 0 : _g.remove();
         entry.remove();
         listGroup.appendChild(listGroupItem);
       });
@@ -96,18 +99,19 @@
     const listGroup = document.createElement("ul");
     listGroup.classList.add("list-group");
     entries.forEach((entry) => {
+      var _a, _b, _c, _d, _e, _f, _g;
       const listGroupItem = document.createElement("li");
       listGroupItem.classList.add("list-group-item");
-      if (entry.previousElementSibling?.previousElementSibling?.previousElementSibling) {
-        listGroupItem.appendChild(entry.previousElementSibling?.previousElementSibling?.previousElementSibling);
+      if ((_b = (_a = entry.previousElementSibling) == null ? void 0 : _a.previousElementSibling) == null ? void 0 : _b.previousElementSibling) {
+        listGroupItem.appendChild((_d = (_c = entry.previousElementSibling) == null ? void 0 : _c.previousElementSibling) == null ? void 0 : _d.previousElementSibling);
       }
-      if (entry.previousElementSibling?.previousElementSibling) {
-        listGroupItem.appendChild(entry.previousElementSibling?.previousElementSibling);
+      if ((_e = entry.previousElementSibling) == null ? void 0 : _e.previousElementSibling) {
+        listGroupItem.appendChild((_f = entry.previousElementSibling) == null ? void 0 : _f.previousElementSibling);
       }
       if (entry.previousElementSibling) {
         listGroupItem.appendChild(entry.previousElementSibling);
       }
-      entry.nextElementSibling?.remove();
+      (_g = entry.nextElementSibling) == null ? void 0 : _g.remove();
       entry.remove();
       listGroup.appendChild(listGroupItem);
     });

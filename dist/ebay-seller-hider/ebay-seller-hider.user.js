@@ -10,6 +10,7 @@
 
 
 
+/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/ebay-seller-hider/ebay-seller-hider.user.ts
@@ -20,6 +21,7 @@
   var hideSponsored = true;
   var sponsorClass = "";
   var hideItem = (seller) => {
+    var _a, _b;
     const itemRegExp = RegExp(/\((.*)\) (.*)%/).exec(seller.innerText);
     if (itemRegExp) {
       const [, reviews, feedback] = itemRegExp;
@@ -35,7 +37,7 @@
           let hideSponsoredPost = false;
           const sponsoredSpan = Array.from(parent.querySelectorAll("span")).find((item) => item.textContent === "Sponsored");
           if (sponsoredSpan) {
-            const labelAttr = sponsoredSpan.parentElement?.parentElement?.getAttribute("aria-labelledBy");
+            const labelAttr = (_b = (_a = sponsoredSpan.parentElement) == null ? void 0 : _a.parentElement) == null ? void 0 : _b.getAttribute("aria-labelledBy");
             if (labelAttr && labelAttr === sponsorClass) {
               hideSponsoredPost = true;
             }
@@ -129,10 +131,11 @@
     return group;
   };
   var getPresets = () => {
+    var _a, _b;
     filterReviews = localStorage.getItem("filterReviews") !== "false";
-    reviewMin = parseInt(localStorage.getItem("reviewMin") ?? "10", 10);
+    reviewMin = parseInt((_a = localStorage.getItem("reviewMin")) != null ? _a : "10", 10);
     filterFeedback = localStorage.getItem("filterFeedback") !== "false";
-    feedbackMin = parseFloat(localStorage.getItem("feedbackMin") ?? "95.0");
+    feedbackMin = parseFloat((_b = localStorage.getItem("feedbackMin")) != null ? _b : "95.0");
     hideSponsored = localStorage.getItem("hideSponsored") !== "false";
   };
   var addFilter = () => {
@@ -153,9 +156,10 @@
     }
   };
   var findSponsoredClass = () => {
+    var _a;
     const styleBlock = Array.from(document.head.getElementsByTagName("style")).find((item) => item.type === "text/css");
     if (styleBlock) {
-      const cssRuleList = styleBlock.sheet?.cssRules;
+      const cssRuleList = (_a = styleBlock.sheet) == null ? void 0 : _a.cssRules;
       if (cssRuleList) {
         const rule = Array.from(cssRuleList).find((item) => item.cssText.includes("inline") && item.cssText.includes("span."));
         if (rule) {
