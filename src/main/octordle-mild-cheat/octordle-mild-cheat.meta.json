@@ -1,0 +1,13 @@
+{
+  "UserScript": {
+    "name": [{ "value": "Octordle Mild Cheat" }],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
+    "description": [{ "value": "Give you hints for each game board based on valid remaining words" }],
+    "license": [{ "value": "MIT" }],
+    "version": [{ "value": "0.1" }],
+    "match": [{ "value": "https://www.britannica.com/games/octordle*" }],
+    "icon": [{ "value": "https://www.google.com/s2/favicons?sz=64&domain=britannica.com" }],
+    "grant": [{ "value": "GM.xmlHttpRequest" }, { "value": "GM_xmlhttpRequest" }],
+    "run-at": [{ "value": "document-start" }]
+  }
+}
