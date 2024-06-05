@@ -46,10 +46,10 @@
         const node = sponsoredItems.snapshotItem(i);
         if (node && node.nodeType === Node.ELEMENT_NODE) {
           let parent = node;
-          while (parent && (!parent.hasAttribute("data-asin") || parent.getAttribute("data-asin") === "") && parent.parentElement) {
+          while (parent && !parent.hasAttribute("data-asin") && parent.parentElement) {
             parent = parent.parentElement;
           }
-          if (parent && parent.hasAttribute("data-asin") && parent.getAttribute("data-asin") !== "") {
+          if (parent && parent.hasAttribute("data-asin")) {
             parent.style.display = "none";
           }
         }
