@@ -8,13 +8,12 @@
 // @icon https://www.google.com/s2/favicons?sz=64&domain=ebay.com
 // ==/UserScript==
 
-
-
 /* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/ebay-seller-hider/ebay-seller-hider.user.ts
-  (() => {
+  var EbaySellerHider;
+  ((EbaySellerHider2) => {
     let filterReviews = true;
     let reviewMin = 10;
     let filterFeedback = true;
@@ -59,15 +58,15 @@
     const createCheckboxEventListener = (valueName, checkbox) => {
       if (valueName === "reviewMin") {
         localStorage.setItem("filterReviews", checkbox.checked ? "true" : "false");
-        updateFilter();
+        (0, EbaySellerHider2.updateFilter)();
       }
       if (valueName === "feedbackMin") {
         localStorage.setItem("filterFeedback", checkbox.checked ? "true" : "false");
-        updateFilter();
+        (0, EbaySellerHider2.updateFilter)();
       }
       if (valueName === "hideSponsored") {
         localStorage.setItem("hideSponsored", checkbox.checked ? "true" : "false");
-        updateFilter();
+        (0, EbaySellerHider2.updateFilter)();
       }
     };
     const createCheckbox = (text, valueName) => {
@@ -103,7 +102,7 @@
           const target = evt.target;
           if (target) {
             localStorage.setItem(valueName, target.value);
-            updateFilter();
+            (0, EbaySellerHider2.updateFilter)();
           }
         });
         input.style.height = "22px";
@@ -131,7 +130,7 @@
       group.append(listHeader);
       return group;
     };
-    const getPresets = () => {
+    EbaySellerHider2.getPresets = () => {
       var _a, _b;
       filterReviews = localStorage.getItem("filterReviews") !== "false";
       reviewMin = parseInt((_a = localStorage.getItem("reviewMin")) != null ? _a : "10", 10);
@@ -139,7 +138,7 @@
       feedbackMin = parseFloat((_b = localStorage.getItem("feedbackMin")) != null ? _b : "95.0");
       hideSponsored = localStorage.getItem("hideSponsored") !== "false";
     };
-    const addFilter = () => {
+    EbaySellerHider2.addFilter = () => {
       const menu = document.querySelector(".x-refine__left__nav");
       if (menu) {
         const list = document.createElement("li");
@@ -149,14 +148,14 @@
         menu.prepend(list);
       }
     };
-    const updateFilter = () => {
-      getPresets();
+    EbaySellerHider2.updateFilter = () => {
+      (0, EbaySellerHider2.getPresets)();
       const sellers = document.querySelectorAll("span.s-item__seller-info-text");
       for (const seller of Array.from(sellers)) {
         hideItem(seller);
       }
     };
-    const findSponsoredClass = () => {
+    EbaySellerHider2.findSponsoredClass = () => {
       var _a;
       const styleBlock = Array.from(document.head.getElementsByTagName("style")).find((item) => item.type === "text/css");
       if (styleBlock) {
@@ -173,10 +172,10 @@
         }
       }
     };
-    getPresets();
-    addFilter();
-    updateFilter();
-    findSponsoredClass();
-  })();
+  })(EbaySellerHider || (EbaySellerHider = {}));
+  EbaySellerHider.getPresets();
+  EbaySellerHider.addFilter();
+  EbaySellerHider.updateFilter();
+  EbaySellerHider.findSponsoredClass();
 })();
 //# sourceMappingURL=ebay-seller-hider.user.js.map

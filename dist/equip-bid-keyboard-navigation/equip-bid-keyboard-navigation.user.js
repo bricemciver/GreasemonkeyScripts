@@ -11,13 +11,12 @@
 // @connect equip-bid.com
 // ==/UserScript==
 
-
-
 /* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/equip-bid-keyboard-navigation/equip-bid-keyboard-navigation.user.ts
-  (() => {
+  var EquipBidKeyboardNavigation;
+  ((EquipBidKeyboardNavigation2) => {
     const indexAction = (action) => {
       if (index === 0 && prevLink && action === "minus") {
         prevLink.click();
@@ -91,7 +90,7 @@
       });
       return helpDiv;
     };
-    const initScript = () => {
+    EquipBidKeyboardNavigation2.initScript = () => {
       const head = document.getElementsByTagName("head")[0];
       const style = document.createElement("style");
       style.setAttribute("type", "text/css");
@@ -239,7 +238,7 @@
         hideHelp();
       }
     });
-    initScript();
-  })();
+  })(EquipBidKeyboardNavigation || (EquipBidKeyboardNavigation = {}));
+  EquipBidKeyboardNavigation.initScript();
 })();
 //# sourceMappingURL=equip-bid-keyboard-navigation.user.js.map

@@ -1,4 +1,4 @@
-(() => {
+namespace AmazonGoodreadsMeta {
   const asinRegex = /\/([A-Z0-9]{10})/;
 
   const findASIN = (): string[] => {
@@ -98,7 +98,7 @@
     });
   };
 
-  const main = (): void => {
+  export const main = (): void => {
     const ASIN = findASIN();
     const insertPoint = findInsertPoint();
     for (let i = 0; i < ASIN.length && i < insertPoint.length; i++) {
@@ -108,6 +108,5 @@
       }
     }
   };
-
-  main();
-})();
+}
+AmazonGoodreadsMeta.main();

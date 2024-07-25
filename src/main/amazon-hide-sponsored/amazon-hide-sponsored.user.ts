@@ -1,5 +1,5 @@
-(() => {
-  const findAndRemoveSponsoredItems = () => {
+namespace AmazonHideSponsored {
+  export const findAndRemoveSponsoredItems = () => {
     const sponsoredItems = document.evaluate("//span[text()='Sponsored']", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
 
     for (let i = 0; i < sponsoredItems.snapshotLength; i++) {
@@ -17,5 +17,5 @@
       }
     }
   };
-  findAndRemoveSponsoredItems();
-})();
+}
+AmazonHideSponsored.findAndRemoveSponsoredItems()

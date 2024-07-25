@@ -1,4 +1,4 @@
-(() => {
+namespace AmazonAddToGoodreads {
   const asinRegex = /\/([A-Z0-9]{10})/;
 
   const findASIN = (): string => {
@@ -29,13 +29,12 @@
     insertPoint.appendChild(script);
   };
 
-  const main = (): void => {
+  export const main = (): void => {
     const ASIN = findASIN();
     const insertPoint = findInsertPoint();
     if (ASIN && insertPoint) {
       insertElement(ASIN, insertPoint);
     }
   };
-
-  main();
-})();
+}
+AmazonAddToGoodreads.main();

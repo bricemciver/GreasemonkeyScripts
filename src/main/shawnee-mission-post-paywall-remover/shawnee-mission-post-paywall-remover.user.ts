@@ -1,4 +1,4 @@
-(() => {
+namespace ShawneeMissionPostPaywallRemover {
   // Select the node that should be monitored
   const targetNode = document.documentElement;
 
@@ -29,9 +29,12 @@
     }
   };
 
-  // Create an observer instance linked to the callback function
-  const observer = new MutationObserver(callback);
+  export const main = () => {
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(callback);
 
-  // Start observing the target node for configured mutations
-  observer.observe(targetNode, config);
-})();
+    // Start observing the target node for configured mutations
+    observer.observe(targetNode, config);
+  };
+}
+ShawneeMissionPostPaywallRemover.main();

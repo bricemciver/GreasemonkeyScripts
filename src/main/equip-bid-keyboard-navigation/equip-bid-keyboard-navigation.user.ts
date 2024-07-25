@@ -1,4 +1,4 @@
-(() => {
+namespace EquipBidKeyboardNavigation {
   const indexAction = (action: 'plus' | 'minus'): void => {
     // auto page navigation
     if (index === 0 && prevLink && action === 'minus') {
@@ -81,7 +81,7 @@
     return helpDiv;
   };
 
-  const initScript = (): void => {
+  export const initScript = (): void => {
     // load new styles
     const head = document.getElementsByTagName('head')[0];
     const style = document.createElement('style');
@@ -254,6 +254,5 @@
       hideHelp();
     }
   });
-
-  initScript();
-})();
+}
+EquipBidKeyboardNavigation.initScript();

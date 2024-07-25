@@ -8,7 +8,7 @@
     "lint": "npx eslint --fix src/**/*.ts",
     "lint:check": "npx eslint src/**/*.ts",
     "create-headers": "npx ts-node ./src/scripts/create-headers.ts \"./src/main/**/*.meta.json\" ./dist",
-    "build": "npx esbuild ./src/main/**/*.ts --bundle --sourcemap --charset=utf8 --format=iife --target=es6 --log-level=warning --banner:js='/* jshint esversion: 6 */' --outdir=./dist && npm run create-headers",
+    "build": "npx esbuild ./src/main/**/*.ts --bundle --sourcemap --charset=utf8 --target=es6 --log-level=warning --banner:js='/* jshint esversion: 6 */' --outdir=./dist && npm run create-headers",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

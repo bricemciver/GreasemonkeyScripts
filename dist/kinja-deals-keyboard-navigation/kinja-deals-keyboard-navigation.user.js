@@ -9,13 +9,12 @@
 // @grant none
 // ==/UserScript==
 
-
-
 /* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/kinja-deals-keyboard-navigation/kinja-deals-keyboard-navigation.user.ts
-  (() => {
+  var KinjaDealsKeyboardNavigation;
+  ((KinjaDealsKeyboardNavigation2) => {
     const headTags = [];
     let pos = -1;
     const addGlobalStyle = (css) => {
@@ -45,7 +44,7 @@
         headTags[pos].scrollIntoView();
       }
     };
-    const removeCruft = () => {
+    KinjaDealsKeyboardNavigation2.removeCruft = () => {
       document.querySelectorAll(".js_movable_ad_slot").forEach((element) => element.remove());
       document.querySelectorAll(".connatix-container").forEach((element) => element.remove());
       Array.from(document.getElementsByTagName("span")).filter((item) => item.textContent === "G/O Media may get a commission").forEach((element) => {
@@ -76,19 +75,22 @@
       headTags.push(...Array.from(containerDiv.querySelectorAll("div.inlineFrame, h3, h4")));
       document.addEventListener("keydown", keyPressed);
     };
-    removeCruft();
-    const mainDiv = document.querySelector(".js_post-content .js_commerce-inset-grid");
-    if (mainDiv) {
-      addGlobalStyle(
-        "div.inlineFrame { margin-top:17px; margin-bottom:17px; padding:33px; border-radius:3px; border: 1px solid rgba(0,0,0,0.05) }"
-      );
-      addGlobalStyle("div.inlineFrame.selected { border: 1px solid rgba(0, 0, 0, 0.15) }");
-      addGlobalStyle("main { width:100% !important }");
-      if (mainDiv.parentElement) {
-        createEntries(mainDiv.parentElement);
-        addListeners(mainDiv.parentElement);
+    KinjaDealsKeyboardNavigation2.main = () => {
+      const mainDiv = document.querySelector(".js_post-content .js_commerce-inset-grid");
+      if (mainDiv) {
+        addGlobalStyle(
+          "div.inlineFrame { margin-top:17px; margin-bottom:17px; padding:33px; border-radius:3px; border: 1px solid rgba(0,0,0,0.05) }"
+        );
+        addGlobalStyle("div.inlineFrame.selected { border: 1px solid rgba(0, 0, 0, 0.15) }");
+        addGlobalStyle("main { width:100% !important }");
+        if (mainDiv.parentElement) {
+          createEntries(mainDiv.parentElement);
+          addListeners(mainDiv.parentElement);
+        }
       }
-    }
-  })();
+    };
+  })(KinjaDealsKeyboardNavigation || (KinjaDealsKeyboardNavigation = {}));
+  KinjaDealsKeyboardNavigation.removeCruft();
+  KinjaDealsKeyboardNavigation.main();
 })();
 //# sourceMappingURL=kinja-deals-keyboard-navigation.user.js.map

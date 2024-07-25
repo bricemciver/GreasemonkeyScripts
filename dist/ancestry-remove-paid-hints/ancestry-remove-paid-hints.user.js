@@ -13,8 +13,6 @@
 // @run-at document-start
 // ==/UserScript==
 
-
-
 /* jshint esversion: 6 */
 "use strict";
 (() => {
@@ -46,7 +44,8 @@
   // src/main/ancestry-remove-paid-hints/ancestry-remove-paid-hints.user.ts
   var require_ancestry_remove_paid_hints_user = __commonJS({
     "src/main/ancestry-remove-paid-hints/ancestry-remove-paid-hints.user.ts"(exports) {
-      (() => {
+      var AncestryRemovePaidHints;
+      ((AncestryRemovePaidHints2) => {
         const familyTreeSources = [62476, 9289, 1030, 1006];
         const handleOfferPage = (db, link) => {
           const dbidRegex = /[?&]dbid=(\d+)/;
@@ -74,7 +73,7 @@
             console.error("Database failed to open");
             reject(event);
           };
-          openRequest.onsuccess = (_event) => {
+          openRequest.onsuccess = () => {
             resolve(openRequest.result);
           };
           openRequest.onupgradeneeded = (event) => {
@@ -168,7 +167,7 @@
         };
         const mutationObserverSetup = (db) => {
           const config = { childList: true, subtree: true };
-          const callback = (mutationList, _observer) => {
+          const callback = (mutationList) => {
             for (const mutation of mutationList) {
               if (mutation.type === "childList") {
                 mutation.addedNodes.forEach((node) => {
@@ -183,7 +182,7 @@
           const observer = new MutationObserver(callback);
           observer.observe(document, config);
         };
-        const main = () => __async(exports, null, function* () {
+        AncestryRemovePaidHints2.main = () => __async(exports, null, function* () {
           const db = yield initDB();
           if (db instanceof IDBDatabase) {
             if (window.location.href.indexOf("offers/join") !== -1) {
@@ -193,8 +192,8 @@
             }
           }
         });
-        main().catch((_error) => ({}));
-      })();
+      })(AncestryRemovePaidHints || (AncestryRemovePaidHints = {}));
+      AncestryRemovePaidHints.main();
     }
   });
   require_ancestry_remove_paid_hints_user();

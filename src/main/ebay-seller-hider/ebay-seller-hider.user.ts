@@ -1,4 +1,4 @@
-(() => {
+namespace EbaySellerHider {
   let filterReviews = true;
   let reviewMin = 10;
   let filterFeedback = true;
@@ -129,7 +129,7 @@
     return group;
   };
 
-  const getPresets = (): void => {
+  export const getPresets = (): void => {
     filterReviews = localStorage.getItem('filterReviews') !== 'false';
     reviewMin = parseInt(localStorage.getItem('reviewMin') ?? '10', 10);
     filterFeedback = localStorage.getItem('filterFeedback') !== 'false';
@@ -137,7 +137,7 @@
     hideSponsored = localStorage.getItem('hideSponsored') !== 'false';
   };
 
-  const addFilter = (): void => {
+  export const addFilter = (): void => {
     const menu = document.querySelector('.x-refine__left__nav');
     if (menu) {
       const list = document.createElement('li');
@@ -148,7 +148,7 @@
     }
   };
 
-  const updateFilter = (): void => {
+  export const updateFilter = (): void => {
     getPresets();
     const sellers = document.querySelectorAll('span.s-item__seller-info-text');
     for (const seller of Array.from(sellers)) {
@@ -156,7 +156,7 @@
     }
   };
 
-  const findSponsoredClass = (): void => {
+  export const findSponsoredClass = (): void => {
     // get inserted style
     const styleBlock = Array.from(document.head.getElementsByTagName('style')).find(item => item.type === 'text/css');
     if (styleBlock) {
@@ -173,9 +173,8 @@
       }
     }
   };
-
-  getPresets();
-  addFilter();
-  updateFilter();
-  findSponsoredClass();
-})();
+}
+EbaySellerHider.getPresets();
+EbaySellerHider.addFilter();
+EbaySellerHider.updateFilter();
+EbaySellerHider.findSponsoredClass();

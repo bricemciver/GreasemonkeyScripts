@@ -11,13 +11,12 @@
 // @run-at document-start
 // ==/UserScript==
 
-
-
 /* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/octordle-mild-cheat/octordle-mild-cheat.user.ts
-  (() => {
+  var OctordleMildCheat;
+  ((OctordleMildCheat2) => {
     let State;
     ((State2) => {
       State2[State2["correct"] = 0] = "correct";
@@ -69,7 +68,7 @@
         }
       }
     };
-    const findAllowedWords = () => {
+    OctordleMildCheat2.findAllowedWords = () => {
       wordBankWords.push(...getItem("wordBank", []));
       allowedWords.push(...getItem("allowed", []));
       if (!wordBankWords.length || !allowedWords.length) {
@@ -222,7 +221,7 @@
       }
       return boardState;
     };
-    const addListeners = () => {
+    OctordleMildCheat2.addListeners = () => {
       document.addEventListener(
         "keydown",
         function(event) {
@@ -266,8 +265,8 @@
       });
       return tempWordList;
     };
-    findAllowedWords();
-    addListeners();
-  })();
+  })(OctordleMildCheat || (OctordleMildCheat = {}));
+  OctordleMildCheat.findAllowedWords();
+  OctordleMildCheat.addListeners();
 })();
 //# sourceMappingURL=octordle-mild-cheat.user.js.map

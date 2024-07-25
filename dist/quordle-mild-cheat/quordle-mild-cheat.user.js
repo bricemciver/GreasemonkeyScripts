@@ -10,13 +10,12 @@
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
 
-
-
 /* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/quordle-mild-cheat/quordle-mild-cheat.user.ts
-  (() => {
+  var QuordleMildCheat;
+  ((QuordleMildCheat2) => {
     const wordBankRegEx = /wordBank:\s*"([^"]*)"/;
     const allowedRegEx = /allowed:\s*"([^"]*)"/;
     const wordBankWords = [];
@@ -34,7 +33,7 @@
         return val;
       }
     };
-    const findAllowedWords = () => {
+    QuordleMildCheat2.findAllowedWords = () => {
       wordBankWords.push(...getItem("wordBank", []));
       allowedWords.push(...getItem("allowed", []));
       if (!wordBankWords.length || !allowedWords.length) {
@@ -160,7 +159,7 @@
         dialog.close();
       }
     };
-    const addListeners = () => {
+    QuordleMildCheat2.addListeners = () => {
       document.addEventListener(
         "keydown",
         function(event) {
@@ -249,8 +248,8 @@
       });
       return tempWordList;
     };
-    findAllowedWords();
-    addListeners();
-  })();
+  })(QuordleMildCheat || (QuordleMildCheat = {}));
+  QuordleMildCheat.findAllowedWords();
+  QuordleMildCheat.addListeners();
 })();
 //# sourceMappingURL=quordle-mild-cheat.user.js.map

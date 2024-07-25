@@ -37,13 +37,12 @@
 // @grant none
 // ==/UserScript==
 
-
-
 /* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/amazon-add-to-goodreads/amazon-add-to-goodreads.user.ts
-  (() => {
+  var AmazonAddToGoodreads;
+  ((AmazonAddToGoodreads2) => {
     const asinRegex = /\/([A-Z0-9]{10})/;
     const findASIN = () => {
       const array = asinRegex.exec(document.location.pathname);
@@ -68,14 +67,14 @@
       insertPoint.appendChild(elem);
       insertPoint.appendChild(script);
     };
-    const main = () => {
+    AmazonAddToGoodreads2.main = () => {
       const ASIN = findASIN();
       const insertPoint = findInsertPoint();
       if (ASIN && insertPoint) {
         insertElement(ASIN, insertPoint);
       }
     };
-    main();
-  })();
+  })(AmazonAddToGoodreads || (AmazonAddToGoodreads = {}));
+  AmazonAddToGoodreads.main();
 })();
 //# sourceMappingURL=amazon-add-to-goodreads.user.js.map

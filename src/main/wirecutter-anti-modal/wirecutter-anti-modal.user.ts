@@ -1,4 +1,4 @@
-(() => {
+namespace WirecutterAntiModal {
   // keep track of actions so we can disable observer at some point
   let modalRemoved = false;
   let overflowFixed = false;
@@ -33,7 +33,7 @@
     }
   };
 
-  const startObserver = (): void => {
+  export const startObserver = (): void => {
     const callback: MutationCallback = (mutationsList, observer) => {
       mutationsList.forEach(mutation => {
         removePaywallModal(mutation);
@@ -50,6 +50,5 @@
       new MutationObserver(callback).observe(elementToObserve, config);
     }
   };
-
-  startObserver();
-})();
+}
+WirecutterAntiModal.startObserver();

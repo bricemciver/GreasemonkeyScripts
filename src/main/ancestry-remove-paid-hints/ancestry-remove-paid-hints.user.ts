@@ -1,4 +1,4 @@
-(() => {
+namespace AncestryRemovePaidHints {
   const familyTreeSources = [62476, 9289, 1030, 1006];
 
   const handleOfferPage = (db: IDBDatabase, link: Location) => {
@@ -35,7 +35,7 @@
       };
 
       // success handler signifies that the database opened successfully
-      openRequest.onsuccess = _event => {
+      openRequest.onsuccess = () => {
         // Store the opened database object in the db variable. This is used a lot below
         resolve(openRequest.result);
       };
@@ -163,7 +163,7 @@
     const config = { childList: true, subtree: true };
 
     // Callback function to execute when mutations are observed
-    const callback: MutationCallback = (mutationList, _observer) => {
+    const callback: MutationCallback = (mutationList) => {
       for (const mutation of mutationList) {
         if (mutation.type === 'childList') {
           mutation.addedNodes.forEach(node => {
@@ -186,7 +186,7 @@
     observer.observe(document, config);
   };
 
-  const main = async (): Promise<void> => {
+  export const main = async (): Promise<void> => {
     const db = await initDB();
     if (db instanceof IDBDatabase) {
       // see if we're on offer page and handle it
@@ -197,6 +197,5 @@
       }
     }
   };
-
-  main().catch(_error => ({}));
-})();
+}
+AncestryRemovePaidHints.main();

@@ -11,15 +11,14 @@
 // @connect equip-bid.com
 // ==/UserScript==
 
-
-
 /* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/equip-bid-redesign/equip-bid-redesign.user.ts
-  (() => {
+  var EquipBidRedesign;
+  ((EquipBidRedesign2) => {
     let currentIndex = 0;
-    const addFocusStyling = () => {
+    EquipBidRedesign2.addFocusStyling = () => {
       var _a;
       const styleEl = document.createElement("style");
       document.head.appendChild(styleEl);
@@ -93,7 +92,7 @@
       listGroupItems[currentIndex].scrollIntoView({ block: "center" });
       listGroupItems[currentIndex].classList.add("focused");
     };
-    const processEntries = () => {
+    EquipBidRedesign2.processEntries = () => {
       const entries = document.querySelectorAll("div.lot-divider");
       if (!entries.length)
         return;
@@ -122,8 +121,8 @@
       lotList.insertAdjacentElement("afterend", listGroup);
       keyboardNavigation();
     };
-    addFocusStyling();
-    processEntries();
-  })();
+  })(EquipBidRedesign || (EquipBidRedesign = {}));
+  EquipBidRedesign.addFocusStyling();
+  EquipBidRedesign.processEntries();
 })();
 //# sourceMappingURL=equip-bid-redesign.user.js.map

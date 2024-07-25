@@ -33,14 +33,13 @@
 // @icon https://www.google.com/s2/favicons?sz=64&domain=amazon.com
 // ==/UserScript==
 
-
-
 /* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/amazon-hide-sponsored/amazon-hide-sponsored.user.ts
-  (() => {
-    const findAndRemoveSponsoredItems = () => {
+  var AmazonHideSponsored;
+  ((AmazonHideSponsored2) => {
+    AmazonHideSponsored2.findAndRemoveSponsoredItems = () => {
       const sponsoredItems = document.evaluate("//span[text()='Sponsored']", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
       for (let i = 0; i < sponsoredItems.snapshotLength; i++) {
         const node = sponsoredItems.snapshotItem(i);
@@ -55,7 +54,7 @@
         }
       }
     };
-    findAndRemoveSponsoredItems();
-  })();
+  })(AmazonHideSponsored || (AmazonHideSponsored = {}));
+  AmazonHideSponsored.findAndRemoveSponsoredItems();
 })();
 //# sourceMappingURL=amazon-hide-sponsored.user.js.map

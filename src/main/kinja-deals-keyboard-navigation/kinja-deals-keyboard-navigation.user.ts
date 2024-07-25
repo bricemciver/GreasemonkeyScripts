@@ -1,4 +1,4 @@
-(() => {
+namespace KinjaDealsKeyboardNavigation {
   const headTags: Element[] = [];
   let pos = -1;
 
@@ -32,7 +32,7 @@
     }
   };
 
-  const removeCruft = (): void => {
+  export const removeCruft = (): void => {
     document.querySelectorAll('.js_movable_ad_slot').forEach(element => element.remove());
     document.querySelectorAll('.connatix-container').forEach(element => element.remove());
     Array.from(document.getElementsByTagName('span'))
@@ -63,25 +63,27 @@
     document.addEventListener('keydown', keyPressed);
   };
 
-  // remove unneeded content
-  removeCruft();
+  export const main = () => {
+    // find main content
+    const mainDiv = document.querySelector('.js_post-content .js_commerce-inset-grid');
+    if (mainDiv) {
+      // add necessary styles
+      addGlobalStyle(
+        'div.inlineFrame { margin-top:17px; margin-bottom:17px; padding:33px; border-radius:3px; border: 1px solid rgba(0,0,0,0.05) }',
+      );
+      addGlobalStyle('div.inlineFrame.selected { border: 1px solid rgba(0, 0, 0, 0.15) }');
+      addGlobalStyle('main { width:100% !important }');
 
-  // find main content
-  const mainDiv = document.querySelector('.js_post-content .js_commerce-inset-grid');
-  if (mainDiv) {
-    // add necessary styles
-    addGlobalStyle(
-      'div.inlineFrame { margin-top:17px; margin-bottom:17px; padding:33px; border-radius:3px; border: 1px solid rgba(0,0,0,0.05) }',
-    );
-    addGlobalStyle('div.inlineFrame.selected { border: 1px solid rgba(0, 0, 0, 0.15) }');
-    addGlobalStyle('main { width:100% !important }');
+      if (mainDiv.parentElement) {
+        // create entries
+        createEntries(mainDiv.parentElement);
 
-    if (mainDiv.parentElement) {
-      // create entries
-      createEntries(mainDiv.parentElement);
-
-      // add keyboard navigation
-      addListeners(mainDiv.parentElement);
+        // add keyboard navigation
+        addListeners(mainDiv.parentElement);
+      }
     }
-  }
-})();
+  };
+}
+// remove unneeded content
+KinjaDealsKeyboardNavigation.removeCruft();
+KinjaDealsKeyboardNavigation.main();

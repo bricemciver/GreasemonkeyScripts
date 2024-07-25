@@ -11,13 +11,12 @@
 // @run-at document-start
 // ==/UserScript==
 
-
-
 /* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/wordle-mild-cheat/wordle-mild-cheat.user.ts
-  (() => {
+  var WordleMildCheat;
+  ((WordleMildCheat2) => {
     let State;
     ((State2) => {
       State2[State2["correct"] = 0] = "correct";
@@ -195,14 +194,14 @@
       });
       return tempWordList;
     };
-    const findAllowedWords = () => {
+    WordleMildCheat2.findAllowedWords = () => {
       fullWordList.push(...getItem("wordList", []));
       if (fullWordList.length === 0) {
         const observer = new MutationObserver(callback);
         observer.observe(document, { subtree: true, childList: true });
       }
     };
-    const addListeners = () => {
+    WordleMildCheat2.addListeners = () => {
       document.addEventListener(
         "keydown",
         (event) => {
@@ -221,8 +220,8 @@
         true
       );
     };
-    findAllowedWords();
-    addListeners();
-  })();
+  })(WordleMildCheat || (WordleMildCheat = {}));
+  WordleMildCheat.findAllowedWords();
+  WordleMildCheat.addListeners();
 })();
 //# sourceMappingURL=wordle-mild-cheat.user.js.map

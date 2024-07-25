@@ -35,13 +35,12 @@
 // @icon https://www.google.com/s2/favicons?sz=64&domain=amazon.com
 // ==/UserScript==
 
-
-
 /* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/amazon-goodreads-meta/amazon-goodreads-meta.user.ts
-  (() => {
+  var AmazonGoodreadsMeta;
+  ((AmazonGoodreadsMeta2) => {
     const asinRegex = /\/([A-Z0-9]{10})/;
     const findASIN = () => {
       const asinArray = [];
@@ -121,7 +120,7 @@
         }
       });
     };
-    const main = () => {
+    AmazonGoodreadsMeta2.main = () => {
       const ASIN = findASIN();
       const insertPoint = findInsertPoint();
       for (let i = 0; i < ASIN.length && i < insertPoint.length; i++) {
@@ -131,7 +130,7 @@
         }
       }
     };
-    main();
-  })();
+  })(AmazonGoodreadsMeta || (AmazonGoodreadsMeta = {}));
+  AmazonGoodreadsMeta.main();
 })();
 //# sourceMappingURL=amazon-goodreads-meta.user.js.map

@@ -1,4 +1,4 @@
-(() => {
+namespace FacebookHideMarketplaceDeals {
   // Options for the observer (which mutations to observe)
   const config: MutationObserverInit = {
     childList: true,
@@ -30,6 +30,9 @@
     }
   };
 
-  // Create an observer instance linked to the callback function and observe
-  new MutationObserver(callback).observe(document, config);
-})();
+  export const main = () => {
+    // Create an observer instance linked to the callback function and observe
+    new MutationObserver(callback).observe(document, config);
+  };
+}
+FacebookHideMarketplaceDeals.main();

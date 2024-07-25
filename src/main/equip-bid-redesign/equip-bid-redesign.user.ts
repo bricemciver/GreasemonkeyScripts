@@ -1,7 +1,7 @@
-(() => {
+namespace EquipBidRedesign {
   let currentIndex = 0;
 
-  const addFocusStyling = () => {
+  export const addFocusStyling = () => {
     const styleEl = document.createElement('style');
     document.head.appendChild(styleEl);
     styleEl.sheet?.insertRule('li.list-group-item.focused{outline: Highlight auto 1px; outline:-webkit-focus-ring-color auto 1px;}');
@@ -92,7 +92,7 @@
     listGroupItems[currentIndex].classList.add('focused');
   };
 
-  const processEntries = () => {
+  export const processEntries = () => {
     const entries = document.querySelectorAll<HTMLDivElement>('div.lot-divider');
     if (!entries.length) return;
 
@@ -122,7 +122,6 @@
 
     keyboardNavigation();
   };
-
-  addFocusStyling();
-  processEntries();
-})();
+}
+EquipBidRedesign.addFocusStyling();
+EquipBidRedesign.processEntries();

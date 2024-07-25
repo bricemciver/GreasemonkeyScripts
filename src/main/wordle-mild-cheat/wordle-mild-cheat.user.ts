@@ -1,4 +1,4 @@
-(() => {
+namespace WordleMildCheat {
   enum State {
     correct,
     diff,
@@ -236,7 +236,7 @@
     return tempWordList;
   };
 
-  const findAllowedWords = () => {
+  export const findAllowedWords = () => {
     fullWordList.push(...getItem('wordList', []));
     if (fullWordList.length === 0) {
       // create a new instance of `MutationObserver` named `observer`,
@@ -249,7 +249,7 @@
     }
   };
 
-  const addListeners = () => {
+  export const addListeners = () => {
     document.addEventListener(
       'keydown',
       event => {
@@ -269,10 +269,8 @@
       true,
     );
   };
-
-  // Retrieve (locally or from site) the word lists
-  findAllowedWords();
-
-  // add listeners
-  addListeners();
-})();
+}
+// Retrieve (locally or from site) the word lists
+WordleMildCheat.findAllowedWords();
+// add listeners
+WordleMildCheat.addListeners();

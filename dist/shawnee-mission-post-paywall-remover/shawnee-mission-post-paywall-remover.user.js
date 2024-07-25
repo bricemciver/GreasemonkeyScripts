@@ -11,13 +11,12 @@
 // @grant none
 // ==/UserScript==
 
-
-
 /* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/shawnee-mission-post-paywall-remover/shawnee-mission-post-paywall-remover.user.ts
-  (() => {
+  var ShawneeMissionPostPaywallRemover;
+  ((ShawneeMissionPostPaywallRemover2) => {
     const targetNode = document.documentElement;
     const config = { childList: true, subtree: true, attributes: true };
     const callback = function(mutationsList) {
@@ -42,8 +41,11 @@
         }
       }
     };
-    const observer = new MutationObserver(callback);
-    observer.observe(targetNode, config);
-  })();
+    ShawneeMissionPostPaywallRemover2.main = () => {
+      const observer = new MutationObserver(callback);
+      observer.observe(targetNode, config);
+    };
+  })(ShawneeMissionPostPaywallRemover || (ShawneeMissionPostPaywallRemover = {}));
+  ShawneeMissionPostPaywallRemover.main();
 })();
 //# sourceMappingURL=shawnee-mission-post-paywall-remover.user.js.map

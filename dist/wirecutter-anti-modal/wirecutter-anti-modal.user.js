@@ -9,13 +9,12 @@
 // @grant none
 // ==/UserScript==
 
-
-
 /* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/wirecutter-anti-modal/wirecutter-anti-modal.user.ts
-  (() => {
+  var WirecutterAntiModal;
+  ((WirecutterAntiModal2) => {
     let modalRemoved = false;
     let overflowFixed = false;
     const config = {
@@ -44,7 +43,7 @@
         }
       }
     };
-    const startObserver = () => {
+    WirecutterAntiModal2.startObserver = () => {
       const callback = (mutationsList, observer) => {
         mutationsList.forEach((mutation) => {
           removePaywallModal(mutation);
@@ -58,7 +57,7 @@
         new MutationObserver(callback).observe(elementToObserve, config);
       }
     };
-    startObserver();
-  })();
+  })(WirecutterAntiModal || (WirecutterAntiModal = {}));
+  WirecutterAntiModal.startObserver();
 })();
 //# sourceMappingURL=wirecutter-anti-modal.user.js.map

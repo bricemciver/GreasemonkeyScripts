@@ -25,7 +25,7 @@ const createUserScriptHeader = (metaData: object): string => {
       }
     }
   }
-  header += '// ==/UserScript==\n\n';
+  header += '// ==/UserScript==\n';
   return header;
 };
 
@@ -57,7 +57,7 @@ async function generateUserScriptHeaders(globPattern: string, outputDir: string)
       );
       if (fs.existsSync(outputFilePath)) {
         const existingContent = fs.readFileSync(outputFilePath, 'utf-8');
-        fs.writeFileSync(outputFilePath, `${userScriptHeader}\n\n${existingContent}`);
+        fs.writeFileSync(outputFilePath, `${userScriptHeader}\n${existingContent}`);
       }
     } catch (e) {
       continue;

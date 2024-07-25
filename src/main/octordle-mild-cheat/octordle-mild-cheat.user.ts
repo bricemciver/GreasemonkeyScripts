@@ -1,4 +1,4 @@
-(() => {
+namespace OctordleMildCheat {
   enum State {
     correct,
     diff,
@@ -77,7 +77,7 @@
     }
   };
 
-  const findAllowedWords = () => {
+  export const findAllowedWords = () => {
     // see if we need to retrieve
     wordBankWords.push(...getItem('wordBank', []));
     allowedWords.push(...getItem('allowed', []));
@@ -257,7 +257,7 @@
     return boardState;
   };
 
-  const addListeners = () => {
+  export const addListeners = () => {
     document.addEventListener(
       'keydown',
       function (event) {
@@ -319,10 +319,8 @@
 
     return tempWordList;
   };
-
-  // Retrieve (locally or from site) the word lists
-  findAllowedWords();
-
-  // add listeners
-  addListeners();
-})();
+}
+// Retrieve (locally or from site) the word lists
+OctordleMildCheat.findAllowedWords();
+// add listeners
+OctordleMildCheat.addListeners();

@@ -1,4 +1,4 @@
-(() => {
+namespace QuordleMildCheat {
   type ProcessedCell = {
     letter: string;
     position: number;
@@ -34,7 +34,7 @@
     }
   };
 
-  const findAllowedWords = () => {
+  export const findAllowedWords = () => {
     // see if we need to retrieve
     wordBankWords.push(...getItem('wordBank', []));
     allowedWords.push(...getItem('allowed', []));
@@ -180,7 +180,7 @@
     }
   };
 
-  const addListeners = () => {
+  export const addListeners = () => {
     document.addEventListener(
       'keydown',
       function (event) {
@@ -301,10 +301,8 @@
 
     return tempWordList;
   };
-
-  // Retrieve (locally or from site) the word lists
-  findAllowedWords();
-
-  // add listeners
-  addListeners();
-})();
+}
+// Retrieve (locally or from site) the word lists
+QuordleMildCheat.findAllowedWords();
+// add listeners
+QuordleMildCheat.addListeners();

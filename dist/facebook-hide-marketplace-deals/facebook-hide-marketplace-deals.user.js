@@ -9,13 +9,12 @@
 // @grant none
 // ==/UserScript==
 
-
-
 /* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/facebook-hide-marketplace-deals/facebook-hide-marketplace-deals.user.ts
-  (() => {
+  var FacebookHideMarketplaceDeals;
+  ((FacebookHideMarketplaceDeals2) => {
     const config = {
       childList: true,
       attributes: true,
@@ -44,7 +43,10 @@
         }
       }
     };
-    new MutationObserver(callback).observe(document, config);
-  })();
+    FacebookHideMarketplaceDeals2.main = () => {
+      new MutationObserver(callback).observe(document, config);
+    };
+  })(FacebookHideMarketplaceDeals || (FacebookHideMarketplaceDeals = {}));
+  FacebookHideMarketplaceDeals.main();
 })();
 //# sourceMappingURL=facebook-hide-marketplace-deals.user.js.map
