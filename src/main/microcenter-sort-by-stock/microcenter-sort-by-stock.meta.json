@@ -1,14 +1,54 @@
 {
   "UserScript": {
-    "name": [{ "value": "Microcenter sort by stock" }],
-    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
-    "author": [{ "value": "Brice McIver <github@bricemciver.com>" }],
-    "copyright": [{ "value": "2024 Brice McIver" }],
-    "description": [{ "value": "Adds an option to sort the search results by number in stock at the selected store" }],
-    "license": [{ "value": "CC-BY-NC-SA-4.0; https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode" }],
-    "version": [{ "value": "0.0.1" }],
-    "match": [{ "value": "*://www.microcenter.com/*" }],
-    "icon": [{ "value": "https://icons.duckduckgo.com/ip3/microcenter.com.ico" }],
-    "grant": [{ "value": "none" }]
+    "name": [
+      {
+        "value": "Microcenter sort by stock"
+      }
+    ],
+    "namespace": [
+      {
+        "value": "https://github.com/bricemciver/GreasemonekeyScripts"
+      }
+    ],
+    "author": [
+      {
+        "value": "Brice McIver <github@bricemciver.com>"
+      }
+    ],
+    "copyright": [
+      {
+        "value": "2024 Brice McIver"
+      }
+    ],
+    "description": [
+      {
+        "value": "Adds an option to sort the search results by number in stock at the selected store"
+      }
+    ],
+    "license": [
+      {
+        "value": "MIT"
+      }
+    ],
+    "version": [
+      {
+        "value": "0.0.1"
+      }
+    ],
+    "match": [
+      {
+        "value": "*://www.microcenter.com/*"
+      }
+    ],
+    "icon": [
+      {
+        "value": "https://icons.duckduckgo.com/ip3/microcenter.com.ico"
+      }
+    ],
+    "grant": [
+      {
+        "value": "none"
+      }
+    ]
   }
 }
