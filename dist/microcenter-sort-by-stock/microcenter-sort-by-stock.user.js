@@ -4,7 +4,7 @@
 // @author Brice McIver <github@bricemciver.com>
 // @copyright 2024 Brice McIver
 // @description Adds an option to sort the search results by number in stock at the selected store
-// @license CC-BY-NC-SA-4.0; https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+// @license MIT
 // @version 0.0.1
 // @match *://www.microcenter.com/*
 // @icon https://icons.duckduckgo.com/ip3/microcenter.com.ico
