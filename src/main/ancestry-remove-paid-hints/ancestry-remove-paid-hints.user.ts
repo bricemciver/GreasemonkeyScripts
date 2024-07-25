@@ -163,7 +163,7 @@ namespace AncestryRemovePaidHints {
     const config = { childList: true, subtree: true };
 
     // Callback function to execute when mutations are observed
-    const callback: MutationCallback = (mutationList) => {
+    const callback: MutationCallback = mutationList => {
       for (const mutation of mutationList) {
         if (mutation.type === 'childList') {
           mutation.addedNodes.forEach(node => {

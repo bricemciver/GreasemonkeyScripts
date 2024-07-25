@@ -18,4 +18,4 @@ namespace AmazonHideSponsored {
     }
   };
 }
-AmazonHideSponsored.findAndRemoveSponsoredItems()
+AmazonHideSponsored.findAndRemoveSponsoredItems();
