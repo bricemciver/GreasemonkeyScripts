@@ -1,54 +1,54 @@
 {
-    "UserScript": {
-        "name": [
-            {
-                "value": "Kansas City Star Anti-Annoy"
-            }
-        ],
-        "namespace": [
-            {
-                "value": "https://github.com/bricemciver/GreasemonekeyScripts"
-            }
-        ],
-        "description": [
-            {
-                "value": "Remove annoyances for non-paid users of kansascity.com"
-            }
-        ],
-        "license": [
-            {
-                "value": "MIT"
-            }
-        ],
-        "version": [
-            {
-                "value": "0.0.1"
-            }
-        ],
-        "author": [
-            {
-                "value": "Brice McIver <github@bricemciver.com>"
-            }
-        ],
-        "copyright": [
-            {
-                "value": "2024 Brice McIver"
-            }
-        ],
-        "match": [
-            {
-                "value": "https://www.kansascity.com/*"
-            }
-        ],
-        "icon": [
-            {
-                "value": "https://icons.duckduckgo.com/ip3/kansascity.com.ico"
-            }
-        ],
-        "grant": [
-            {
-                "value": "none"
-            }
-        ]
-    }
+  "UserScript": {
+    "name": [
+      {
+        "value": "Kansas City Star Anti-Annoy"
+      }
+    ],
+    "namespace": [
+      {
+        "value": "https://github.com/bricemciver/GreasemonekeyScripts"
+      }
+    ],
+    "description": [
+      {
+        "value": "Remove annoyances for non-paid users of kansascity.com"
+      }
+    ],
+    "license": [
+      {
+        "value": "MIT"
+      }
+    ],
+    "version": [
+      {
+        "value": "0.0.1"
+      }
+    ],
+    "author": [
+      {
+        "value": "Brice McIver <github@bricemciver.com>"
+      }
+    ],
+    "copyright": [
+      {
+        "value": "2024 Brice McIver"
+      }
+    ],
+    "match": [
+      {
+        "value": "https://www.kansascity.com/*"
+      }
+    ],
+    "icon": [
+      {
+        "value": "https://icons.duckduckgo.com/ip3/kansascity.com.ico"
+      }
+    ],
+    "grant": [
+      {
+        "value": "none"
+      }
+    ]
+  }
 }
