@@ -1,5 +1,5 @@
 import fs from 'fs';
-import glob from 'glob';
+import { glob } from 'glob';
 import path from 'path';
 
 type Metadata = {
@@ -30,26 +30,22 @@ const createUserScriptHeader = (metaData: object): string => {
 };
 
 async function generateUserScriptHeaders(globPattern: string, outputDir: string): Promise<void> {
-  const filePaths = await new Promise<string[]>((resolve, reject) => {
-    glob(globPattern, (err, files) => {
-      if (err) {
-        reject(err);
-      } else {
-        resolve(files);
-      }
-    });
-  });
+  const filePaths = await glob(globPattern, { withFileTypes: true})
 
   for (const filePath of filePaths) {
-    const parentDir = path.normalize(`${filePath}/../../`);
+    const parentDir = filePath.parent?.parentPath;
+    if (!parentDir) {
+      console.error(`Error processing ${filePath}: parentDir not found`);
+      continue;
+    }
     try {
-      const metaData = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as Metadata;
+      const metaData = JSON.parse(fs.readFileSync(filePath.fullpath(), 'utf-8')) as Metadata;
       if (!metaData.UserScript) {
         continue;
       }
       const userScriptHeader = createUserScriptHeader(metaData.UserScript);
 
-      const relativeFilePath = path.normalize(filePath).replace(parentDir, '');
+      const relativeFilePath = filePath.fullpath().replace(parentDir, '');
       const outputFilePath = path.join(
         outputDir,
         path.dirname(relativeFilePath),
