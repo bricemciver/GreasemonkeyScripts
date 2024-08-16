@@ -60,6 +60,7 @@ async function generateUserScriptHeaders(globPattern: string, outputDir: string)
         fs.writeFileSync(outputFilePath, `${userScriptHeader}\n${existingContent}`);
       }
     } catch (e) {
+      console.error(`Error processing ${filePath}: ${e}`);
       continue;
     }
   }
