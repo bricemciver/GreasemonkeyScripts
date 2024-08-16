@@ -29,11 +29,9 @@
         const parser = new DOMParser();
         const doc = parser.parseFromString(data, "text/html");
         const entries = doc.querySelectorAll("div.lot-divider");
-        if (!entries.length)
-          return;
+        if (!entries.length) return;
         const listGroup = document.querySelector("div.lot-list > ul.list-group");
-        if (!listGroup)
-          return;
+        if (!listGroup) return;
         entries.forEach((entry) => {
           var _a, _b, _c, _d, _e, _f, _g;
           const listGroupItem = document.createElement("li");
@@ -56,8 +54,7 @@
     };
     const keyboardNavigation = () => {
       const listGroup = document.querySelector("div.lot-list > ul.list-group");
-      if (!listGroup)
-        return;
+      if (!listGroup) return;
       const listGroupItems = Array.from(listGroup.querySelectorAll("li.list-group-item"));
       const next = document.querySelector("li.next > a");
       const handleKeyDown = (event) => {
@@ -94,8 +91,7 @@
     };
     EquipBidRedesign2.processEntries = () => {
       const entries = document.querySelectorAll("div.lot-divider");
-      if (!entries.length)
-        return;
+      if (!entries.length) return;
       const listGroup = document.createElement("ul");
       listGroup.classList.add("list-group");
       entries.forEach((entry) => {
@@ -116,8 +112,7 @@
         listGroup.appendChild(listGroupItem);
       });
       const lotList = document.querySelector("div.lot-list > hr");
-      if (!lotList)
-        return;
+      if (!lotList) return;
       lotList.insertAdjacentElement("afterend", listGroup);
       keyboardNavigation();
     };

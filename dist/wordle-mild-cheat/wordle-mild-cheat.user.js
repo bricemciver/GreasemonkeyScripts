@@ -29,8 +29,7 @@
     };
     const getItem = (key, defaultVal) => {
       const val = window.sessionStorage.getItem(key);
-      if (!val || val === "undefined")
-        return defaultVal;
+      if (!val || val === "undefined") return defaultVal;
       try {
         return JSON.parse(val);
       } catch (e) {
