@@ -30,7 +30,7 @@ const createUserScriptHeader = (metaData: object): string => {
 };
 
 async function generateUserScriptHeaders(globPattern: string, outputDir: string): Promise<void> {
-  const filePaths = await glob(globPattern, { withFileTypes: true})
+  const filePaths = await glob(globPattern, { withFileTypes: true });
 
   for (const filePath of filePaths) {
     const parentDir = filePath.parent?.parentPath;
