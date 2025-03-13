@@ -1,14 +1,13 @@
 {
-    "UserScript": {
-      "name": [{ "value": "Lichess - Show common move" }],
-      "author": [{ "value": "Brice McIver" }],
-      "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
-      "description": [{ "value": "Shows the most common next move based on the current board position" }],
-      "license": [{ "value": "MIT" }],
-      "version": [{ "value": "0.0.1" }],
-      "icon": [{ "value": "https://www.google.com/s2/favicons?sz=64&domain=lichess.org" }],
-      "match": [{ "value": "https://lichess.org/*" }],
-      "grant": [{ "value": "GM.xmlHttpRequest" }]
-    }
+  "UserScript": {
+    "name": [{ "value": "Lichess - Show common move" }],
+    "author": [{ "value": "Brice McIver" }],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
+    "description": [{ "value": "Shows the most common next move based on the current board position" }],
+    "license": [{ "value": "MIT" }],
+    "version": [{ "value": "0.0.1" }],
+    "icon": [{ "value": "https://www.google.com/s2/favicons?sz=64&domain=lichess.org" }],
+    "match": [{ "value": "https://lichess.org/*" }],
+    "grant": [{ "value": "GM.xmlHttpRequest" }]
   }
-  
+}
