@@ -1,0 +1,13 @@
+{
+  "UserScript": {
+    "name": [{ "value": "Equip-Bid Restyle" }],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
+    "description": [{ "value": "Enhancements to the Equip-Bid auction website" }],
+    "license": [{ "value": "MIT" }],
+    "version": [{ "value": "0.1" }],
+    "match": [{ "value": "https://www.equip-bid.com/*" }],
+    "icon": [{ "value": "https://icons.duckduckgo.com/ip3/equip-bid.com.ico" }],
+    "grant": [{ "value": "GM_xmlhttpRequest" }],
+    "connect": [{ "value": "equip-bid.com" }]
+  }
+}
