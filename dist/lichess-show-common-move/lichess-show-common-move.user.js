@@ -3124,7 +3124,12 @@
               currentMoves += `${item.textContent} `;
             }
           }
+          if (currentMoves === "") {
+            console.log("No moves found");
+            return;
+          }
           if (currentMoves === previousMoves) {
+            console.log("No new moves");
             return;
           }
           console.log(`Moves: ${currentMoves}`);
@@ -3161,10 +3166,6 @@
           }
           previousMoves = currentMoves;
         });
-        const getMovesDiv = (element) => {
-          observerCnt++;
-          return element.querySelector("rm6, l4x") ? element : null;
-        };
         const getMoves = (records, observer) => {
           for (const record of records) {
             for (const item of Array.from(record.addedNodes)) {
@@ -3178,14 +3179,12 @@
           for (const record of records) {
             for (const item of Array.from(record.addedNodes)) {
               if (item.nodeType == Node.ELEMENT_NODE) {
-                const retNode = getMovesDiv(item);
-                if (retNode) {
+                const rm6 = document.querySelector("rm6");
+                if (rm6) {
                   observer.disconnect();
                   const movesObserver = new MutationObserver(getMoves);
-                  movesObserver.observe(retNode, observerOptions);
-                  break;
-                } else if (observerCnt > 75) {
-                  observer.disconnect();
+                  movesObserver.observe(rm6, observerOptions);
+                  getMoveList(rm6, movesObserver);
                   break;
                 }
               }
