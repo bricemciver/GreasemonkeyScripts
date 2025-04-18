@@ -237,9 +237,7 @@ namespace EquipBidRestyle {
         label: 'Previous image',
         keyName: '←',
       },
-      { label: 'Add to/Remove from Watchlist',
-        keyName: 'W',
-      }
+      { label: 'Add to/Remove from Watchlist', keyName: 'W' },
     ]);
     document.body.append(modal);
     document.addEventListener('keydown', event => {
@@ -277,17 +275,17 @@ namespace EquipBidRestyle {
     // find the focused entry
     const focusedEntry = document.querySelector<HTMLLIElement>('.lot-list .list-group li.list-group-item.focused');
     if (!focusedEntry) {
-      console.log("No focused entry to add to watchlist")
-      return
+      console.log('No focused entry to add to watchlist');
+      return;
     }
     // get the watchlist button
     const watchlistButton = focusedEntry.querySelector<HTMLAnchorElement>('a.item-watch-up, a.item-watch-dn');
     if (!watchlistButton) {
-      console.log("Unable to find a watchlist button for the focused entry")
-      return
+      console.log('Unable to find a watchlist button for the focused entry');
+      return;
     }
     watchlistButton.click();
-  }
+  };
 
   const selectItem = (direction: 'next' | 'previous') => {
     // find the focused entry

@@ -268,10 +268,7 @@
               label: "Previous image",
               keyName: "←"
             },
-            {
-              label: "Add to/Remove from Watchlist",
-              keyName: "W"
-            }
+            { label: "Add to/Remove from Watchlist", keyName: "W" }
           ]);
           document.body.append(modal);
           document.addEventListener("keydown", (event) => {
