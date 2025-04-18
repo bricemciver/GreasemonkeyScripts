@@ -267,6 +267,10 @@
             {
               label: "Previous image",
               keyName: "←"
+            },
+            {
+              label: "Add to/Remove from Watchlist",
+              keyName: "W"
             }
           ]);
           document.body.append(modal);
@@ -291,6 +295,19 @@
           }
           const link = direction == "right" ? focusedEntry.querySelector("a.right") : focusedEntry.querySelector("a.left");
           link == null ? void 0 : link.click();
+        };
+        const addToWatchlist = () => {
+          const focusedEntry = document.querySelector(".lot-list .list-group li.list-group-item.focused");
+          if (!focusedEntry) {
+            console.log("No focused entry to add to watchlist");
+            return;
+          }
+          const watchlistButton = focusedEntry.querySelector("a.item-watch-up, a.item-watch-dn");
+          if (!watchlistButton) {
+            console.log("Unable to find a watchlist button for the focused entry");
+            return;
+          }
+          watchlistButton.click();
         };
         const selectItem = (direction) => {
           let focusedEntry = document.querySelector(".lot-list .list-group li.list-group-item.focused");
@@ -473,6 +490,9 @@
             if (event.key == "p") {
               const prevButton = document.querySelector("li.previous > a");
               prevButton == null ? void 0 : prevButton.click();
+            }
+            if (event.key == "w") {
+              addToWatchlist();
             }
           };
           document.removeEventListener("keydown", allListeners);
