@@ -11,7 +11,7 @@ namespace AmazonHideSponsored {
           parent = parent.parentElement;
         }
         // hide the parent if it has a non-empty data-asin attribute
-        if (parent && parent.hasAttribute('data-asin')) {
+        if (parent?.hasAttribute('data-asin')) {
           parent.style.display = 'none';
         }
       }

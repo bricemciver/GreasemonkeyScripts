@@ -12,6 +12,7 @@ Parent project to hold all my Greasemonkey scripts
     - [EBay](#ebay)
     - [Equip-Bid](#equip-bid)
     - [Wirecutter](#wirecutter)
+- [DEVELOPMENT](#development)
 - [SEE ALSO](#see-also)
   - [Sites](#sites-1)
 
@@ -34,6 +35,7 @@ aren't ready for release and which may not even compile.
 
 - [Amazon - Add to Goodreads widget](https://greasyfork.org/en/scripts/468321-amazon-add-to-goodreads-widget 'Homepage') - Places an "Add to Goodreads" widget on Amazon book pages
 - [Amazon - Goodreads metadata](https://greasyfork.org/en/scripts/468322-amazon-goodreads-metadata 'Homepage') - Shows the ratings from Goodreads on Amazon book pages
+- [Amazon - Hide Sponsored] - Hides sponsored items in Amazon search results
 
 ### Ancestry
 
@@ -50,6 +52,63 @@ aren't ready for release and which may not even compile.
 ### Wirecutter
 
 - [Wirecutter Anti-modal](https://greasyfork.org/en/scripts/468325-wirecutter-anti-modal 'Homepage') - Stop modals asking you to register before viewing articles
+
+### Microcenter
+
+- [Microcenter - Sort by stock] - Allows sorting search results by the number of items in stock
+
+# Development
+
+To work with these scripts locally:
+
+```sh
+git clone https://github.com/bricemciver/GreasemonkeyScripts.git
+cd GreasemonkeyScripts
+npm install
+```
+
+## Build
+
+To build all scripts for deployment:
+
+```sh
+npm run build
+```
+
+## Lint and Format
+
+To check code style and formatting:
+
+```sh
+npm run lint:check
+npm run format:check
+```
+
+To automatically fix lint and formatting issues:
+
+```sh
+npm run lint
+npm run format
+```
+
+## Folder Structure
+
+- `src/main/` – Main userscript source files
+- `src/scripts/` – Build and utility scripts
+- `dist/` – Compiled output (not tracked in git)
+
+## Requirements
+
+- Node.js (v18+ recommended)
+- npm
+
+## License
+
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
+
+## Contributing
+
+Pull requests and suggestions are welcome!
 
 # SEE ALSO
 
