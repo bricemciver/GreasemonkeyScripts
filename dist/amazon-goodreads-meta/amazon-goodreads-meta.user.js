@@ -133,7 +133,7 @@
             (_d = reviewElement.parentNode) == null ? void 0 : _d.insertBefore(container, reviewElement.nextSibling);
           }
         };
-        const processAsins = (asins) => __async(exports, null, function* () {
+        const processAsins = (asins) => __async(null, null, function* () {
           for (const asin of asins) {
             try {
               const goodreadsData = yield fetchGoodreadsDataForASIN(asin);
@@ -154,7 +154,7 @@
             }
           }
         });
-        AmazonGoodreadsMeta2.init = () => __async(exports, null, function* () {
+        AmazonGoodreadsMeta2.init = () => __async(null, null, function* () {
           const asins = extractASINs();
           if (!asins || asins.length == 0) return;
           try {

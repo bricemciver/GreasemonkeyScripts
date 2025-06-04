@@ -411,7 +411,7 @@
           });
           (_a = lotList.querySelector("hr")) == null ? void 0 : _a.insertAdjacentElement("afterend", unorderedList);
         };
-        const getDetails = (href) => __async(exports, null, function* () {
+        const getDetails = (href) => __async(null, null, function* () {
           let bidCount = "";
           let gallery = [];
           return new Promise((resolve, reject) => {
@@ -441,9 +441,9 @@
             });
           });
         });
-        EquipBidRestyle2.additionalDetails = () => __async(exports, null, function* () {
+        EquipBidRestyle2.additionalDetails = () => __async(null, null, function* () {
           const allItems = document.querySelectorAll(".lot-list > ul > li");
-          const promises = Array.from(allItems).map((listItem) => __async(exports, null, function* () {
+          const promises = Array.from(allItems).map((listItem) => __async(null, null, function* () {
             var _a;
             const detailAnchor = listItem.querySelector("a");
             if (!detailAnchor) return;

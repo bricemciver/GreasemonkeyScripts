@@ -48,7 +48,7 @@
           while (parent && !parent.hasAttribute("data-asin") && parent.parentElement) {
             parent = parent.parentElement;
           }
-          if (parent && parent.hasAttribute("data-asin")) {
+          if (parent == null ? void 0 : parent.hasAttribute("data-asin")) {
             parent.style.display = "none";
           }
         }

@@ -7,7 +7,7 @@
     "strict": true,
     "incremental": true,
     "moduleResolution": "node",
-    "outDir": "dist",
+    "outDir": "dist"
   },
   "include": ["src/main/**/*.ts", "src/scripts/*.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]

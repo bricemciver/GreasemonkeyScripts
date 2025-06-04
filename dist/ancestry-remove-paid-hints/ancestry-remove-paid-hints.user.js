@@ -182,7 +182,7 @@
           const observer = new MutationObserver(callback);
           observer.observe(document, config);
         };
-        AncestryRemovePaidHints2.main = () => __async(exports, null, function* () {
+        AncestryRemovePaidHints2.main = () => __async(null, null, function* () {
           const db = yield initDB();
           if (db instanceof IDBDatabase) {
             if (window.location.href.indexOf("offers/join") !== -1) {

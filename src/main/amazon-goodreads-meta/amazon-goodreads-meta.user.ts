@@ -1,7 +1,6 @@
 namespace AmazonGoodreadsMeta {
-
-  const asinRegex = /^[A-Z0-9]{10}$/
-  const goodreadsRegex = /"aggregateRating":({"@type":"AggregateRating","ratingValue":.*?,"ratingCount":.*?,"reviewCount":.*?})/
+  const asinRegex = /^[A-Z0-9]{10}$/;
+  const goodreadsRegex = /"aggregateRating":({"@type":"AggregateRating","ratingValue":.*?,"ratingCount":.*?,"reviewCount":.*?})/;
 
   interface GoodreadsData {
     rating: string;
@@ -14,7 +13,7 @@ namespace AmazonGoodreadsMeta {
   const extractASINs = () => {
     const asins: string[] = [];
     // Check if a multi-book page
-    for (const item of document.querySelectorAll<any>("bds-unified-book-faceout")) {
+    for (const item of document.querySelectorAll<any>('bds-unified-book-faceout')) {
       if (item.__asin && asinRegex.test(item.__asin)) {
         asins.push(item.__asin);
       }
@@ -30,14 +29,14 @@ namespace AmazonGoodreadsMeta {
     }
 
     return asins;
-  }
+  };
 
   const fetchGoodreadsDataForASIN = (asin: string) => {
     return GM.xmlHttpRequest({
       method: 'GET',
       url: `https://www.goodreads.com/book/isbn/${asin}`,
-    })
-  }
+    });
+  };
 
   // Insert Goodreads data into the Amazon page
   const insertGoodreadsData = (asin: string, goodreadsData: GoodreadsData) => {
@@ -72,10 +71,10 @@ namespace AmazonGoodreadsMeta {
 
     // Find insertion point on Amazon page
     // Check if the page is a multi-book page
-    const currentBooks = document.querySelectorAll('bds-unified-book-faceout')
+    const currentBooks = document.querySelectorAll('bds-unified-book-faceout');
     for (const book of currentBooks) {
       // Book info is in the shadow root, so we need to access it
-      const bookInfoDiv = book.shadowRoot?.querySelector('div[data-csa-c-item-id]')
+      const bookInfoDiv = book.shadowRoot?.querySelector('div[data-csa-c-item-id]');
       if (bookInfoDiv) {
         const bookAsin = bookInfoDiv.getAttribute('data-csa-c-item-id');
         if (bookAsin && bookAsin === asin) {
@@ -89,25 +88,25 @@ namespace AmazonGoodreadsMeta {
       }
     }
     // insert as a single book
-    const reviewElement = document.getElementById('reviewFeatureGroup')
+    const reviewElement = document.getElementById('reviewFeatureGroup');
     if (reviewElement) {
-        reviewElement.parentNode?.insertBefore(container, reviewElement.nextSibling);
+      reviewElement.parentNode?.insertBefore(container, reviewElement.nextSibling);
     }
-  }
+  };
 
   const processAsins = async (asins: string[]) => {
     for (const asin of asins) {
       try {
         const goodreadsData = await fetchGoodreadsDataForASIN(asin);
         const url = goodreadsData.finalUrl;
-        const aggregateMatch = goodreadsRegex.exec(goodreadsData.responseText)
+        const aggregateMatch = goodreadsRegex.exec(goodreadsData.responseText);
         if (aggregateMatch && aggregateMatch.length > 1) {
           const aggregateData = JSON.parse(aggregateMatch[1]);
           const goodreadsData: GoodreadsData = {
             rating: aggregateData.ratingValue,
             ratingCount: aggregateData.ratingCount,
             reviewCount: aggregateData.reviewCount,
-            bookUrl: url
+            bookUrl: url,
           };
           insertGoodreadsData(asin, goodreadsData);
         }
@@ -115,7 +114,7 @@ namespace AmazonGoodreadsMeta {
         console.error('Error fetching Goodreads data:', error);
       }
     }
-  }
+  };
 
   // Main function to initialize the script
   export const init = async () => {
@@ -127,7 +126,7 @@ namespace AmazonGoodreadsMeta {
     } catch (error) {
       console.error('Error in Goodreads script:', error);
     }
-  }
+  };
 }
 
 AmazonGoodreadsMeta.init();

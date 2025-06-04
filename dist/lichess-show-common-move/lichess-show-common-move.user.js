@@ -3113,7 +3113,7 @@
             }
           }
         };
-        const getMoveList = (node, observer) => __async(exports, null, function* () {
+        const getMoveList = (node, observer) => __async(null, null, function* () {
           var _a, _b;
           const parentElement = node.parentElement;
           if (!parentElement) {
