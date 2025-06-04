@@ -35,7 +35,7 @@ async function generateUserScriptHeaders(globPattern: string, outputDir: string)
   for (const filePath of filePaths) {
     const parentDir = filePath.parent?.parentPath;
     if (!parentDir) {
-      console.error(`Error processing ${filePath}: parentDir not found`);
+      console.error(`Error processing ${filePath.fullpath()}: parentDir not found`);
       continue;
     }
     try {
@@ -56,7 +56,7 @@ async function generateUserScriptHeaders(globPattern: string, outputDir: string)
         fs.writeFileSync(outputFilePath, `${userScriptHeader}\n${existingContent}`);
       }
     } catch (e) {
-      console.error(`Error processing ${filePath}: ${e}`);
+      console.error(`Error processing ${filePath.fullpath()}: ${e}`);
       continue;
     }
   }

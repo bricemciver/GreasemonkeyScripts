@@ -1,112 +1,133 @@
 namespace AmazonGoodreadsMeta {
-  const asinRegex = /\/([A-Z0-9]{10})/;
 
-  const findASIN = (): string[] => {
-    const asinArray = [];
-    const array = asinRegex.exec(document.location.pathname);
-    const asin = array && array.length > 1 ? array[1] : '';
-    // eslint-disable-next-line no-console
-    console.log(`ASIN in pathname: ${asin}`);
-    // determine if book
-    const dp = document.getElementById('dp');
-    if (dp?.className.includes('book')) {
-      asinArray.push(asin);
-    } else {
-      // see if we are on a page with multiple books
-      const images = document.getElementsByTagName('img');
+  const asinRegex = /^[A-Z0-9]{10}$/
+  const goodreadsRegex = /"aggregateRating":({"@type":"AggregateRating","ratingValue":.*?,"ratingCount":.*?,"reviewCount":.*?})/
 
-      const coverImages = Array.from(images).filter(item => item.classList.contains('cover-image'));
-      coverImages.forEach(image => {
-        const parentElem = image.parentElement;
-        if (parentElem instanceof HTMLAnchorElement) {
-          const link = parentElem.href;
-          const ciArray = asinRegex.exec(link);
-          const ciAsin = ciArray && ciArray.length > 1 ? ciArray[1] : '';
-          // eslint-disable-next-line no-console
-          console.log(`ASIN on book image: ${ciAsin}`);
-          asinArray.push(ciAsin);
-        }
-      });
-    }
+  interface GoodreadsData {
+    rating: string;
+    ratingCount: string;
+    reviewCount: string;
+    bookUrl: string;
+  }
 
-    return asinArray;
-  };
-
-  const findInsertPoint = (): Element[] => {
-    // on book page
-    const insertPoint: Element[] = [];
-    const reviewElement = document.getElementById('averageCustomerReviews');
-    if (reviewElement) {
-      insertPoint.push(reviewElement);
-    } else {
-      // check for SHOP NOW button with review stars above. Return array
-      const reviewArray = document.getElementsByClassName('pf-image-w');
-      insertPoint.push(...Array.from(reviewArray));
-    }
-    return insertPoint;
-  };
-
-  const insertElement = (isbn: string, insertPoint: Element): void => {
-    GM.xmlHttpRequest({
-      method: 'GET',
-      url: `https://www.goodreads.com/book/isbn/${isbn}`,
-      onload(response) {
-        const node = new DOMParser().parseFromString(response.responseText, 'text/html');
-        // get styles we need
-        const head = document.getElementsByTagName('head')[0];
-        const styles = Array.from(node.getElementsByTagName('link')).filter(item => item.rel === 'stylesheet');
-        styles.forEach(item => {
-          // add goodreads to links
-          item.href = item.href.replace('amazon', 'goodreads');
-          head.appendChild(item);
-        });
-        const meta = node.getElementById('ReviewsSection');
-        if (meta) {
-          // find our div
-          const rating = meta.querySelector('div.RatingStatistics');
-          if (rating) {
-            // replace links
-            Array.from(rating.getElementsByTagName('a')).forEach(item => {
-              item.href = response.finalUrl + item.href.replace(item.baseURI, '');
-              return item;
-            });
-            // replace styles
-            Array.from(rating.getElementsByTagName('span')).forEach(item => {
-              item.classList.replace('RatingStar--medium', 'RatingStar--small');
-              item.classList.replace('RatingStars__medium', 'RatingStars__small');
-            });
-            Array.from(rating.getElementsByTagName('div'))
-              .filter(item => item.classList.contains('RatingStatistics__rating'))
-              .forEach(item => {
-                item.style.marginBottom = '-0.8rem';
-                item.style.fontSize = '2.2rem';
-              });
-            // create label div
-            const labelCol = document.createElement('div');
-            labelCol.classList.add('a-column', 'a-span12', 'a-spacing-top-small');
-            const labelRow = document.createElement('div');
-            labelRow.classList.add('a-row', 'a-spacing-small');
-            labelRow.textContent = 'Goodreads';
-            const lineBreak = document.createElement('br');
-            labelCol.appendChild(labelRow);
-            labelRow.appendChild(lineBreak);
-            labelRow.appendChild(rating);
-            insertPoint.appendChild(labelCol);
-          }
-        }
-      },
-    });
-  };
-
-  export const main = (): void => {
-    const ASIN = findASIN();
-    const insertPoint = findInsertPoint();
-    for (let i = 0; i < ASIN.length && i < insertPoint.length; i++) {
-      const insertPointElement = insertPoint[i].parentElement;
-      if (insertPointElement) {
-        insertElement(ASIN[i], insertPointElement);
+  // Extract ASIN from Amazon URL or page
+  const extractASINs = () => {
+    const asins: string[] = [];
+    // Check if a multi-book page
+    for (const item of document.querySelectorAll<any>("bds-unified-book-faceout")) {
+      if (item.__asin && asinRegex.test(item.__asin)) {
+        asins.push(item.__asin);
       }
     }
-  };
+
+    // Try to extract from page meta data
+    const asinMeta = document.querySelector<HTMLDivElement>('div[data-asin]');
+    if (asinMeta) {
+      const asin = asinMeta.getAttribute('data-asin');
+      if (asin && asinRegex.test(asin)) {
+        asins.push(asin);
+      }
+    }
+
+    return asins;
+  }
+
+  const fetchGoodreadsDataForASIN = (asin: string) => {
+    return GM.xmlHttpRequest({
+      method: 'GET',
+      url: `https://www.goodreads.com/book/isbn/${asin}`,
+    })
+  }
+
+  // Insert Goodreads data into the Amazon page
+  const insertGoodreadsData = (asin: string, goodreadsData: GoodreadsData) => {
+    // Create a styled container for Goodreads data
+    const container = document.createElement('div');
+    container.style.padding = '6px';
+    container.style.margin = '5px 0';
+    container.style.backgroundColor = '#f8f8f8';
+    container.style.border = '1px solid #ddd';
+    container.style.borderRadius = '3px';
+
+    // Create content
+    let content = `<div style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 2px;">
+          <span><img src="https://www.goodreads.com/favicon.ico" style="width: 16px; height: 16px; margin-right: 3px;" alt="Goodreads" />
+          <a href="${goodreadsData.bookUrl}" target="_blank" style="font-weight: bold;">Goodreads</a></span>`;
+
+    if (goodreadsData.rating) {
+      content += `<span style="color: #000">${goodreadsData.rating} stars</span>`;
+    }
+
+    if (goodreadsData.ratingCount) {
+      content += `<span style="white-space: nowrap;">${goodreadsData.ratingCount} ratings</span>`;
+    }
+
+    if (goodreadsData.reviewCount) {
+      content += `<span style="white-space: nowrap;">${goodreadsData.reviewCount} reviews</span>`;
+    }
+
+    content += `</div>`;
+
+    container.innerHTML = content;
+
+    // Find insertion point on Amazon page
+    // Check if the page is a multi-book page
+    const currentBooks = document.querySelectorAll('bds-unified-book-faceout')
+    for (const book of currentBooks) {
+      // Book info is in the shadow root, so we need to access it
+      const bookInfoDiv = book.shadowRoot?.querySelector('div[data-csa-c-item-id]')
+      if (bookInfoDiv) {
+        const bookAsin = bookInfoDiv.getAttribute('data-csa-c-item-id');
+        if (bookAsin && bookAsin === asin) {
+          // insert as a multi-book
+          const ratings = book.shadowRoot?.querySelector('div.star-rating');
+          if (ratings) {
+            ratings.parentNode?.insertBefore(container, ratings.nextSibling);
+            break;
+          }
+        }
+      }
+    }
+    // insert as a single book
+    const reviewElement = document.getElementById('reviewFeatureGroup')
+    if (reviewElement) {
+        reviewElement.parentNode?.insertBefore(container, reviewElement.nextSibling);
+    }
+  }
+
+  const processAsins = async (asins: string[]) => {
+    for (const asin of asins) {
+      try {
+        const goodreadsData = await fetchGoodreadsDataForASIN(asin);
+        const url = goodreadsData.finalUrl;
+        const aggregateMatch = goodreadsRegex.exec(goodreadsData.responseText)
+        if (aggregateMatch && aggregateMatch.length > 1) {
+          const aggregateData = JSON.parse(aggregateMatch[1]);
+          const goodreadsData: GoodreadsData = {
+            rating: aggregateData.ratingValue,
+            ratingCount: aggregateData.ratingCount,
+            reviewCount: aggregateData.reviewCount,
+            bookUrl: url
+          };
+          insertGoodreadsData(asin, goodreadsData);
+        }
+      } catch (error) {
+        console.error('Error fetching Goodreads data:', error);
+      }
+    }
+  }
+
+  // Main function to initialize the script
+  export const init = async () => {
+    const asins = extractASINs();
+    if (!asins || asins.length == 0) return;
+
+    try {
+      await processAsins(asins);
+    } catch (error) {
+      console.error('Error in Goodreads script:', error);
+    }
+  }
 }
-AmazonGoodreadsMeta.main();
+
+AmazonGoodreadsMeta.init();

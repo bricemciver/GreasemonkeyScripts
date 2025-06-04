@@ -2590,6 +2590,7 @@
                 tokens.push("{", safeComment(comment), "}");
               }
               frame.state = 1;
+            // fall through
             case 1: {
               const child = frame.sidelines.next();
               if (child.done) {
@@ -2702,11 +2703,13 @@
                 if (line.startsWith(BOM))
                   line = line.slice(BOM.length);
                 this.state = 1;
+              // fall through
               case 1:
                 if (isWhitespace(line) || isCommentLine(line))
                   return;
                 this.found = true;
                 this.state = 2;
+              // fall through
               case 2: {
                 if (isCommentLine(line))
                   return;
@@ -2858,6 +2861,7 @@
           case "classical":
           case "normal":
           case "fischerandom":
+          // Cute Chess
           case "fischerrandom":
           case "fischer random":
           case "wild/0":
