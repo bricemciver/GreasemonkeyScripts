@@ -58,13 +58,13 @@
             const indicator = document.createElement("li");
             indicator.setAttribute("data-target", `#${id}`);
             indicator.setAttribute("data-slide-to", index.toString());
-            if (index == 0) {
+            if (index === 0) {
               indicator.classList.add("active");
             }
             indicators.append(indicator);
             const item = document.createElement("div");
             item.classList.add("item");
-            if (index == 0) {
+            if (index === 0) {
               item.classList.add("active");
             }
             const img = document.createElement("img");
@@ -198,7 +198,9 @@
           close.style.outline = "0";
           close.style.transition = "background-color .02s ease-in-out, border-color .02s ease-in-out, color .02s ease-in-out";
           close.onclick = () => {
-            const modal = document.querySelector("dialog.shortcuts-dialog");
+            const modal = document.querySelector(
+              "dialog.shortcuts-dialog"
+            );
             modal == null ? void 0 : modal.close();
           };
           const times = document.createElement("span");
@@ -272,34 +274,42 @@
           ]);
           document.body.append(modal);
           document.addEventListener("keydown", (event) => {
-            if (event.key == "?") {
+            if (event.key === "?") {
               modal.open ? modal.close() : modal.showModal();
             }
-            if (event.key == "Escape" && modal.open) {
+            if (event.key === "Escape" && modal.open) {
               modal.close();
             }
           });
         };
         const scrollPictures = (direction) => {
-          let focusedEntry = document.querySelector(".lot-list .list-group li.list-group-item.focused");
+          let focusedEntry = document.querySelector(
+            ".lot-list .list-group li.list-group-item.focused"
+          );
           if (!focusedEntry) {
-            focusedEntry = document.querySelector(".lot-list .list-group li.list-group-item:nth-child(1)");
+            focusedEntry = document.querySelector(
+              ".lot-list .list-group li.list-group-item:nth-child(1)"
+            );
             if (!focusedEntry) {
               return;
             }
             focusedEntry.classList.add("focused");
             focusedEntry.scrollIntoView({ block: "center" });
           }
-          const link = direction == "right" ? focusedEntry.querySelector("a.right") : focusedEntry.querySelector("a.left");
+          const link = direction === "right" ? focusedEntry.querySelector("a.right") : focusedEntry.querySelector("a.left");
           link == null ? void 0 : link.click();
         };
         const addToWatchlist = () => {
-          const focusedEntry = document.querySelector(".lot-list .list-group li.list-group-item.focused");
+          const focusedEntry = document.querySelector(
+            ".lot-list .list-group li.list-group-item.focused"
+          );
           if (!focusedEntry) {
             console.log("No focused entry to add to watchlist");
             return;
           }
-          const watchlistButton = focusedEntry.querySelector("a.item-watch-up, a.item-watch-dn");
+          const watchlistButton = focusedEntry.querySelector(
+            "a.item-watch-up, a.item-watch-dn"
+          );
           if (!watchlistButton) {
             console.log("Unable to find a watchlist button for the focused entry");
             return;
@@ -307,9 +317,13 @@
           watchlistButton.click();
         };
         const selectItem = (direction) => {
-          let focusedEntry = document.querySelector(".lot-list .list-group li.list-group-item.focused");
+          let focusedEntry = document.querySelector(
+            ".lot-list .list-group li.list-group-item.focused"
+          );
           if (!focusedEntry) {
-            focusedEntry = document.querySelector(".lot-list .list-group li.list-group-item:nth-child(1)");
+            focusedEntry = document.querySelector(
+              ".lot-list .list-group li.list-group-item:nth-child(1)"
+            );
             if (!focusedEntry) {
               return;
             }
@@ -317,7 +331,7 @@
             focusedEntry.scrollIntoView({ block: "center" });
             return;
           }
-          const selectedItem = direction == "next" ? focusedEntry.nextElementSibling : focusedEntry.previousElementSibling;
+          const selectedItem = direction === "next" ? focusedEntry.nextElementSibling : focusedEntry.previousElementSibling;
           if (!selectedItem) {
             return;
           }
@@ -333,20 +347,26 @@
           rule.style.marginLeft = "auto";
         };
         const handleInnerRules = (innerRules, sheet, i, minRuleInserted) => {
+          let isRuleInserted = minRuleInserted;
           for (const innerRule of Array.from(innerRules)) {
             if (innerRule instanceof CSSStyleRule && innerRule.selectorText === ".container") {
-              if (!minRuleInserted) {
-                sheet.insertRule("@media (min-width: 576px) { .container { max-width:540px } }", i);
-                minRuleInserted = true;
+              if (!isRuleInserted) {
+                sheet.insertRule(
+                  "@media (min-width: 576px) { .container { max-width:540px } }",
+                  i
+                );
+                isRuleInserted = true;
               }
               innerRule.style.maxWidth = innerRule.style.width;
               innerRule.style.removeProperty("width");
             }
           }
-          return minRuleInserted;
+          return isRuleInserted;
         };
         const addAdditionalStyles = (sheet) => {
-          sheet.insertRule("@media (min-width: 1400px) { .container { max-width:1320px } }");
+          sheet.insertRule(
+            "@media (min-width: 1400px) { .container { max-width:1320px } }"
+          );
           sheet.insertRule(
             "dialog.ShortcutsHelp { width: 540px; border: 0; display: inline-flex; flex-direction: column; padding: 0; max-height: 80vh; max-width: 100%; outline: none; text-align: left; vertical-align: middle; background-color: #ffffff; border-radius: .8rem; box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.15), 0px 2px 8px rgba(0, 0, 0, 0.08); min-width: 400px; position: relative;}"
           );
@@ -365,7 +385,12 @@
                   modifyContainerRule(rule);
                 }
                 if (rule instanceof CSSMediaRule) {
-                  minRuleInserted = handleInnerRules(rule.cssRules, sheet, i, minRuleInserted);
+                  minRuleInserted = handleInnerRules(
+                    rule.cssRules,
+                    sheet,
+                    i,
+                    minRuleInserted
+                  );
                 }
               }
               if (minRuleInserted) {
@@ -373,28 +398,36 @@
               }
             } catch (e) {
               console.log("Security error");
-              continue;
             }
           }
         };
         EquipBidRestyle2.collectItems = () => {
-          var _a;
+          var _a, _b, _c;
           const lotList = document.querySelector("div.lot-list");
           if (!lotList) {
             console.warn("No lot list found");
             return;
           }
-          Array.from(lotList.querySelectorAll("div small a")).filter((item) => item.textContent == "Click for Details and More Images").forEach((item) => {
-            var _a2, _b;
-            return (_b = (_a2 = item.parentElement) == null ? void 0 : _a2.parentElement) == null ? void 0 : _b.remove();
-          });
-          Array.from(lotList.querySelectorAll(".lot-divider + div")).forEach((item) => item.remove());
-          Array.from(lotList.querySelectorAll(".lot-divider")).forEach((item) => item.remove());
+          for (const item of Array.from(
+            lotList.querySelectorAll("div small a")
+          ).filter(
+            (item2) => item2.textContent === "Click for Details and More Images"
+          )) {
+            (_b = (_a = item.parentElement) == null ? void 0 : _a.parentElement) == null ? void 0 : _b.remove();
+          }
+          for (const item of Array.from(
+            lotList.querySelectorAll(".lot-divider + div")
+          )) {
+            item.remove();
+          }
+          for (const item of Array.from(lotList.querySelectorAll(".lot-divider"))) {
+            item.remove();
+          }
           const allRows = lotList.querySelectorAll("hr ~ div");
           const unorderedList = document.createElement("ul");
           unorderedList.classList.add("list-group");
           let listItem = null;
-          allRows.forEach((row) => {
+          for (const row of allRows) {
             if (row.querySelector("h4[data-auction-title]")) {
               listItem = document.createElement("li");
               listItem.classList.add("list-group-item");
@@ -408,38 +441,44 @@
               }
               listItem = null;
             }
-          });
-          (_a = lotList.querySelector("hr")) == null ? void 0 : _a.insertAdjacentElement("afterend", unorderedList);
+          }
+          (_c = lotList.querySelector("hr")) == null ? void 0 : _c.insertAdjacentElement("afterend", unorderedList);
         };
         const getDetails = (href) => __async(null, null, function* () {
           let bidCount = "";
           let gallery = [];
-          return new Promise((resolve, reject) => {
-            GM_xmlhttpRequest({
-              method: "GET",
-              url: href,
-              onload: function(response) {
-                const datasource = RegExp(/dataSource: (\[\{.*\}\])/).exec(response.responseText);
-                if (datasource) {
-                  const jsonDatasource = JSON.parse(datasource[1]);
-                  gallery = jsonDatasource.map((obj) => ({
-                    image: obj.image
-                  }));
-                }
-                const bidCountMatch = RegExp(/lot_bid_history_count.*>(.*)<\/span>/).exec(response.responseText);
-                if (bidCountMatch) {
-                  bidCount = bidCountMatch[1];
-                }
-                resolve({
-                  gallery,
-                  bidCount
-                });
-              },
-              ontimeout: () => reject(new Error("Timeout")),
-              onerror: (error) => reject(new Error(error.responseText)),
-              onabort: () => reject(new Error("AbortError"))
-            });
-          });
+          return new Promise(
+            (resolve, reject) => {
+              GM_xmlhttpRequest({
+                method: "GET",
+                url: href,
+                onload: (response) => {
+                  const datasource = RegExp(/dataSource: (\[\{.*\}\])/).exec(
+                    response.responseText
+                  );
+                  if (datasource) {
+                    const jsonDatasource = JSON.parse(datasource[1]);
+                    gallery = jsonDatasource.map((obj) => ({
+                      image: obj.image
+                    }));
+                  }
+                  const bidCountMatch = RegExp(
+                    /lot_bid_history_count.*>(.*)<\/span>/
+                  ).exec(response.responseText);
+                  if (bidCountMatch) {
+                    bidCount = bidCountMatch[1];
+                  }
+                  resolve({
+                    gallery,
+                    bidCount
+                  });
+                },
+                ontimeout: () => reject(new Error("Timeout")),
+                onerror: (error) => reject(new Error(error.responseText)),
+                onabort: () => reject(new Error("AbortError"))
+              });
+            }
+          );
         });
         EquipBidRestyle2.additionalDetails = () => __async(null, null, function* () {
           const allItems = document.querySelectorAll(".lot-list > ul > li");
@@ -456,39 +495,49 @@
               detailsObj.gallery.map((obj) => obj.image)
             );
             img == null ? void 0 : img.replaceWith(carousel);
-            const highBidder = Array.from(listItem.querySelectorAll("small")).filter((item) => {
-              var _a2;
-              return (_a2 = item.textContent) == null ? void 0 : _a2.includes("High Bidder");
-            })[0];
+            const highBidder = Array.from(listItem.querySelectorAll("small")).filter(
+              (item) => {
+                var _a2;
+                return (_a2 = item.textContent) == null ? void 0 : _a2.includes("High Bidder");
+              }
+            )[0];
             if (highBidder) {
-              highBidder.innerHTML = highBidder.innerHTML.replace("High Bidder", `${detailsObj.bidCount} - High Bidder`);
+              highBidder.innerHTML = highBidder.innerHTML.replace(
+                "High Bidder",
+                `${detailsObj.bidCount} - High Bidder`
+              );
             }
           }));
           yield Promise.all(promises);
         });
+        EquipBidRestyle2.defaultSort = () => {
+          if (window.location.search === "" && window.location.hash === "" && window.location.pathname.includes("/auction/")) {
+            window.location.href += "?page=1&item_status=open&lot_sort_field=title&search=Search";
+          }
+        };
         EquipBidRestyle2.addListeners = () => {
           const allListeners = (event) => {
-            if (event.key == "ArrowRight") {
+            if (event.key === "ArrowRight") {
               scrollPictures("right");
             }
-            if (event.key == "ArrowLeft") {
+            if (event.key === "ArrowLeft") {
               scrollPictures("left");
             }
-            if (event.key == "j") {
+            if (event.key === "j") {
               selectItem("next");
             }
-            if (event.key == "k") {
+            if (event.key === "k") {
               selectItem("previous");
             }
-            if (event.key == "n") {
+            if (event.key === "n") {
               const nextButton = document.querySelector("li.next > a");
               nextButton == null ? void 0 : nextButton.click();
             }
-            if (event.key == "p") {
+            if (event.key === "p") {
               const prevButton = document.querySelector("li.previous > a");
               prevButton == null ? void 0 : prevButton.click();
             }
-            if (event.key == "w") {
+            if (event.key === "w") {
               addToWatchlist();
             }
           };
@@ -496,6 +545,7 @@
           document.addEventListener("keydown", allListeners);
         };
       })(EquipBidRestyle || (EquipBidRestyle = {}));
+      EquipBidRestyle.defaultSort();
       EquipBidRestyle.updateStyles();
       EquipBidRestyle.createShortcutsModal();
       EquipBidRestyle.collectItems();
