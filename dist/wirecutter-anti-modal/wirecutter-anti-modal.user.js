@@ -25,13 +25,13 @@
     const elementToObserve = document.querySelector("body");
     const removePaywallModal = (mutation) => {
       if (!modalRemoved && mutation.type === "childList") {
-        mutation.addedNodes.forEach((item) => {
+        for (const item of mutation.addedNodes) {
           const element = item;
           if (element.id === "modal-portal-regiwall") {
             element.remove();
             modalRemoved = true;
           }
-        });
+        }
       }
     };
     const removeScrollLock = (mutation) => {
@@ -45,13 +45,13 @@
     };
     WirecutterAntiModal2.startObserver = () => {
       const callback = (mutationsList, observer) => {
-        mutationsList.forEach((mutation) => {
+        for (const mutation of mutationsList) {
           removePaywallModal(mutation);
           removeScrollLock(mutation);
           if (modalRemoved && overflowFixed) {
             observer.disconnect();
           }
-        });
+        }
       };
       if (elementToObserve) {
         new MutationObserver(callback).observe(elementToObserve, config);

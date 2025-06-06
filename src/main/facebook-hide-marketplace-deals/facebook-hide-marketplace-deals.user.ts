@@ -20,7 +20,7 @@ namespace FacebookHideMarketplaceDeals {
     for (const mutation of mutationsList) {
       if (mutation.type === 'childList' && mutation.addedNodes.length) {
         for (const node of mutation.addedNodes) {
-          removeTracking(node)
+          removeTracking(node);
         }
       }
       if (mutation.type === 'attributes' && mutation.attributeName === 'href' && mutation.target.nodeType === Node.ELEMENT_NODE) {

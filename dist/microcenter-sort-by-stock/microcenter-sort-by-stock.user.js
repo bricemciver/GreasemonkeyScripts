@@ -27,9 +27,9 @@
         stockSortLink.classList.add("dropdown-item");
         if (firstEntry == null ? void 0 : firstEntry.href.includes("sortby")) {
           const sortByIndex = firstEntry.href.indexOf("sortby");
-          stockSortLink.href = firstEntry.href.substring(0, sortByIndex) + "sortby=stock";
+          stockSortLink.href = `${firstEntry.href.substring(0, sortByIndex)}sortby=stock`;
         } else {
-          stockSortLink.href = (firstEntry == null ? void 0 : firstEntry.href) + "&sortby=stock";
+          stockSortLink.href = `${firstEntry == null ? void 0 : firstEntry.href}&sortby=stock`;
         }
         stockSortLink.textContent = "Stock";
         stockSort.appendChild(stockSortLink);

@@ -92,14 +92,14 @@
       boardHeader.textContent = title;
       wordList.appendChild(boardHeader);
       const list = document.createElement("ul");
-      board.forEach((word) => {
+      for (const word of board) {
         const listItem = document.createElement("li");
         listItem.textContent = word;
         if (wordBankWords.some((item) => item === word)) {
           listItem.attributeStyleMap.set("font-weight", 700);
         }
         list.appendChild(listItem);
-      });
+      }
       wordList.appendChild(list);
     };
     const showWordlist = (...boards) => {
@@ -206,24 +206,24 @@
       const board = document.getElementById(`board-${boardNum}`);
       if (board) {
         const rows = board.querySelectorAll("div[class~='board-row']");
-        rows.forEach((row) => {
+        for (const row of rows) {
           const cells = row.querySelectorAll("div[class~='letter']");
           let index = 0;
-          cells.forEach((cell) => {
+          for (const cell of cells) {
             const processedCell = processCell(index, cell);
             if (processedCell !== null) {
               boardState.push(processedCell);
             }
             index++;
-          });
-        });
+          }
+        }
       }
       return boardState;
     };
     OctordleMildCheat2.addListeners = () => {
       document.addEventListener(
         "keydown",
-        function(event) {
+        (event) => {
           if (event.defaultPrevented) {
             return;
           }
@@ -249,7 +249,7 @@
     const processGameBoard = (boardState) => {
       let tempWordList = [...wordBankWords, ...allowedWords];
       sortProcessedCells(boardState);
-      boardState.forEach((item) => {
+      for (const item of boardState) {
         if (item.status === 0 /* correct */) {
           tempWordList = tempWordList.filter((word) => word.charAt(item.position).toUpperCase() === item.letter.toUpperCase());
         } else if (item.status === 1 /* diff */) {
@@ -261,7 +261,7 @@
         } else if (item.status === 2 /* none */ && boardState.some(({ letter, status }) => (status === 0 /* correct */ || status === 1 /* diff */) && letter === item.letter)) {
           tempWordList = tempWordList.filter((word) => word.indexOf(item.letter.toUpperCase()) === word.lastIndexOf(item.letter.toUpperCase()));
         }
-      });
+      }
       return tempWordList;
     };
   })(OctordleMildCheat || (OctordleMildCheat = {}));

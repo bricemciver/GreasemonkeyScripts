@@ -132,11 +132,11 @@
       }
       if (wordList) {
         wordList.innerHTML = "";
-        curWords.forEach((word) => {
+        for (const word of curWords) {
           const listItem = document.createElement("li");
           listItem.textContent = word;
           wordList == null ? void 0 : wordList.appendChild(listItem);
-        });
+        }
       }
       (_e = document.querySelector("dialog#dialog")) == null ? void 0 : _e.showModal();
     };
@@ -151,7 +151,7 @@
         if (letter && letter !== "empty") {
           return {
             letter,
-            position: parseInt(position.charAt(0), 10),
+            position: Number.parseInt(position.charAt(0), 10),
             status: strToState[status]
           };
         }
@@ -163,12 +163,12 @@
       const board = document.querySelector("div[class^='Board-module_board__']");
       if (board) {
         const tiles = board.querySelectorAll("div[class^='Tile-module_tile__']");
-        tiles.forEach((tile) => {
+        for (const tile of tiles) {
           const processedCell = processCell(tile);
           if (processedCell !== null) {
             boardState.push(processedCell);
           }
-        });
+        }
       }
       return boardState;
     };
@@ -178,7 +178,7 @@
     const processGameBoard = (boardState) => {
       let tempWordList = [...fullWordList];
       sortProcessedCells(boardState);
-      boardState.forEach((item) => {
+      for (const item of boardState) {
         if (item.status === 0 /* correct */) {
           tempWordList = tempWordList.filter((word) => word.charAt(item.position - 1).toLowerCase() === item.letter.toLowerCase());
         } else if (item.status === 1 /* diff */) {
@@ -190,7 +190,7 @@
         )) {
           tempWordList = tempWordList.filter((word) => word.indexOf(item.letter.toLowerCase()) === -1);
         }
-      });
+      }
       return tempWordList;
     };
     WordleMildCheat2.findAllowedWords = () => {

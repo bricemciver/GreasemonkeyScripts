@@ -19,24 +19,30 @@
   ((ShawneeMissionPostPaywallRemover2) => {
     const targetNode = document.documentElement;
     const config = { childList: true, subtree: true, attributes: true };
-    const callback = function(mutationsList) {
+    const callback = (mutationsList) => {
       for (const mutation of mutationsList) {
         if (mutation.type === "childList") {
-          for (const node of Array.from(mutation.addedNodes)) {
-            if (node.nodeType === Node.ELEMENT_NODE) {
-              const element = node;
-              if (element.classList.contains("wkwp-paywall")) {
-                element.setAttribute("style", "display: none");
-              }
-            }
-          }
+          hidePaywallElement(mutation);
         }
         if (mutation.type === "attributes") {
-          if (mutation.target.nodeType === Node.ELEMENT_NODE) {
-            const element = mutation.target;
-            if (element.classList.contains("wkwp-blur")) {
-              element.classList.remove("wkwp-blur");
-            }
+          unblurElement(mutation);
+        }
+      }
+    };
+    const unblurElement = (mutation) => {
+      if (mutation.target.nodeType === Node.ELEMENT_NODE) {
+        const element = mutation.target;
+        if (element.classList.contains("wkwp-blur")) {
+          element.classList.remove("wkwp-blur");
+        }
+      }
+    };
+    const hidePaywallElement = (mutation) => {
+      for (const node of Array.from(mutation.addedNodes)) {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const element = node;
+          if (element.classList.contains("wkwp-paywall")) {
+            element.setAttribute("style", "display: none");
           }
         }
       }

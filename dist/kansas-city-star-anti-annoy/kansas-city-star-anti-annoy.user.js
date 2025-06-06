@@ -20,13 +20,13 @@
     KansasCityStarAntiAnnoy2.hidePaywall = () => {
       const observer = new MutationObserver((records) => {
         for (const record of records) {
-          record.addedNodes.forEach((addedNode) => {
+          for (const addedNode of record.addedNodes) {
             if (addedNode.nodeName === "MCC-PAYWALL") {
               if (addedNode.parentNode) {
                 addedNode.parentNode.removeChild(addedNode);
               }
             }
-          });
+          }
         }
       });
       observer.observe(document.body, {

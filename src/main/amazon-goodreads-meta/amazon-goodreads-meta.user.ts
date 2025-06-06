@@ -14,7 +14,7 @@ namespace AmazonGoodreadsMeta {
     const asins: string[] = [];
     // Check if a multi-book page
     for (const item of document.querySelectorAll<HTMLElement>('bds-unified-book-faceout')) {
-      const asin = item.getAttribute("data-csa-c-item-id");
+      const asin = item.getAttribute('data-csa-c-item-id');
       if (asin && asinRegex.test(asin)) {
         asins.push(asin);
       }
@@ -66,7 +66,7 @@ namespace AmazonGoodreadsMeta {
       content += `<span style="white-space: nowrap;">${goodreadsData.reviewCount} reviews</span>`;
     }
 
-    content += "</div>";
+    content += '</div>';
 
     container.innerHTML = content;
 

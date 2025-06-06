@@ -3088,13 +3088,13 @@
             const parsedPgn = pgn_exports.parsePgn(pgnString);
             const game = parsedPgn[0];
             const pos = Chess.default();
-            Array.from(game.moves.mainline()).forEach((move) => {
+            for (const move of Array.from(game.moves.mainline())) {
               const parsed = san_exports.parseSan(pos, move.san);
               if (!parsed) {
                 throw new Error(`Invalid move: ${move.san}`);
               }
               pos.play(parsed);
-            });
+            }
             return fen_exports.makeFen(pos.toSetup());
           } catch (error) {
             throw new Error(`Error processing PGN: ${error}`);
@@ -3109,7 +3109,7 @@
           } else {
             observer.disconnect();
             if (moveBlock) {
-              moveBlock.innerHTML = `<div>No more known moves</div>`;
+              moveBlock.innerHTML = "<div>No more known moves</div>";
             }
           }
         };
@@ -3122,9 +3122,9 @@
           }
           let currentMoves = "";
           for (const item of Array.from(parentElement.children)) {
-            if (item.nodeName == "I5Z") {
+            if (item.nodeName === "I5Z") {
               currentMoves += `${item.textContent}.`;
-            } else if (item.nodeName == "KWDB") {
+            } else if (item.nodeName === "KWDB") {
               currentMoves += `${item.textContent} `;
             }
           }
@@ -3181,14 +3181,15 @@
         const findNode = (records, observer) => {
           for (const record of records) {
             for (const item of Array.from(record.addedNodes)) {
-              if (item.nodeType == Node.ELEMENT_NODE) {
+              if (item.nodeType === Node.ELEMENT_NODE) {
                 const retNode = getMovesDiv(item);
                 if (retNode) {
                   observer.disconnect();
                   const movesObserver = new MutationObserver(getMoves);
                   movesObserver.observe(retNode, observerOptions);
                   break;
-                } else if (observerCnt > 75) {
+                }
+                if (observerCnt > 75) {
                   observer.disconnect();
                   break;
                 }

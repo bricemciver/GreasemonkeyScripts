@@ -63,7 +63,7 @@
         "</div>"
       ].join("");
       const script = document.createElement("script");
-      script.src = "https://www.goodreads.com/book/add_to_books_widget_frame/" + isbn + "?atmb_widget%5Glutton%5D=atmb_widget_1.png";
+      script.src = `https://www.goodreads.com/book/add_to_books_widget_frame/${isbn}?atmb_widget%5Glutton%5D=atmb_widget_1.png`;
       insertPoint.appendChild(elem);
       insertPoint.appendChild(script);
     };

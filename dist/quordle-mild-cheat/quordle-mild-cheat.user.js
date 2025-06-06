@@ -75,14 +75,14 @@
       boardHeader.textContent = title;
       wordList.appendChild(boardHeader);
       const list = document.createElement("ul");
-      board.forEach((word) => {
+      for (const word of board) {
         const listItem = document.createElement("li");
         listItem.textContent = word;
         if (wordBankWords.some((item) => item === word)) {
           listItem.classList.add("font-bold");
         }
         list.appendChild(listItem);
-      });
+      }
       wordList.appendChild(list);
     };
     const showWordlist = (...boards) => {
@@ -161,7 +161,7 @@
     QuordleMildCheat2.addListeners = () => {
       document.addEventListener(
         "keydown",
-        function(event) {
+        (event) => {
           if (event.defaultPrevented) {
             return;
           }
@@ -188,7 +188,7 @@
         const match = RegExp(cellRegEx).exec(label);
         if (match && match.length > 3) {
           const letter = match[1];
-          const position = parseInt(match[2], 10);
+          const position = Number.parseInt(match[2], 10);
           const status = match[3];
           return {
             letter,
@@ -209,15 +209,15 @@
       const board = document.querySelector(`div[role="table"][aria-label="Game Board ${boardNum}"]`);
       if (board) {
         const rows = board.querySelectorAll('div[role="row"]');
-        rows.forEach((row) => {
+        for (const row of rows) {
           const cells = row.querySelectorAll('div[role="cell"]');
-          cells.forEach((cell) => {
+          for (const cell of cells) {
             const processedCell = processCell(cell);
             if (processedCell !== null) {
               boardState.push(processedCell);
             }
-          });
-        });
+          }
+        }
       }
       return boardState;
     };
@@ -232,7 +232,7 @@
     const processGameBoard = (boardState) => {
       let tempWordList = [...wordBankWords, ...allowedWords];
       sortProcessedCells(boardState);
-      boardState.forEach((item) => {
+      for (const item of boardState) {
         if (item.status === "correct") {
           tempWordList = tempWordList.filter((word) => word.charAt(item.position - 1).toUpperCase() === item.letter.toUpperCase());
         } else if (item.status === "diff") {
@@ -244,7 +244,7 @@
         } else if (item.status === "none" && boardState.some(({ letter, status }) => (status === "correct" || status === "diff") && letter === item.letter)) {
           tempWordList = tempWordList.filter((word) => word.indexOf(item.letter.toUpperCase()) === word.lastIndexOf(item.letter.toUpperCase()));
         }
-      });
+      }
       return tempWordList;
     };
   })(QuordleMildCheat || (QuordleMildCheat = {}));

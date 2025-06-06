@@ -40,26 +40,31 @@
         if (pos < 0) {
           pos = headTags.length - 1;
         }
-        headTags[pos].className = headTags[pos].className + " selected";
+        headTags[pos].className = `${headTags[pos].className} selected`;
         headTags[pos].scrollIntoView();
       }
     };
     KinjaDealsKeyboardNavigation2.removeCruft = () => {
-      document.querySelectorAll(".js_movable_ad_slot").forEach((element) => element.remove());
-      document.querySelectorAll(".connatix-container").forEach((element) => element.remove());
-      Array.from(document.getElementsByTagName("span")).filter((item) => item.textContent === "G/O Media may get a commission").forEach((element) => {
-        var _a;
-        return (_a = element.closest("aside")) == null ? void 0 : _a.remove();
-      });
-      document.querySelectorAll("#sidebar_wrapper").forEach((element) => {
-        var _a;
-        return (_a = element.closest("aside")) == null ? void 0 : _a.remove();
-      });
+      var _a, _b;
+      for (const element of document.querySelectorAll(".js_movable_ad_slot")) {
+        element.remove();
+      }
+      for (const element of document.querySelectorAll(".connatix-container")) {
+        element.remove();
+      }
+      for (const element of Array.from(document.getElementsByTagName("span")).filter(
+        (item) => item.textContent === "G/O Media may get a commission"
+      )) {
+        (_a = element.closest("aside")) == null ? void 0 : _a.remove();
+      }
+      for (const element of document.querySelectorAll("#sidebar_wrapper")) {
+        (_b = element.closest("aside")) == null ? void 0 : _b.remove();
+      }
     };
     const createEntries = (containerDiv) => {
+      var _a;
       let newElement = null;
-      Array.from(containerDiv.children).forEach((element) => {
-        var _a;
+      for (const element of Array.from(containerDiv.children)) {
         if (element.tagName === "H2" && ((_a = element.textContent) == null ? void 0 : _a.length) && element.textContent.length > 0) {
           newElement = document.createElement("div");
           newElement.className = "inlineFrame";
@@ -68,7 +73,7 @@
         } else if (newElement) {
           newElement.append(element);
         }
-      });
+      }
     };
     const addListeners = (containerDiv) => {
       headTags.push(containerDiv);

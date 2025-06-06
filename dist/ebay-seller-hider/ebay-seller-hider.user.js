@@ -25,8 +25,8 @@
       const itemRegExp = RegExp(/\((.*)\) (.*)%/).exec(seller.innerText);
       if (itemRegExp) {
         const [, reviews, feedback] = itemRegExp;
-        const reviewsNum = parseInt(reviews.replace(",", ""), 10);
-        const feedbackNum = parseFloat(feedback);
+        const reviewsNum = Number.parseInt(reviews.replace(",", ""), 10);
+        const feedbackNum = Number.parseFloat(feedback);
         let parent = seller.parentElement;
         while (parent && parent.tagName !== "LI") {
           parent = parent.parentElement;
@@ -133,9 +133,9 @@
     EbaySellerHider2.getPresets = () => {
       var _a, _b;
       filterReviews = localStorage.getItem("filterReviews") !== "false";
-      reviewMin = parseInt((_a = localStorage.getItem("reviewMin")) != null ? _a : "10", 10);
+      reviewMin = Number.parseInt((_a = localStorage.getItem("reviewMin")) != null ? _a : "10", 10);
       filterFeedback = localStorage.getItem("filterFeedback") !== "false";
-      feedbackMin = parseFloat((_b = localStorage.getItem("feedbackMin")) != null ? _b : "95.0");
+      feedbackMin = Number.parseFloat((_b = localStorage.getItem("feedbackMin")) != null ? _b : "95.0");
       hideSponsored = localStorage.getItem("hideSponsored") !== "false";
     };
     EbaySellerHider2.addFilter = () => {
@@ -157,7 +157,7 @@
     };
     EbaySellerHider2.findSponsoredClass = () => {
       var _a;
-      const styleBlock = Array.from(document.head.getElementsByTagName("style")).find((item) => item.type === "text/css");
+      const styleBlock = Array.from(document.head.getElementsByTagName("style")).find((item) => item.sheet !== null);
       if (styleBlock) {
         const cssRuleList = (_a = styleBlock.sheet) == null ? void 0 : _a.cssRules;
         if (cssRuleList) {

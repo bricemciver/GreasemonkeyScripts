@@ -73,8 +73,9 @@
         const extractASINs = () => {
           const asins = [];
           for (const item of document.querySelectorAll("bds-unified-book-faceout")) {
-            if (item.__asin && asinRegex.test(item.__asin)) {
-              asins.push(item.__asin);
+            const asin = item.getAttribute("data-csa-c-item-id");
+            if (asin && asinRegex.test(asin)) {
+              asins.push(asin);
             }
           }
           const asinMeta = document.querySelector("div[data-asin]");
@@ -112,7 +113,7 @@
           if (goodreadsData.reviewCount) {
             content += `<span style="white-space: nowrap;">${goodreadsData.reviewCount} reviews</span>`;
           }
-          content += `</div>`;
+          content += "</div>";
           container.innerHTML = content;
           const currentBooks = document.querySelectorAll("bds-unified-book-faceout");
           for (const book of currentBooks) {
@@ -156,7 +157,7 @@
         });
         AmazonGoodreadsMeta2.init = () => __async(null, null, function* () {
           const asins = extractASINs();
-          if (!asins || asins.length == 0) return;
+          if (!asins || asins.length === 0) return;
           try {
             yield processAsins(asins);
           } catch (error) {
