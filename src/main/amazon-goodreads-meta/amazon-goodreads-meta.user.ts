@@ -13,9 +13,10 @@ namespace AmazonGoodreadsMeta {
   const extractASINs = () => {
     const asins: string[] = [];
     // Check if a multi-book page
-    for (const item of document.querySelectorAll<any>('bds-unified-book-faceout')) {
-      if (item.__asin && asinRegex.test(item.__asin)) {
-        asins.push(item.__asin);
+    for (const item of document.querySelectorAll<HTMLElement>('bds-unified-book-faceout')) {
+      const asin = item.getAttribute("data-csa-c-item-id");
+      if (asin && asinRegex.test(asin)) {
+        asins.push(asin);
       }
     }
 
@@ -65,7 +66,7 @@ namespace AmazonGoodreadsMeta {
       content += `<span style="white-space: nowrap;">${goodreadsData.reviewCount} reviews</span>`;
     }
 
-    content += `</div>`;
+    content += "</div>";
 
     container.innerHTML = content;
 
@@ -119,7 +120,7 @@ namespace AmazonGoodreadsMeta {
   // Main function to initialize the script
   export const init = async () => {
     const asins = extractASINs();
-    if (!asins || asins.length == 0) return;
+    if (!asins || asins.length === 0) return;
 
     try {
       await processAsins(asins);

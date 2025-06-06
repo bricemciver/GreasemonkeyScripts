@@ -19,7 +19,9 @@ namespace FacebookHideMarketplaceDeals {
   const callback: MutationCallback = mutationsList => {
     for (const mutation of mutationsList) {
       if (mutation.type === 'childList' && mutation.addedNodes.length) {
-        mutation.addedNodes.forEach(node => removeTracking(node));
+        for (const node of mutation.addedNodes) {
+          removeTracking(node)
+        }
       }
       if (mutation.type === 'attributes' && mutation.attributeName === 'href' && mutation.target.nodeType === Node.ELEMENT_NODE) {
         const link = mutation.target as HTMLAnchorElement;
