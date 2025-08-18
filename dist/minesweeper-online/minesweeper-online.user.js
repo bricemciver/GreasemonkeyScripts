@@ -203,16 +203,16 @@
       }
     }
     const classToValue = {
-      "hdd_flag": 9,
-      "hdd_type0": 0,
-      "hdd_type1": 1,
-      "hdd_type2": 2,
-      "hdd_type3": 3,
-      "hdd_type4": 4,
-      "hdd_type5": 5,
-      "hdd_type6": 6,
-      "hdd_type7": 7,
-      "hdd_type8": 8
+      hdd_flag: 9,
+      hdd_type0: 0,
+      hdd_type1: 1,
+      hdd_type2: 2,
+      hdd_type3: 3,
+      hdd_type4: 4,
+      hdd_type5: 5,
+      hdd_type6: 6,
+      hdd_type7: 7,
+      hdd_type8: 8
     };
     const processChange = (element) => {
       const xString = element.getAttribute("data-x");

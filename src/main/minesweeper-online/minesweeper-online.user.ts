@@ -1,6 +1,5 @@
 namespace MinesweeperOnline {
-
-  type Cell = -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+  type Cell = -1 | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
   type Grid = Cell[][];
 
   interface Position {
@@ -41,8 +40,7 @@ namespace MinesweeperOnline {
           const newY = y + dy;
           const newX = x + dx;
 
-          if (newY >= 0 && newY < this.rows &&
-            newX >= 0 && newX < this.cols) {
+          if (newY >= 0 && newY < this.rows && newX >= 0 && newX < this.cols) {
             adjacent.push({ x: newX, y: newY });
           }
         }
@@ -56,7 +54,10 @@ namespace MinesweeperOnline {
      * @param y - vertical position (row)
      * @param x - horizontal position (column)
      */
-    private analyzeAdjacent(y: number, x: number): {
+    private analyzeAdjacent(
+      y: number,
+      x: number,
+    ): {
       bombs: number;
       unknowns: Position[];
       clears: number;
@@ -149,7 +150,7 @@ namespace MinesweeperOnline {
                 pos: { x, y },
                 value: cell,
                 unknowns,
-                remainingBombs
+                remainingBombs,
               });
             }
           }
@@ -259,28 +260,28 @@ namespace MinesweeperOnline {
         grid: this.grid,
         newBombs: allNewBombs,
         newClears: allNewClears,
-        changed: totalChanged
+        changed: totalChanged,
       };
     }
   }
 
   const classToValue: Record<string, Cell> = {
-    "hdd_flag": 9,
-    "hdd_type0": 0,
-    "hdd_type1": 1,
-    "hdd_type2": 2,
-    "hdd_type3": 3,
-    "hdd_type4": 4,
-    "hdd_type5": 5,
-    "hdd_type6": 6,
-    "hdd_type7": 7,
-    "hdd_type8": 8,
+    hdd_flag: 9,
+    hdd_type0: 0,
+    hdd_type1: 1,
+    hdd_type2: 2,
+    hdd_type3: 3,
+    hdd_type4: 4,
+    hdd_type5: 5,
+    hdd_type6: 6,
+    hdd_type7: 7,
+    hdd_type8: 8,
   };
 
   const processChange = (element: Element) => {
     // example data
-    const xString = element.getAttribute("data-x");
-    const yString = element.getAttribute("data-y");
+    const xString = element.getAttribute('data-x');
+    const yString = element.getAttribute('data-y');
     let value: Cell = -1;
     for (const [cls, val] of Object.entries(classToValue)) {
       if (element.classList.contains(cls)) {
@@ -294,12 +295,12 @@ namespace MinesweeperOnline {
       return { x, y, value };
     }
     return null;
-  }
+  };
 
   let detectionTimeout: number | undefined;
   const DEBOUNCE_MS = 500;
 
-  const OVERLAY_ID = "minesweeper-solver-overlay";
+  const OVERLAY_ID = 'minesweeper-solver-overlay';
 
   function createOverlayFragment(knownMines: Position[], knownSafe: Position[]) {
     const fragment = document.createDocumentFragment();
@@ -310,31 +311,31 @@ namespace MinesweeperOnline {
       if (!cell) return null;
 
       // Make sure it hasn't be revealed already
-      if (!cell.classList.contains("hdd_closed")) {
+      if (!cell.classList.contains('hdd_closed')) {
         return null;
       }
 
       // Position relative to the board container
-      const highlight = document.createElement("div");
-      highlight.style.position = "absolute";
+      const highlight = document.createElement('div');
+      highlight.style.position = 'absolute';
       highlight.style.left = `${cell.offsetLeft}px`;
       highlight.style.top = `${cell.offsetTop}px`;
       highlight.style.width = `${cell.offsetWidth}px`;
       highlight.style.height = `${cell.offsetHeight}px`;
-      highlight.style.pointerEvents = "none";
-      highlight.style.boxSizing = "border-box";
+      highlight.style.pointerEvents = 'none';
+      highlight.style.boxSizing = 'border-box';
       highlight.style.border = `2px solid ${color}`;
-      highlight.style.borderRadius = "3px";
-      highlight.style.zIndex = "1";
+      highlight.style.borderRadius = '3px';
+      highlight.style.zIndex = '1';
       return highlight;
     }
 
     for (const mine of knownMines) {
-      const div = createHighlightDiv(mine, "red");
+      const div = createHighlightDiv(mine, 'red');
       if (div) fragment.appendChild(div);
     }
     for (const safe of knownSafe) {
-      const div = createHighlightDiv(safe, "green");
+      const div = createHighlightDiv(safe, 'green');
       if (div) fragment.appendChild(div);
     }
     return fragment;
@@ -346,20 +347,20 @@ namespace MinesweeperOnline {
     if (old?.parentElement) old.parentElement.removeChild(old);
 
     // Find the board container (adjust selector as needed)
-    const board = document.getElementById("game")
+    const board = document.getElementById('game');
     if (!board) return;
-    const gameBoard = board as HTMLDivElement
+    const gameBoard = board as HTMLDivElement;
 
     // Create overlay container
-    const overlay = document.createElement("div");
+    const overlay = document.createElement('div');
     overlay.id = OVERLAY_ID;
-    overlay.style.position = "absolute";
-    overlay.style.left = "0";
-    overlay.style.top = "0";
-    overlay.style.width = "100%";
-    overlay.style.height = "100%";
-    overlay.style.pointerEvents = "none";
-    overlay.style.zIndex = "9999";
+    overlay.style.position = 'absolute';
+    overlay.style.left = '0';
+    overlay.style.top = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.pointerEvents = 'none';
+    overlay.style.zIndex = '9999';
 
     // Position overlay absolutely over the board
     overlay.style.left = `${gameBoard.offsetLeft}px`;
@@ -376,7 +377,7 @@ namespace MinesweeperOnline {
 
   const createGrid = () => {
     const grid: Cell[][] = [];
-    const cells = document.querySelectorAll("#AreaBlock .cell");
+    const cells = document.querySelectorAll('#AreaBlock .cell');
     for (const cell of cells) {
       const cellData = processChange(cell);
       if (cellData) {
@@ -387,7 +388,7 @@ namespace MinesweeperOnline {
       }
     }
     return grid;
-  }
+  };
 
   const scheduleDetection = () => {
     if (detectionTimeout !== undefined) {
@@ -404,20 +405,20 @@ namespace MinesweeperOnline {
     }, DEBOUNCE_MS);
   };
 
-  const gameObserver = new MutationObserver((records) => {
+  const gameObserver = new MutationObserver(records => {
     for (const record of records) {
       if (record.attributeName) {
         // target is the element so type it
         const element = record.target as Element;
-        if (element.classList.contains("cell")) {
+        if (element.classList.contains('cell')) {
           scheduleDetection();
         }
       }
     }
-  })
+  });
 
   export const main = () => {
-    gameObserver.observe(document, { subtree: true, childList: true, attributeFilter: ["class"] });
-  }
+    gameObserver.observe(document, { subtree: true, childList: true, attributeFilter: ['class'] });
+  };
 }
 MinesweeperOnline.main();
