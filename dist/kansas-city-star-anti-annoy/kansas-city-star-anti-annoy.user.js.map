@@ -1,7 +1,7 @@
 {
   "version": 3,
   "sources": ["../../src/main/kansas-city-star-anti-annoy/kansas-city-star-anti-annoy.user.ts"],
-  "sourcesContent": ["namespace KansasCityStarAntiAnnoy {\n  export const hidePaywall = () => {\n    const observer = new MutationObserver(records => {\n      for (const record of records) {\n        for (const addedNode of record.addedNodes) {\n          if (addedNode.nodeName === 'MCC-PAYWALL') {\n            if (addedNode.parentNode) {\n              addedNode.parentNode.removeChild(addedNode);\n            }\n          }\n        }\n      }\n    });\n\n    observer.observe(document.body, {\n      childList: true,\n      subtree: true,\n    });\n  };\n}\nKansasCityStarAntiAnnoy.hidePaywall();\n"],
+  "sourcesContent": ["namespace KansasCityStarAntiAnnoy {\n  export const hidePaywall = () => {\n    const observer = new MutationObserver(records => {\n      for (const record of records) {\n        for (const addedNode of record.addedNodes) {\n          if (addedNode.nodeName === 'MCC-PAYWALL') {\n            if (addedNode.parentNode) {\n              addedNode.parentNode.removeChild(addedNode)\n            }\n          }\n        }\n      }\n    })\n\n    observer.observe(document.body, {\n      childList: true,\n      subtree: true,\n    })\n  }\n}\nKansasCityStarAntiAnnoy.hidePaywall()\n"],
   "mappings": ";;;;AAAA,MAAU;AAAV,IAAUA,6BAAV;AACS,IAAMA,yBAAA,cAAc,MAAM;AAC/B,YAAM,WAAW,IAAI,iBAAiB,aAAW;AAC/C,mBAAW,UAAU,SAAS;AAC5B,qBAAW,aAAa,OAAO,YAAY;AACzC,gBAAI,UAAU,aAAa,eAAe;AACxC,kBAAI,UAAU,YAAY;AACxB,0BAAU,WAAW,YAAY,SAAS;AAAA,cAC5C;AAAA,YACF;AAAA,UACF;AAAA,QACF;AAAA,MACF,CAAC;AAED,eAAS,QAAQ,SAAS,MAAM;AAAA,QAC9B,WAAW;AAAA,QACX,SAAS;AAAA,MACX,CAAC;AAAA,IACH;AAAA,KAlBQ;AAoBV,0BAAwB,YAAY;",
   "names": ["KansasCityStarAntiAnnoy"]
 }

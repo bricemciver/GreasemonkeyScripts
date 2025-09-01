@@ -1,7 +1,7 @@
 {
   "version": 3,
   "sources": ["../../src/main/breeze-sidebar-autosize/breeze-sidebar-autosize.user.ts"],
-  "sourcesContent": ["namespace BreezeSidebarAutosize {\n  export const replaceCss = (): void => {\n    const head = document.getElementsByTagName('head')[0];\n    const style = document.createElement('style');\n    style.setAttribute('type', 'text/css');\n    style.textContent =\n      '@media (min-width: 992px) { .mainsail-ui .mainsail-side-nav.extra-wide { flex-basis: fit-content; max-width: fit-content; }}';\n    head.appendChild(style);\n  };\n}\nBreezeSidebarAutosize.replaceCss();\n"],
+  "sourcesContent": ["namespace BreezeSidebarAutosize {\n  export const replaceCss = (): void => {\n    const head = document.getElementsByTagName('head')[0]\n    const style = document.createElement('style')\n    style.setAttribute('type', 'text/css')\n    style.textContent =\n      '@media (min-width: 992px) { .mainsail-ui .mainsail-side-nav.extra-wide { flex-basis: fit-content; max-width: fit-content; }}'\n    head.appendChild(style)\n  }\n}\nBreezeSidebarAutosize.replaceCss()\n"],
   "mappings": ";;;;AAAA,MAAU;AAAV,IAAUA,2BAAV;AACS,IAAMA,uBAAA,aAAa,MAAY;AACpC,YAAM,OAAO,SAAS,qBAAqB,MAAM,EAAE,CAAC;AACpD,YAAM,QAAQ,SAAS,cAAc,OAAO;AAC5C,YAAM,aAAa,QAAQ,UAAU;AACrC,YAAM,cACJ;AACF,WAAK,YAAY,KAAK;AAAA,IACxB;AAAA,KARQ;AAUV,wBAAsB,WAAW;",
   "names": ["BreezeSidebarAutosize"]
 }

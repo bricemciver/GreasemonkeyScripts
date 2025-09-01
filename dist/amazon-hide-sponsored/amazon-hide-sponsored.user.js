@@ -34,27 +34,27 @@
 // ==/UserScript==
 
 /* jshint esversion: 6 */
-'use strict'
-;(() => {
+"use strict";
+(() => {
   // src/main/amazon-hide-sponsored/amazon-hide-sponsored.user.ts
-  var AmazonHideSponsored
-  ;(AmazonHideSponsored2 => {
+  var AmazonHideSponsored;
+  ((AmazonHideSponsored2) => {
     AmazonHideSponsored2.findAndRemoveSponsoredItems = () => {
-      const sponsoredItems = document.evaluate("//span[text()='Sponsored']", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null)
+      const sponsoredItems = document.evaluate("//span[text()='Sponsored']", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
       for (let i = 0; i < sponsoredItems.snapshotLength; i++) {
-        const node = sponsoredItems.snapshotItem(i)
+        const node = sponsoredItems.snapshotItem(i);
         if (node && node.nodeType === Node.ELEMENT_NODE) {
-          let parent = node
-          while (parent && !parent.hasAttribute('data-asin') && parent.parentElement) {
-            parent = parent.parentElement
+          let parent = node;
+          while (parent && !parent.hasAttribute("data-asin") && parent.parentElement) {
+            parent = parent.parentElement;
           }
-          if (parent == null ? void 0 : parent.hasAttribute('data-asin')) {
-            parent.style.display = 'none'
+          if (parent == null ? void 0 : parent.hasAttribute("data-asin")) {
+            parent.style.display = "none";
           }
         }
       }
-    }
-  })(AmazonHideSponsored || (AmazonHideSponsored = {}))
-  AmazonHideSponsored.findAndRemoveSponsoredItems()
-})()
+    };
+  })(AmazonHideSponsored || (AmazonHideSponsored = {}));
+  AmazonHideSponsored.findAndRemoveSponsoredItems();
+})();
 //# sourceMappingURL=amazon-hide-sponsored.user.js.map
