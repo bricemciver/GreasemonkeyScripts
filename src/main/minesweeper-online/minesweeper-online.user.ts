@@ -99,7 +99,7 @@ namespace MinesweeperOnline {
     /**
      * Apply basic minesweeper logic rules
      */
-  private applyBasicRules(): SolverStepResult {
+    private applyBasicRules(): SolverStepResult {
       const newBombs: Position[] = []
       const newClears: Position[] = []
       let changed = false
@@ -134,7 +134,7 @@ namespace MinesweeperOnline {
         }
       }
 
-  return { newBombs, newClears, changed }
+      return { newBombs, newClears, changed }
     }
 
     private getConstraintCells(): Array<{
@@ -170,10 +170,7 @@ namespace MinesweeperOnline {
       return constraintCells
     }
 
-    private analyzeConstraintPair(
-      cell1: ConstraintCell,
-      cell2: ConstraintCell,
-    ): SolverStepResult {
+    private analyzeConstraintPair(cell1: ConstraintCell, cell2: ConstraintCell): SolverStepResult {
       const newBombs = []
       const newClears = []
       let changed = false
@@ -265,7 +262,7 @@ namespace MinesweeperOnline {
       return { newBombs, newClears, changed }
     }
 
-  private solveBruteForce(constraintCells: ConstraintCell[], unknownsList: string[], unknownsMap: Map<string, number>): SolverStepResult {
+    private solveBruteForce(constraintCells: ConstraintCell[], unknownsList: string[], unknownsMap: Map<string, number>): SolverStepResult {
       const newBombs: Position[] = []
       const newClears: Position[] = []
       let changed = false
@@ -449,7 +446,7 @@ namespace MinesweeperOnline {
     }
 
     // NEW: Analyze overlapping constraints for common patterns
-  analyzeOverlappingConstraints(constraintCells: ConstraintCell[]): SolverStepResult {
+    analyzeOverlappingConstraints(constraintCells: ConstraintCell[]): SolverStepResult {
       const newBombs: Position[] = []
       const newClears: Position[] = []
       let changed = false

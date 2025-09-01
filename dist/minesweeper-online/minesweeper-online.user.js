@@ -242,6 +242,108 @@
         }
         return { newBombs, newClears, changed };
       }
+      // Solve constraints with overlapping unknowns
+      solveOverlapConstraint(cell1, cell2, overlap, only1, only2) {
+        const newBombs = [];
+        const newClears = [];
+        let changed = false;
+        const overlapSize = overlap.length;
+        for (let overlapMines = 0; overlapMines <= Math.min(overlapSize, Math.min(cell1.remainingBombs, cell2.remainingBombs)); overlapMines++) {
+          const mines1InOnly1 = cell1.remainingBombs - overlapMines;
+          const mines2InOnly2 = cell2.remainingBombs - overlapMines;
+          if (mines1InOnly1 >= 0 && mines1InOnly1 <= only1.length && mines2InOnly2 >= 0 && mines2InOnly2 <= only2.length) {
+            if (mines1InOnly1 === 0) {
+              for (const pos of only1) {
+                if (this.grid[pos.y][pos.x] === -1) {
+                  this.grid[pos.y][pos.x] = 0;
+                  newClears.push(pos);
+                  changed = true;
+                }
+              }
+            } else if (mines1InOnly1 === only1.length) {
+              for (const pos of only1) {
+                if (this.grid[pos.y][pos.x] === -1) {
+                  this.grid[pos.y][pos.x] = 9;
+                  newBombs.push(pos);
+                  changed = true;
+                }
+              }
+            }
+            if (mines2InOnly2 === 0) {
+              for (const pos of only2) {
+                if (this.grid[pos.y][pos.x] === -1) {
+                  this.grid[pos.y][pos.x] = 0;
+                  newClears.push(pos);
+                  changed = true;
+                }
+              }
+            } else if (mines2InOnly2 === only2.length) {
+              for (const pos of only2) {
+                if (this.grid[pos.y][pos.x] === -1) {
+                  this.grid[pos.y][pos.x] = 9;
+                  newBombs.push(pos);
+                  changed = true;
+                }
+              }
+            }
+          }
+        }
+        const validOverlapCombinations = [];
+        for (let overlapMines = 0; overlapMines <= Math.min(overlapSize, Math.min(cell1.remainingBombs, cell2.remainingBombs)); overlapMines++) {
+          const mines1InOnly1 = cell1.remainingBombs - overlapMines;
+          const mines2InOnly2 = cell2.remainingBombs - overlapMines;
+          if (mines1InOnly1 >= 0 && mines1InOnly1 <= only1.length && mines2InOnly2 >= 0 && mines2InOnly2 <= only2.length) {
+            validOverlapCombinations.push(overlapMines);
+          }
+        }
+        if (validOverlapCombinations.length === 1) {
+          const exactOverlapMines = validOverlapCombinations[0];
+          if (exactOverlapMines === 0) {
+            for (const pos of overlap) {
+              if (this.grid[pos.y][pos.x] === -1) {
+                this.grid[pos.y][pos.x] = 0;
+                newClears.push(pos);
+                changed = true;
+              }
+            }
+          } else if (exactOverlapMines === overlap.length) {
+            for (const pos of overlap) {
+              if (this.grid[pos.y][pos.x] === -1) {
+                this.grid[pos.y][pos.x] = 9;
+                newBombs.push(pos);
+                changed = true;
+              }
+            }
+          }
+        }
+        return { newBombs, newClears, changed };
+      }
+      // NEW: Analyze overlapping constraints for common patterns
+      analyzeOverlappingConstraints(constraintCells) {
+        const newBombs = [];
+        const newClears = [];
+        let changed = false;
+        for (let i = 0; i < constraintCells.length; i++) {
+          const cell1 = constraintCells[i];
+          for (let j = i + 1; j < constraintCells.length; j++) {
+            const cell2 = constraintCells[j];
+            const unknowns1Set = new Set(cell1.unknowns.map((p) => `${p.x},${p.y}`));
+            const unknowns2Set = new Set(cell2.unknowns.map((p) => `${p.x},${p.y}`));
+            const overlap = cell1.unknowns.filter((p) => unknowns2Set.has(`${p.x},${p.y}`));
+            const only1 = cell1.unknowns.filter((p) => !unknowns2Set.has(`${p.x},${p.y}`));
+            const only2 = cell2.unknowns.filter((p) => !unknowns1Set.has(`${p.x},${p.y}`));
+            if (overlap.length > 0) {
+              const result = this.solveOverlapConstraint(cell1, cell2, overlap, only1, only2);
+              if (result.changed) {
+                newBombs.push(...result.newBombs);
+                newClears.push(...result.newClears);
+                changed = true;
+              }
+            }
+          }
+        }
+        return { newBombs, newClears, changed };
+      }
       // NEW: Advanced constraint satisfaction using equation solving
       applyConstraintSatisfaction() {
         const newBombs = [];
@@ -249,6 +351,12 @@
         let changed = false;
         const constraintCells = this.getConstraintCells();
         if (constraintCells.length === 0) return { newBombs, newClears, changed };
+        const overlapResult = this.analyzeOverlappingConstraints(constraintCells);
+        if (overlapResult.changed) {
+          newBombs.push(...overlapResult.newBombs);
+          newClears.push(...overlapResult.newClears);
+          changed = true;
+        }
         const allUnknowns = /* @__PURE__ */ new Set();
         constraintCells.forEach((cell) => {
           cell.unknowns.forEach((pos) => {
