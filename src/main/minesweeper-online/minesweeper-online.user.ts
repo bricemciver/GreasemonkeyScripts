@@ -683,7 +683,7 @@ namespace MinesweeperOnline {
         }
       }
     }
-  });
+  })
 
   export const main = () => {
     gameObserver.observe(document, {

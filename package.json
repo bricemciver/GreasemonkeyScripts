@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "My collection of GreaseMonkey scripts",
   "scripts": {
-    "format": "npx biome format --write",
-    "format:check": "npx biome format",
-    "lint": "npx biome lint --fix",
-    "lint:check": "npx biome lint",
+    "format": "npx @biomejs/biome format --write",
+    "format:check": "npx @biomejs/biome format",
+    "lint": "npx @biomejs/biome lint --write",
+    "lint:check": "npx @biomejs/biome lint",
     "create-headers": "npx ts-node ./src/scripts/create-headers.ts \"./src/main/**/*.meta.json\" ./dist",
     "build": "npx esbuild ./src/main/**/*.ts --bundle --sourcemap --charset=utf8 --target=es6 --log-level=warning --banner:js='/* jshint esversion: 6 */' --outdir=./dist && npm run create-headers",
     "test": "echo \"Error: no test specified\" && exit 1"

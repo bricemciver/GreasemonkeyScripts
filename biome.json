@@ -1,7 +1,14 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.2.0/schema.json",
-  "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
-  "files": { "ignoreUnknown": false },
+  "vcs": {
+    "enabled": false,
+    "clientKind": "git",
+    "useIgnoreFile": false
+  },
+  "files": {
+    "ignoreUnknown": false,
+    "includes": ["**", "!**/dist", "!**/node_modules"]
+  },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -13,8 +20,7 @@
     "bracketSameLine": false,
     "bracketSpacing": true,
     "expand": "auto",
-    "useEditorconfig": true,
-    "includes": ["**", "!**/dist/", "!**/node_modules/"]
+    "useEditorconfig": true
   },
   "linter": {
     "enabled": true,
@@ -53,7 +59,10 @@
         "useValidTypeof": "error",
         "useYield": "error"
       },
-      "style": { "useBlockStatements": "off", "useConst": "error" },
+      "style": {
+        "useBlockStatements": "off",
+        "useConst": "error"
+      },
       "suspicious": {
         "noAssignInExpressions": "error",
         "noAsyncPromiseExecutor": "error",
@@ -85,8 +94,7 @@
         "noWith": "error",
         "useGetterReturn": "error"
       }
-    },
-    "includes": ["**", "!**/dist"]
+    }
   },
   "javascript": {
     "formatter": {
@@ -103,7 +111,7 @@
     "globals": [
       "GM",
       "GM_xmlhttpRequest",
-	  "Tampermonkey",
+      "Tampermonkey",
       "onanimationend",
       "exports",
       "ongamepadconnected",
@@ -232,9 +240,17 @@
       "onemptied"
     ]
   },
-  "html": { "formatter": { "selfCloseVoidElements": "always" } },
+  "html": {
+    "formatter": {
+      "selfCloseVoidElements": "always"
+    }
+  },
   "assist": {
     "enabled": true,
-    "actions": { "source": { "organizeImports": "on" } }
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   }
 }
