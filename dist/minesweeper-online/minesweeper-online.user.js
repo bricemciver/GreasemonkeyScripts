@@ -192,34 +192,68 @@
         let changed = false;
         const constraintCells = this.getConstraintCells();
         if (constraintCells.length === 0) return { newBombs, newClears, changed };
-        const allUnknowns = /* @__PURE__ */ new Set();
-        constraintCells.forEach((cell) => {
-          cell.unknowns.forEach((pos) => {
-            allUnknowns.add(`${pos.x},${pos.y}`);
+        const constraintGroups = this.groupConnectedConstraints(constraintCells);
+        for (const group of constraintGroups) {
+          const allUnknowns = /* @__PURE__ */ new Set();
+          group.forEach((cell) => {
+            cell.unknowns.forEach((pos) => {
+              allUnknowns.add(`${pos.x},${pos.y}`);
+            });
           });
-        });
-        const unknownsList = Array.from(allUnknowns);
-        const unknownsMap = /* @__PURE__ */ new Map();
-        unknownsList.forEach((key, index) => {
-          unknownsMap.set(key, index);
-        });
-        if (unknownsList.length <= 12 && constraintCells.length <= 8) {
-          const result = this.solveBruteForce(constraintCells, unknownsList, unknownsMap);
-          if (result.changed) {
-            newBombs.push(...result.newBombs);
-            newClears.push(...result.newClears);
-            changed = true;
+          const unknownsList = Array.from(allUnknowns);
+          const unknownsMap = /* @__PURE__ */ new Map();
+          unknownsList.forEach((key, index) => {
+            unknownsMap.set(key, index);
+          });
+          if (unknownsList.length <= 16 && group.length <= 10) {
+            const result = this.solveBruteForce(group, unknownsList, unknownsMap);
+            if (result.changed) {
+              newBombs.push(...result.newBombs);
+              newClears.push(...result.newClears);
+              changed = true;
+            }
           }
         }
         return { newBombs, newClears, changed };
+      }
+      // Group constraints that share unknowns into connected components
+      groupConnectedConstraints(constraintCells) {
+        const groups = [];
+        const visited = /* @__PURE__ */ new Set();
+        for (let i = 0; i < constraintCells.length; i++) {
+          if (visited.has(i)) continue;
+          const group = [];
+          const queue = [i];
+          visited.add(i);
+          while (queue.length > 0) {
+            const current = queue.shift();
+            group.push(constraintCells[current]);
+            const currentUnknowns = new Set(constraintCells[current].unknowns.map((p) => `${p.x},${p.y}`));
+            for (let j = 0; j < constraintCells.length; j++) {
+              if (visited.has(j)) continue;
+              const otherUnknowns = constraintCells[j].unknowns.map((p) => `${p.x},${p.y}`);
+              const hasSharedUnknown = otherUnknowns.some((unknown) => currentUnknowns.has(unknown));
+              if (hasSharedUnknown) {
+                queue.push(j);
+                visited.add(j);
+              }
+            }
+          }
+          if (group.length > 0) {
+            groups.push(group);
+          }
+        }
+        return groups;
       }
       solveBruteForce(constraintCells, unknownsList, unknownsMap) {
         const newBombs = [];
         const newClears = [];
         let changed = false;
         const n = unknownsList.length;
+        if (n > 20) return { newBombs, newClears, changed };
         const validSolutions = [];
-        for (let mask = 0; mask < 1 << n; mask++) {
+        const maxSolutions = 1e4;
+        for (let mask = 0; mask < 1 << n && validSolutions.length < maxSolutions; mask++) {
           const solution = new Array(n).fill(0);
           for (let i = 0; i < n; i++) {
             if (mask & 1 << i) {
@@ -410,30 +444,34 @@
       }
       return null;
     };
+    function getCellElement(pos) {
+      return document.getElementById(`cell_${pos.x}_${pos.y}`);
+    }
+    function isCellClosed(cell) {
+      return cell.classList.contains("hdd_closed");
+    }
     let detectionTimeout;
     const DEBOUNCE_MS = 500;
     const OVERLAY_ID = "minesweeper-solver-overlay";
+    function createHighlightDiv(pos, color) {
+      const cell = getCellElement(pos);
+      if (!cell) return null;
+      if (!isCellClosed(cell)) return null;
+      const highlight = document.createElement("div");
+      highlight.style.position = "absolute";
+      highlight.style.left = `${cell.offsetLeft}px`;
+      highlight.style.top = `${cell.offsetTop}px`;
+      highlight.style.width = `${cell.offsetWidth}px`;
+      highlight.style.height = `${cell.offsetHeight}px`;
+      highlight.style.pointerEvents = "none";
+      highlight.style.boxSizing = "border-box";
+      highlight.style.border = `2px solid ${color}`;
+      highlight.style.borderRadius = "3px";
+      highlight.style.zIndex = "1";
+      return highlight;
+    }
     function createOverlayFragment(knownMines, knownSafe) {
       const fragment = document.createDocumentFragment();
-      function createHighlightDiv(pos, color) {
-        const cell = document.getElementById(`cell_${pos.x}_${pos.y}`);
-        if (!cell) return null;
-        if (!cell.classList.contains("hdd_closed")) {
-          return null;
-        }
-        const highlight = document.createElement("div");
-        highlight.style.position = "absolute";
-        highlight.style.left = `${cell.offsetLeft}px`;
-        highlight.style.top = `${cell.offsetTop}px`;
-        highlight.style.width = `${cell.offsetWidth}px`;
-        highlight.style.height = `${cell.offsetHeight}px`;
-        highlight.style.pointerEvents = "none";
-        highlight.style.boxSizing = "border-box";
-        highlight.style.border = `2px solid ${color}`;
-        highlight.style.borderRadius = "3px";
-        highlight.style.zIndex = "1";
-        return highlight;
-      }
       for (const mine of knownMines) {
         const div = createHighlightDiv(mine, "red");
         if (div) fragment.appendChild(div);
@@ -445,28 +483,27 @@
       return fragment;
     }
     function updateOverlay(knownMines, knownSafe) {
-      const old = document.getElementById(OVERLAY_ID);
-      if (old == null ? void 0 : old.parentElement) old.parentElement.removeChild(old);
+      removeOverlay();
       const board = document.getElementById("game");
       if (!board) return;
       const gameBoard = board;
       const overlay = document.createElement("div");
       overlay.id = OVERLAY_ID;
       overlay.style.position = "absolute";
-      overlay.style.left = "0";
-      overlay.style.top = "0";
-      overlay.style.width = "100%";
-      overlay.style.height = "100%";
-      overlay.style.pointerEvents = "none";
-      overlay.style.zIndex = "9999";
       overlay.style.left = `${gameBoard.offsetLeft}px`;
       overlay.style.top = `${gameBoard.offsetTop}px`;
       overlay.style.width = `${gameBoard.offsetWidth}px`;
       overlay.style.height = `${gameBoard.offsetHeight}px`;
+      overlay.style.pointerEvents = "none";
+      overlay.style.zIndex = "9999";
       overlay.appendChild(createOverlayFragment(knownMines, knownSafe));
       board.appendChild(overlay);
     }
-    const createGrid = () => {
+    function removeOverlay() {
+      const old = document.getElementById(OVERLAY_ID);
+      if (old == null ? void 0 : old.parentElement) old.parentElement.removeChild(old);
+    }
+    function createGrid() {
       const grid = [];
       const cells = document.querySelectorAll("#AreaBlock .cell");
       for (const cell of cells) {
@@ -479,21 +516,22 @@
         }
       }
       return grid;
-    };
-    const scheduleDetection = () => {
+    }
+    function scheduleDetection() {
       if (detectionTimeout !== void 0) {
         clearTimeout(detectionTimeout);
       }
-      detectionTimeout = window.setTimeout(() => {
-        const grid = createGrid();
-        const solver = new MinesweeperSolver(grid);
-        const result = solver.solve();
-        const knownMines = result.newBombs;
-        const knownSafe = result.newClears;
-        updateOverlay(knownMines, knownSafe);
-        detectionTimeout = void 0;
-      }, DEBOUNCE_MS);
-    };
+      detectionTimeout = window.setTimeout(runSolverAndUpdateOverlay, DEBOUNCE_MS);
+    }
+    function runSolverAndUpdateOverlay() {
+      const grid = createGrid();
+      const solver = new MinesweeperSolver(grid);
+      const result = solver.solve();
+      const knownMines = result.newBombs;
+      const knownSafe = result.newClears;
+      updateOverlay(knownMines, knownSafe);
+      detectionTimeout = void 0;
+    }
     const gameObserver = new MutationObserver((records) => {
       for (const record of records) {
         if (record.attributeName) {

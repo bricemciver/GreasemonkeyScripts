@@ -24,6 +24,8 @@ namespace MinesweeperOnline {
     remainingBombs: number
   }
 
+  interface ConstraintGroup extends Array<ConstraintCell> {}
+
   interface Constraint {
     unknowns: string[]
     remainingBombs: number
@@ -271,32 +273,76 @@ namespace MinesweeperOnline {
       const constraintCells = this.getConstraintCells()
       if (constraintCells.length === 0) return { newBombs, newClears, changed }
 
-      // Build system of linear constraints
-      const allUnknowns = new Set<string>()
-      constraintCells.forEach(cell => {
-        cell.unknowns.forEach(pos => {
-          allUnknowns.add(`${pos.x},${pos.y}`)
+      // Group connected constraint regions to solve them separately
+      const constraintGroups = this.groupConnectedConstraints(constraintCells)
+
+      for (const group of constraintGroups) {
+        const allUnknowns = new Set<string>()
+        group.forEach(cell => {
+          cell.unknowns.forEach(pos => {
+            allUnknowns.add(`${pos.x},${pos.y}`)
+          })
         })
-      })
 
-      const unknownsList = Array.from(allUnknowns)
-      const unknownsMap = new Map()
-      unknownsList.forEach((key, index) => {
-        unknownsMap.set(key, index)
-      })
+        const unknownsList = Array.from(allUnknowns)
+        const unknownsMap = new Map()
+        unknownsList.forEach((key, index) => {
+          unknownsMap.set(key, index)
+        })
 
-      // Try all possible combinations for small constraint sets
-      if (unknownsList.length <= 12 && constraintCells.length <= 8) {
-        // Limit for performance
-        const result = this.solveBruteForce(constraintCells, unknownsList, unknownsMap)
-        if (result.changed) {
-          newBombs.push(...result.newBombs)
-          newClears.push(...result.newClears)
-          changed = true
+        // Try all possible combinations for small constraint sets
+        if (unknownsList.length <= 16 && group.length <= 10) {
+          // Limit for performance
+          const result = this.solveBruteForce(group, unknownsList, unknownsMap)
+          if (result.changed) {
+            newBombs.push(...result.newBombs)
+            newClears.push(...result.newClears)
+            changed = true
+          }
         }
       }
 
       return { newBombs, newClears, changed }
+    }
+
+    // Group constraints that share unknowns into connected components
+    private groupConnectedConstraints(constraintCells: ConstraintCell[]): ConstraintGroup[] {
+      const groups: ConstraintGroup[] = []
+      const visited = new Set<number>()
+
+      for (let i = 0; i < constraintCells.length; i++) {
+        if (visited.has(i)) continue
+
+        const group: ConstraintGroup = []
+        const queue: number[] = [i]
+        visited.add(i)
+
+        while (queue.length > 0) {
+          const current = queue.shift() as number
+          group.push(constraintCells[current])
+
+          const currentUnknowns = new Set<string>(constraintCells[current].unknowns.map(p => `${p.x},${p.y}`))
+
+          // Find all other constraints that share unknowns with this one
+          for (let j = 0; j < constraintCells.length; j++) {
+            if (visited.has(j)) continue
+
+            const otherUnknowns = constraintCells[j].unknowns.map(p => `${p.x},${p.y}`)
+            const hasSharedUnknown = otherUnknowns.some(unknown => currentUnknowns.has(unknown))
+
+            if (hasSharedUnknown) {
+              queue.push(j)
+              visited.add(j)
+            }
+          }
+        }
+
+        if (group.length > 0) {
+          groups.push(group)
+        }
+      }
+
+      return groups
     }
 
     private solveBruteForce(constraintCells: ConstraintCell[], unknownsList: string[], unknownsMap: Map<string, number>): SolverStepResult {
@@ -305,10 +351,13 @@ namespace MinesweeperOnline {
       let changed = false
 
       const n = unknownsList.length
+      if (n > 20) return { newBombs, newClears, changed } // Safety limit
+
       const validSolutions: number[][] = []
+      const maxSolutions = 10000 // Limit to prevent infinite computation
 
       // Generate all possible mine configurations
-      for (let mask = 0; mask < 1 << n; mask++) {
+      for (let mask = 0; mask < 1 << n && validSolutions.length < maxSolutions; mask++) {
         const solution: number[] = new Array(n).fill(0)
         for (let i = 0; i < n; i++) {
           if (mask & (1 << i)) {
@@ -526,8 +575,12 @@ namespace MinesweeperOnline {
     hdd_type8: 8,
   }
 
-  const processChange = (element: Element) => {
-    // example data
+  /**
+   * Extracts the cell's position and value from a DOM element.
+   * @param element - The cell DOM element
+   * @returns Position and value, or null if not found
+   */
+  const processChange = (element: Element): { x: number; y: number; value: Cell } | null => {
     const xString = element.getAttribute('data-x')
     const yString = element.getAttribute('data-y')
     let value: Cell = -1
@@ -545,39 +598,56 @@ namespace MinesweeperOnline {
     return null
   }
 
+  /**
+   * Returns the DOM element for a cell at a given position.
+   * @param pos - The cell position
+   */
+  function getCellElement(pos: Position): HTMLElement | null {
+    return document.getElementById(`cell_${pos.x}_${pos.y}`)
+  }
+
+  /**
+   * Checks if a cell is still closed (not revealed).
+   * @param cell - The cell DOM element
+   */
+  function isCellClosed(cell: HTMLElement): boolean {
+    return cell.classList.contains('hdd_closed')
+  }
   let detectionTimeout: number | undefined
   const DEBOUNCE_MS = 500
 
   const OVERLAY_ID = 'minesweeper-solver-overlay'
 
-  function createOverlayFragment(knownMines: Position[], knownSafe: Position[]) {
+  /**
+   * Creates a highlight div for a cell overlay.
+   * @param pos - The cell position
+   * @param color - Border color
+   */
+  function createHighlightDiv(pos: Position, color: string): HTMLDivElement | null {
+    const cell = getCellElement(pos)
+    if (!cell) return null
+    if (!isCellClosed(cell)) return null
+    const highlight = document.createElement('div')
+    highlight.style.position = 'absolute'
+    highlight.style.left = `${cell.offsetLeft}px`
+    highlight.style.top = `${cell.offsetTop}px`
+    highlight.style.width = `${cell.offsetWidth}px`
+    highlight.style.height = `${cell.offsetHeight}px`
+    highlight.style.pointerEvents = 'none'
+    highlight.style.boxSizing = 'border-box'
+    highlight.style.border = `2px solid ${color}`
+    highlight.style.borderRadius = '3px'
+    highlight.style.zIndex = '1'
+    return highlight
+  }
+
+  /**
+   * Creates a document fragment containing overlays for known mines and safe cells.
+   * @param knownMines - Array of mine positions
+   * @param knownSafe - Array of safe positions
+   */
+  function createOverlayFragment(knownMines: Position[], knownSafe: Position[]): DocumentFragment {
     const fragment = document.createDocumentFragment()
-
-    // Helper to create a highlight div for a cell
-    function createHighlightDiv(pos: Position, color: string) {
-      const cell = document.getElementById(`cell_${pos.x}_${pos.y}`)
-      if (!cell) return null
-
-      // Make sure it hasn't be revealed already
-      if (!cell.classList.contains('hdd_closed')) {
-        return null
-      }
-
-      // Position relative to the board container
-      const highlight = document.createElement('div')
-      highlight.style.position = 'absolute'
-      highlight.style.left = `${cell.offsetLeft}px`
-      highlight.style.top = `${cell.offsetTop}px`
-      highlight.style.width = `${cell.offsetWidth}px`
-      highlight.style.height = `${cell.offsetHeight}px`
-      highlight.style.pointerEvents = 'none'
-      highlight.style.boxSizing = 'border-box'
-      highlight.style.border = `2px solid ${color}`
-      highlight.style.borderRadius = '3px'
-      highlight.style.zIndex = '1'
-      return highlight
-    }
-
     for (const mine of knownMines) {
       const div = createHighlightDiv(mine, 'red')
       if (div) fragment.appendChild(div)
@@ -589,41 +659,41 @@ namespace MinesweeperOnline {
     return fragment
   }
 
-  function updateOverlay(knownMines: Position[], knownSafe: Position[]) {
-    // Remove old overlay if present
-    const old = document.getElementById(OVERLAY_ID)
-    if (old?.parentElement) old.parentElement.removeChild(old)
-
-    // Find the board container (adjust selector as needed)
+  /**
+   * Updates the overlay on the game board to show known mines and safe cells.
+   * @param knownMines - Array of mine positions
+   * @param knownSafe - Array of safe positions
+   */
+  function updateOverlay(knownMines: Position[], knownSafe: Position[]): void {
+    removeOverlay()
     const board = document.getElementById('game')
     if (!board) return
     const gameBoard = board as HTMLDivElement
-
-    // Create overlay container
     const overlay = document.createElement('div')
     overlay.id = OVERLAY_ID
     overlay.style.position = 'absolute'
-    overlay.style.left = '0'
-    overlay.style.top = '0'
-    overlay.style.width = '100%'
-    overlay.style.height = '100%'
-    overlay.style.pointerEvents = 'none'
-    overlay.style.zIndex = '9999'
-
-    // Position overlay absolutely over the board
     overlay.style.left = `${gameBoard.offsetLeft}px`
     overlay.style.top = `${gameBoard.offsetTop}px`
     overlay.style.width = `${gameBoard.offsetWidth}px`
     overlay.style.height = `${gameBoard.offsetHeight}px`
-
-    // Add highlights
+    overlay.style.pointerEvents = 'none'
+    overlay.style.zIndex = '9999'
     overlay.appendChild(createOverlayFragment(knownMines, knownSafe))
-
-    // Insert overlay into board container
     board.appendChild(overlay)
   }
 
-  const createGrid = () => {
+  /**
+   * Removes the overlay from the game board if present.
+   */
+  function removeOverlay(): void {
+    const old = document.getElementById(OVERLAY_ID)
+    if (old?.parentElement) old.parentElement.removeChild(old)
+  }
+
+  /**
+   * Creates a 2D grid representing the current state of the board from the DOM.
+   */
+  function createGrid(): Cell[][] {
     const grid: Cell[][] = []
     const cells = document.querySelectorAll('#AreaBlock .cell')
     for (const cell of cells) {
@@ -638,25 +708,35 @@ namespace MinesweeperOnline {
     return grid
   }
 
-  const scheduleDetection = () => {
+  /**
+   * Schedules a solver run and overlay update, debounced to avoid excessive computation.
+   */
+  function scheduleDetection(): void {
     if (detectionTimeout !== undefined) {
       clearTimeout(detectionTimeout)
     }
-    detectionTimeout = window.setTimeout(() => {
-      const grid = createGrid()
-      const solver = new MinesweeperSolver(grid)
-      const result = solver.solve()
-      const knownMines = result.newBombs
-      const knownSafe = result.newClears
-      updateOverlay(knownMines, knownSafe)
-      detectionTimeout = undefined
-    }, DEBOUNCE_MS)
+    detectionTimeout = window.setTimeout(runSolverAndUpdateOverlay, DEBOUNCE_MS)
   }
 
+  /**
+   * Runs the solver and updates the overlay with the results.
+   */
+  function runSolverAndUpdateOverlay(): void {
+    const grid = createGrid()
+    const solver = new MinesweeperSolver(grid)
+    const result = solver.solve()
+    const knownMines = result.newBombs
+    const knownSafe = result.newClears
+    updateOverlay(knownMines, knownSafe)
+    detectionTimeout = undefined
+  }
+
+  /**
+   * Observes DOM mutations to trigger solver updates when the board changes.
+   */
   const gameObserver = new MutationObserver(records => {
     for (const record of records) {
       if (record.attributeName) {
-        // target is the element so type it
         const element = record.target as Element
         if (element.classList.contains('cell')) {
           scheduleDetection()
@@ -665,7 +745,10 @@ namespace MinesweeperOnline {
     }
   })
 
-  export const main = () => {
+  /**
+   * Entry point: starts observing the board for changes and triggers the solver.
+   */
+  export const main = (): void => {
     gameObserver.observe(document, {
       subtree: true,
       childList: true,
