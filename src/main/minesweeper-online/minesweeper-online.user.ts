@@ -137,6 +137,35 @@ namespace MinesweeperOnline {
       return { newBombs, newClears, changed }
     }
 
+    /**
+     * Apply advanced constraint satisfaction techniques
+     */
+    private applyAdvancedRules(): {
+      newBombs: Position[]
+      newClears: Position[]
+      changed: boolean
+    } {
+      const newBombs: Position[] = []
+      const newClears: Position[] = []
+      let changed = false
+
+      // Find all numbered cells with unknowns
+      const constraintCells = this.getConstraintCells()
+
+      // Look for subset relationships between constraint cells
+      for (let i = 0; i < constraintCells.length; i++) {
+        for (let j = i + 1; j < constraintCells.length; j++) {
+          const result = this.analyzeConstraintPair(constraintCells[i], constraintCells[j])
+          if (result.changed) {
+            newBombs.push(...result.newBombs)
+            newClears.push(...result.newClears)
+            changed = true
+          }
+        }
+      }
+      return { newBombs, newClears, changed }
+    }
+
     private getConstraintCells(): Array<{
       pos: Position
       value: number
@@ -233,32 +262,40 @@ namespace MinesweeperOnline {
       return { newBombs, newClears, changed }
     }
 
-    /**
-     * Apply advanced constraint satisfaction techniques
-     */
-    private applyAdvancedRules(): {
-      newBombs: Position[]
-      newClears: Position[]
-      changed: boolean
-    } {
+    // NEW: Advanced constraint satisfaction using equation solving
+    private applyConstraintSatisfaction() {
       const newBombs: Position[] = []
       const newClears: Position[] = []
       let changed = false
 
-      // Find all numbered cells with unknowns
       const constraintCells = this.getConstraintCells()
+      if (constraintCells.length === 0) return { newBombs, newClears, changed }
 
-      // Look for subset relationships between constraint cells
-      for (let i = 0; i < constraintCells.length; i++) {
-        for (let j = i + 1; j < constraintCells.length; j++) {
-          const result = this.analyzeConstraintPair(constraintCells[i], constraintCells[j])
-          if (result.changed) {
-            newBombs.push(...result.newBombs)
-            newClears.push(...result.newClears)
-            changed = true
-          }
+      // Build system of linear constraints
+      const allUnknowns = new Set<string>()
+      constraintCells.forEach(cell => {
+        cell.unknowns.forEach(pos => {
+          allUnknowns.add(`${pos.x},${pos.y}`)
+        })
+      })
+
+      const unknownsList = Array.from(allUnknowns)
+      const unknownsMap = new Map()
+      unknownsList.forEach((key, index) => {
+        unknownsMap.set(key, index)
+      })
+
+      // Try all possible combinations for small constraint sets
+      if (unknownsList.length <= 12 && constraintCells.length <= 8) {
+        // Limit for performance
+        const result = this.solveBruteForce(constraintCells, unknownsList, unknownsMap)
+        if (result.changed) {
+          newBombs.push(...result.newBombs)
+          newClears.push(...result.newClears)
+          changed = true
         }
       }
+
       return { newBombs, newClears, changed }
     }
 
@@ -333,235 +370,6 @@ namespace MinesweeperOnline {
       return { newBombs, newClears, changed }
     }
 
-    // Solve constraints with overlapping unknowns
-    solveOverlapConstraint(
-      cell1: ConstraintCell,
-      cell2: ConstraintCell,
-      overlap: Position[],
-      only1: Position[],
-      only2: Position[],
-    ): SolverStepResult {
-      const newBombs: Position[] = []
-      const newClears: Position[] = []
-      let changed = false
-
-      // Try all possible mine distributions in the overlap region
-      const overlapSize = overlap.length
-
-      for (
-        let overlapMines = 0;
-        overlapMines <= Math.min(overlapSize, Math.min(cell1.remainingBombs, cell2.remainingBombs));
-        overlapMines++
-      ) {
-        const mines1InOnly1 = cell1.remainingBombs - overlapMines
-        const mines2InOnly2 = cell2.remainingBombs - overlapMines
-
-        // Check if this distribution is valid
-        if (mines1InOnly1 >= 0 && mines1InOnly1 <= only1.length && mines2InOnly2 >= 0 && mines2InOnly2 <= only2.length) {
-          // If there's exactly one way to distribute mines, we can make deductions
-          if (mines1InOnly1 === 0) {
-            // All cells in only1 must be safe
-            for (const pos of only1) {
-              if (this.grid[pos.y][pos.x] === -1) {
-                this.grid[pos.y][pos.x] = 0
-                newClears.push(pos)
-                changed = true
-              }
-            }
-          } else if (mines1InOnly1 === only1.length) {
-            // All cells in only1 must be mines
-            for (const pos of only1) {
-              if (this.grid[pos.y][pos.x] === -1) {
-                this.grid[pos.y][pos.x] = 9
-                newBombs.push(pos)
-                changed = true
-              }
-            }
-          }
-
-          if (mines2InOnly2 === 0) {
-            // All cells in only2 must be safe
-            for (const pos of only2) {
-              if (this.grid[pos.y][pos.x] === -1) {
-                this.grid[pos.y][pos.x] = 0
-                newClears.push(pos)
-                changed = true
-              }
-            }
-          } else if (mines2InOnly2 === only2.length) {
-            // All cells in only2 must be mines
-            for (const pos of only2) {
-              if (this.grid[pos.y][pos.x] === -1) {
-                this.grid[pos.y][pos.x] = 9
-                newBombs.push(pos)
-                changed = true
-              }
-            }
-          }
-        }
-      }
-
-      // Advanced: Check if certain cells in overlap must be mines/safe
-      const validOverlapCombinations: number[] = []
-
-      for (
-        let overlapMines = 0;
-        overlapMines <= Math.min(overlapSize, Math.min(cell1.remainingBombs, cell2.remainingBombs));
-        overlapMines++
-      ) {
-        const mines1InOnly1 = cell1.remainingBombs - overlapMines
-        const mines2InOnly2 = cell2.remainingBombs - overlapMines
-
-        if (mines1InOnly1 >= 0 && mines1InOnly1 <= only1.length && mines2InOnly2 >= 0 && mines2InOnly2 <= only2.length) {
-          validOverlapCombinations.push(overlapMines)
-        }
-      }
-
-      // If overlap must have exactly one number of mines, we might be able to deduce more
-      if (validOverlapCombinations.length === 1) {
-        const exactOverlapMines = validOverlapCombinations[0]
-
-        if (exactOverlapMines === 0) {
-          // All overlap cells are safe
-          for (const pos of overlap) {
-            if (this.grid[pos.y][pos.x] === -1) {
-              this.grid[pos.y][pos.x] = 0
-              newClears.push(pos)
-              changed = true
-            }
-          }
-        } else if (exactOverlapMines === overlap.length) {
-          // All overlap cells are mines
-          for (const pos of overlap) {
-            if (this.grid[pos.y][pos.x] === -1) {
-              this.grid[pos.y][pos.x] = 9
-              newBombs.push(pos)
-              changed = true
-            }
-          }
-        }
-      }
-
-      return { newBombs, newClears, changed }
-    }
-
-    // NEW: Analyze overlapping constraints for common patterns
-    analyzeOverlappingConstraints(constraintCells: ConstraintCell[]): SolverStepResult {
-      const newBombs: Position[] = []
-      const newClears: Position[] = []
-      let changed = false
-
-      // Group constraints by their overlapping unknowns
-      for (let i = 0; i < constraintCells.length; i++) {
-        const cell1 = constraintCells[i]
-
-        for (let j = i + 1; j < constraintCells.length; j++) {
-          const cell2 = constraintCells[j]
-
-          // Find overlapping and non-overlapping unknowns
-          const unknowns1Set = new Set(cell1.unknowns.map(p => `${p.x},${p.y}`))
-          const unknowns2Set = new Set(cell2.unknowns.map(p => `${p.x},${p.y}`))
-
-          const overlap: Position[] = cell1.unknowns.filter(p => unknowns2Set.has(`${p.x},${p.y}`))
-          const only1: Position[] = cell1.unknowns.filter(p => !unknowns2Set.has(`${p.x},${p.y}`))
-          const only2: Position[] = cell2.unknowns.filter(p => !unknowns1Set.has(`${p.x},${p.y}`))
-
-          if (overlap.length > 0) {
-            // Analyze the constraint interaction
-            const result: SolverStepResult = this.solveOverlapConstraint(cell1, cell2, overlap, only1, only2)
-            if (result.changed) {
-              newBombs.push(...result.newBombs)
-              newClears.push(...result.newClears)
-              changed = true
-            }
-          }
-        }
-      }
-
-      return { newBombs, newClears, changed }
-    }
-
-    // NEW: Advanced constraint satisfaction using equation solving
-    private applyConstraintSatisfaction() {
-      const newBombs: Position[] = []
-      const newClears: Position[] = []
-      let changed = false
-
-      const constraintCells = this.getConstraintCells()
-      if (constraintCells.length === 0) return { newBombs, newClears, changed }
-
-      // First try overlapping constraint analysis (faster for common patterns)
-      const overlapResult = this.analyzeOverlappingConstraints(constraintCells)
-      if (overlapResult.changed) {
-        newBombs.push(...overlapResult.newBombs)
-        newClears.push(...overlapResult.newClears)
-        changed = true
-      }
-
-      // Build system of linear constraints
-      const allUnknowns = new Set<string>()
-      constraintCells.forEach(cell => {
-        cell.unknowns.forEach(pos => {
-          allUnknowns.add(`${pos.x},${pos.y}`)
-        })
-      })
-
-      const unknownsList = Array.from(allUnknowns)
-      const unknownsMap = new Map()
-      unknownsList.forEach((key, index) => {
-        unknownsMap.set(key, index)
-      })
-
-      // Try all possible combinations for small constraint sets
-      if (unknownsList.length <= 15) {
-        // Limit for performance
-        const result = this.solveBruteForce(constraintCells, unknownsList, unknownsMap)
-        if (result.changed) {
-          newBombs.push(...result.newBombs)
-          newClears.push(...result.newClears)
-          changed = true
-        }
-      }
-
-      return { newBombs, newClears, changed }
-    }
-
-    private solveConstraintMatrix(constraints: Constraint[]): Map<string, 0 | 1> {
-      const solutions = new Map<string, 0 | 1>()
-
-      // Simple constraint propagation
-      let changed = true
-      while (changed) {
-        changed = false
-
-        for (const constraint of constraints) {
-          const unknownVars = constraint.unknowns.filter(cell => !solutions.has(cell))
-          const knownMines = constraint.unknowns.filter(cell => solutions.get(cell) === 1).length
-          const remainingMines = constraint.remainingBombs - knownMines
-
-          if (remainingMines === 0) {
-            // All remaining unknowns are safe
-            for (const cell of unknownVars) {
-              if (!solutions.has(cell)) {
-                solutions.set(cell, 0)
-                changed = true
-              }
-            }
-          } else if (remainingMines === unknownVars.length) {
-            // All remaining unknowns are mines
-            for (const cell of unknownVars) {
-              if (!solutions.has(cell)) {
-                solutions.set(cell, 1)
-                changed = true
-              }
-            }
-          }
-        }
-      }
-
-      return solutions
-    }
-
     // NEW: Tank solver - advanced pattern recognition
     private applyTankSolver() {
       const newBombs = []
@@ -611,6 +419,42 @@ namespace MinesweeperOnline {
       }
 
       return { newBombs, newClears, changed }
+    }
+
+    private solveConstraintMatrix(constraints: Constraint[]): Map<string, 0 | 1> {
+      const solutions = new Map<string, 0 | 1>()
+
+      // Simple constraint propagation
+      let changed = true
+      while (changed) {
+        changed = false
+
+        for (const constraint of constraints) {
+          const unknownVars = constraint.unknowns.filter(cell => !solutions.has(cell))
+          const knownMines = constraint.unknowns.filter(cell => solutions.get(cell) === 1).length
+          const remainingMines = constraint.remainingBombs - knownMines
+
+          if (remainingMines === 0) {
+            // All remaining unknowns are safe
+            for (const cell of unknownVars) {
+              if (!solutions.has(cell)) {
+                solutions.set(cell, 0)
+                changed = true
+              }
+            }
+          } else if (remainingMines === unknownVars.length) {
+            // All remaining unknowns are mines
+            for (const cell of unknownVars) {
+              if (!solutions.has(cell)) {
+                solutions.set(cell, 1)
+                changed = true
+              }
+            }
+          }
+        }
+      }
+
+      return solutions
     }
 
     /**
