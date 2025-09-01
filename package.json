@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "My collection of GreaseMonkey scripts",
   "scripts": {
-    "format": "npx prettier --write \"**/*.{md,json,yml,html,ts}\"",
-    "format:check": "npx prettier --check \"**/*.{md,json,yml,html,ts}\"",
-    "lint": "npx eslint --fix src/**/*.ts",
-    "lint:check": "npx eslint src/**/*.ts",
+    "format": "npx biome format --write",
+    "format:check": "npx biome format",
+    "lint": "npx biome lint --fix",
+    "lint:check": "npx biome lint",
     "create-headers": "npx ts-node ./src/scripts/create-headers.ts \"./src/main/**/*.meta.json\" ./dist",
     "build": "npx esbuild ./src/main/**/*.ts --bundle --sourcemap --charset=utf8 --target=es6 --log-level=warning --banner:js='/* jshint esversion: 6 */' --outdir=./dist && npm run create-headers",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -29,10 +29,7 @@
     "@types/node": "^22.3.0",
     "@types/tampermonkey": "^5.0.3",
     "esbuild": "^0.25.5",
-    "eslint": "^9.9.0",
-    "eslint-config-prettier": "^9.1.0",
     "globals": "^16.2.0",
-    "prettier": "^3.3.3",
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.1.0"
   },

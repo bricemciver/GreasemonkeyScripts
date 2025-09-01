@@ -5,17 +5,17 @@ namespace KansasCityStarAntiAnnoy {
         for (const addedNode of record.addedNodes) {
           if (addedNode.nodeName === 'MCC-PAYWALL') {
             if (addedNode.parentNode) {
-              addedNode.parentNode.removeChild(addedNode);
+              addedNode.parentNode.removeChild(addedNode)
             }
           }
         }
       }
-    });
+    })
 
     observer.observe(document.body, {
       childList: true,
       subtree: true,
-    });
-  };
+    })
+  }
 }
-KansasCityStarAntiAnnoy.hidePaywall();
+KansasCityStarAntiAnnoy.hidePaywall()

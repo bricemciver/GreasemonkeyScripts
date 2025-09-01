@@ -1,17 +1,17 @@
 namespace AncestryRemovePaidHints {
-  const familyTreeSources = [62476, 9289, 1030, 1006];
+  const familyTreeSources = [62476, 9289, 1030, 1006]
 
   const handleOfferPage = (db: IDBDatabase, link: Location) => {
     // extract dbid
-    const dbidRegex = /[?&]dbid=(\d+)/;
-    const dbidMatch = RegExp(dbidRegex).exec(link.href);
+    const dbidRegex = /[?&]dbid=(\d+)/
+    const dbidMatch = RegExp(dbidRegex).exec(link.href)
     if (dbidMatch) {
-      const dbid = Number.parseInt(dbidMatch[1], 10);
+      const dbid = Number.parseInt(dbidMatch[1], 10)
       // since we're on the offer page, we know it's paid
-      const getRequest = db.transaction('collections_os', 'readonly').objectStore('collections_os').get(dbid);
+      const getRequest = db.transaction('collections_os', 'readonly').objectStore('collections_os').get(dbid)
       getRequest.onsuccess = () => {
-        const result = getRequest.result;
-        const putOS = db.transaction('collections_os', 'readwrite').objectStore('collections_os');
+        const result = getRequest.result
+        const putOS = db.transaction('collections_os', 'readwrite').objectStore('collections_os')
         if (result) {
           putOS.put({
             dbid,
@@ -19,7 +19,7 @@ namespace AncestryRemovePaidHints {
             tree: result.tree,
             paid: true,
             visible: false,
-          });
+          })
         } else {
           putOS.put({
             dbid,
@@ -27,69 +27,69 @@ namespace AncestryRemovePaidHints {
             tree: false,
             paid: true,
             visible: false,
-          });
+          })
         }
-      };
+      }
     }
-  };
+  }
 
   const initDB = (): Promise<IDBDatabase | Event> =>
     new Promise((resolve, reject) => {
-      const openRequest = window.indexedDB.open('collections_db', 1);
+      const openRequest = window.indexedDB.open('collections_db', 1)
 
       // error handler signifies that the database didn't open successfully
       openRequest.onerror = () => {
-        const errorMessage = `Database failed to open: ${openRequest?.error?.message ?? 'Unknown error'}`;
-        console.error(errorMessage);
-        reject(new Error(errorMessage));
-      };
+        const errorMessage = `Database failed to open: ${openRequest?.error?.message ?? 'Unknown error'}`
+        console.error(errorMessage)
+        reject(new Error(errorMessage))
+      }
 
       // success handler signifies that the database opened successfully
       openRequest.onsuccess = () => {
         // Store the opened database object in the db variable. This is used a lot below
-        resolve(openRequest.result);
-      };
+        resolve(openRequest.result)
+      }
 
       // Set up the database tables if this has not already been done
       openRequest.onupgradeneeded = () => {
         // Grab a reference to the opened database
-        const tmpDb: IDBDatabase = openRequest.result;
+        const tmpDb: IDBDatabase = openRequest.result
 
         // Create an objectStore in our database to store notes and an auto-incrementing key
         // An objectStore is similar to a 'table' in a relational database
         const objectStore = tmpDb.createObjectStore('collections_os', {
           keyPath: 'dbid',
-        });
+        })
 
         // Define what data items the objectStore will contain
-        objectStore.createIndex('name', 'name', { unique: true });
-        objectStore.createIndex('paid', 'paid', { unique: false });
-        objectStore.createIndex('tree', 'tree', { unique: false });
-        objectStore.createIndex('visible', 'visible', { unique: false });
+        objectStore.createIndex('name', 'name', { unique: true })
+        objectStore.createIndex('paid', 'paid', { unique: false })
+        objectStore.createIndex('tree', 'tree', { unique: false })
+        objectStore.createIndex('visible', 'visible', { unique: false })
 
-        console.log('Database setup complete');
-        resolve(tmpDb);
-      };
-    });
+        console.log('Database setup complete')
+        resolve(tmpDb)
+      }
+    })
 
   const evalLink = (db: IDBDatabase, link: HTMLAnchorElement): void => {
     // Make sure link has test
-    const linkText = link.textContent;
+    const linkText = link.textContent
     if (linkText) {
       // Skip review button links
       if (linkText !== 'Review' && linkText.indexOf('\t') === -1 && linkText.indexOf('\n') === -1) {
         // extract dbid
-        const dbidRegex = /[?&]dbid=(\d+)/;
-        const dbidMatch = RegExp(dbidRegex).exec(link.href);
+        const dbidRegex = /[?&]dbid=(\d+)/
+        const dbidMatch = RegExp(dbidRegex).exec(link.href)
         if (dbidMatch) {
-          const dbid = Number.parseInt(dbidMatch[1], 10);
+          const dbid = Number.parseInt(dbidMatch[1], 10)
 
           // see if database has info
           // start db transaction
-          const getRequest = db.transaction('collections_os', 'readonly').objectStore('collections_os').get(dbid);
+          const getRequest = db.transaction('collections_os', 'readonly').objectStore('collections_os').get(dbid)
           getRequest.onsuccess = () => {
-            const result = getRequest.result;
-            let hide = false;
+            const result = getRequest.result
+            let hide = false
             // if no result, query link and add data to the database
             if (!result) {
               GM.xmlHttpRequest({
@@ -98,13 +98,13 @@ namespace AncestryRemovePaidHints {
                 onreadystatechange(response) {
                   if (response.readyState === Tampermonkey.ReadyState.HeadersReceived) {
                     // HeadersReceived
-                    const location = response.finalUrl;
+                    const location = response.finalUrl
                     if (location) {
                       // find out if this is a paid link
-                      const denyRegex = /offers\/join/;
-                      const denyMatch = RegExp(denyRegex).exec(location);
-                      const putOS = db.transaction('collections_os', 'readwrite').objectStore('collections_os');
-                      const isTree = familyTreeSources.indexOf(dbid) !== -1;
+                      const denyRegex = /offers\/join/
+                      const denyMatch = RegExp(denyRegex).exec(location)
+                      const putOS = db.transaction('collections_os', 'readwrite').objectStore('collections_os')
+                      const isTree = familyTreeSources.indexOf(dbid) !== -1
                       if (denyMatch) {
                         // if match, add to paid collection database
                         putOS.add({
@@ -113,8 +113,8 @@ namespace AncestryRemovePaidHints {
                           paid: true,
                           visible: false,
                           tree: isTree,
-                        });
-                        hide = true;
+                        })
+                        hide = true
                       } else if (isTree) {
                         // by default, hide tree results
                         putOS.add({
@@ -123,8 +123,8 @@ namespace AncestryRemovePaidHints {
                           paid: false,
                           visible: false,
                           tree: true,
-                        });
-                        hide = true;
+                        })
+                        hide = true
                       } else {
                         // add to database as a free link so we don't re-query
                         putOS.add({
@@ -133,92 +133,92 @@ namespace AncestryRemovePaidHints {
                           paid: false,
                           visible: true,
                           tree: false,
-                        });
+                        })
                       }
                     }
                   }
                 },
-              });
+              })
             } else {
-              hide = !result.visible;
+              hide = !result.visible
             }
             if (hide) {
               // remove hint from view
-              const li = link.closest("li[role='group']");
-              const section = link.closest('section');
+              const li = link.closest("li[role='group']")
+              const section = link.closest('section')
               if (li) {
-                li.remove();
+                li.remove()
                 if (section && section.querySelectorAll("li[role='group']").length === 1) {
-                  section.remove();
+                  section.remove()
                 }
               }
             }
-          };
+          }
         }
       }
     }
-  };
+  }
 
   const scanHints = (db: IDBDatabase, element: Element): void => {
     // get links
-    const sseLinks = element.querySelectorAll<HTMLAnchorElement>("a[href*='sse.dll']");
+    const sseLinks = element.querySelectorAll<HTMLAnchorElement>("a[href*='sse.dll']")
     for (const link of sseLinks) {
-      evalLink(db, link);
+      evalLink(db, link)
     }
 
     // remove family tree
-    const familyTreeLinks = element.querySelectorAll<HTMLAnchorElement>("a[href*='/family-tree/tree/']");
+    const familyTreeLinks = element.querySelectorAll<HTMLAnchorElement>("a[href*='/family-tree/tree/']")
     for (const link of familyTreeLinks) {
       // remove hint from view
-      const li = link.closest("li[role='group']");
-      const section = link.closest('section');
+      const li = link.closest("li[role='group']")
+      const section = link.closest('section')
       if (li) {
-        li.remove();
+        li.remove()
         if (section && section.querySelectorAll("li[role='group']").length === 1) {
-          section.remove();
+          section.remove()
         }
       }
     }
-  };
+  }
 
   const mutationObserverSetup = (db: IDBDatabase): void => {
     // Options for the observer (which mutations to observe)
-    const config = { childList: true, subtree: true };
+    const config = { childList: true, subtree: true }
 
     // Callback function to execute when mutations are observed
     const callback: MutationCallback = mutationList => {
       for (const mutation of mutationList) {
         if (mutation.type === 'childList') {
           for (const addedNode of mutation.addedNodes) {
-            const element = addedNode as Element;
+            const element = addedNode as Element
             if (
               element.innerHTML &&
               (element.innerHTML.indexOf('sse.dll') !== -1 || element.innerHTML.indexOf('/family-tree/tree/') !== -1)
             ) {
-              scanHints(db, element);
+              scanHints(db, element)
             }
           }
         }
       }
-    };
+    }
 
     // Create an observer instance linked to the callback function
-    const observer = new MutationObserver(callback);
+    const observer = new MutationObserver(callback)
 
     // Start observing the target node for configured mutations
-    observer.observe(document, config);
-  };
+    observer.observe(document, config)
+  }
 
   export const main = async (): Promise<void> => {
-    const db = await initDB();
+    const db = await initDB()
     if (db instanceof IDBDatabase) {
       // see if we're on offer page and handle it
       if (window.location.href.indexOf('offers/join') !== -1) {
-        handleOfferPage(db, window.location);
+        handleOfferPage(db, window.location)
       } else {
-        mutationObserverSetup(db);
+        mutationObserverSetup(db)
       }
     }
-  };
+  }
 }
-AncestryRemovePaidHints.main();
+AncestryRemovePaidHints.main()

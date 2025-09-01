@@ -6,12 +6,12 @@ namespace WordleMildCheat {
   }
 
   type ProcessedCell = {
-    letter: string;
-    position: number;
-    status: State;
-  };
+    letter: string
+    position: number
+    status: State
+  }
 
-  const fullWordList: string[] = [];
+  const fullWordList: string[] = []
 
   /**
    * Set an item into storage
@@ -19,8 +19,8 @@ namespace WordleMildCheat {
    * @param value value to set
    */
   const setItem = (key: string, value: any) => {
-    window.sessionStorage.setItem(key, JSON.stringify(value));
-  };
+    window.sessionStorage.setItem(key, JSON.stringify(value))
+  }
 
   /**
    * Get an item from session storage
@@ -28,14 +28,14 @@ namespace WordleMildCheat {
    * @param defaultVal value to return if key doesnt exist
    */
   const getItem = (key: string, defaultVal: any) => {
-    const val = window.sessionStorage.getItem(key);
-    if (!val || val === 'undefined') return defaultVal;
+    const val = window.sessionStorage.getItem(key)
+    if (!val || val === 'undefined') return defaultVal
     try {
-      return JSON.parse(val);
-    } catch (e) {
-      return val;
+      return JSON.parse(val)
+    } catch (_e) {
+      return val
     }
-  };
+  }
 
   const callback: MutationCallback = (mutationList, mutationObserver) => {
     for (const mutation of mutationList) {
@@ -44,7 +44,7 @@ namespace WordleMildCheat {
         mutation.addedNodes[0].nodeType === Node.ELEMENT_NODE &&
         mutation.addedNodes[0].nodeName === 'SCRIPT'
       ) {
-        const element = mutation.addedNodes[0] as HTMLScriptElement;
+        const element = mutation.addedNodes[0] as HTMLScriptElement
         if (element.src.startsWith('https://www.nytimes.com/games-assets/v2/wordle.')) {
           // Get the script
           GM.xmlHttpRequest({
@@ -52,63 +52,63 @@ namespace WordleMildCheat {
             url: element.src,
             onload(response) {
               // find a known valid word
-              const sonic = response.responseText.indexOf('sonic');
+              const sonic = response.responseText.indexOf('sonic')
               // find the beginning of array
-              const begArray = response.responseText.lastIndexOf('[', sonic);
+              const begArray = response.responseText.lastIndexOf('[', sonic)
               // find the end of array
-              const endArray = response.responseText.indexOf(']', sonic);
+              const endArray = response.responseText.indexOf(']', sonic)
               // Get the word list from script
-              const wordListStr = response.responseText.substring(begArray, endArray + 1);
+              const wordListStr = response.responseText.substring(begArray, endArray + 1)
               // Convert to an array object
-              const tempArray = JSON.parse(wordListStr) as string[];
-              fullWordList.push(...tempArray);
-              setItem('wordList', fullWordList);
+              const tempArray = JSON.parse(wordListStr) as string[]
+              fullWordList.push(...tempArray)
+              setItem('wordList', fullWordList)
             },
-          });
-          mutationObserver.disconnect();
-          break;
+          })
+          mutationObserver.disconnect()
+          break
         }
       }
     }
-  };
+  }
 
   const strToState: Record<string, State> = {
     absent: State.none,
     'present in another position': State.diff,
     correct: State.correct,
-  };
+  }
 
   const createWordlistDialog = (): HTMLDialogElement => {
-    const wordlist = document.createElement('dialog');
-    wordlist.classList.add('dialog');
-    wordlist.id = 'dialog';
-    const header = document.createElement('h2');
-    header.textContent = 'Word List';
-    const list = document.createElement('ul');
-    list.id = 'wordList';
-    wordlist.appendChild(header);
-    wordlist.appendChild(list);
-    return wordlist;
-  };
+    const wordlist = document.createElement('dialog')
+    wordlist.classList.add('dialog')
+    wordlist.id = 'dialog'
+    const header = document.createElement('h2')
+    header.textContent = 'Word List'
+    const list = document.createElement('ul')
+    list.id = 'wordList'
+    wordlist.appendChild(header)
+    wordlist.appendChild(list)
+    return wordlist
+  }
 
   const showWordlist = (curWords: string[]): void => {
-    let wordList = document.getElementById('wordList');
+    let wordList = document.getElementById('wordList')
     if (!wordList) {
       // load new styles
-      const head = document.getElementsByTagName('head')[0];
-      const style = document.createElement('style');
-      head.appendChild(style);
-      style.setAttribute('type', 'text/css');
+      const head = document.getElementsByTagName('head')[0]
+      const style = document.createElement('style')
+      head.appendChild(style)
+      style.setAttribute('type', 'text/css')
       style.sheet?.insertRule(`.dialog li {
         display: block;
         padding: 2px 0px;
-      }`);
+      }`)
       style.sheet?.insertRule(`.dialog ul {
         list-style: none;
         margin: 4px 0px;
         position: relative;
         padding: 0px;
-      }`);
+      }`)
       style.sheet?.insertRule(`.dialog h2 {
         font-size: 0.6875rem;
         line-height: 1.5;
@@ -126,7 +126,7 @@ namespace WordleMildCheat {
         color: rgb(111, 126, 140);
         margin-top: 8px;
         text-transform: uppercase;
-      }`);
+      }`)
       style.sheet?.insertRule(`.dialog {
         top: 50%;
         left: 50%;
@@ -139,30 +139,30 @@ namespace WordleMildCheat {
         font-family: Arial, sans-serif;
         color: #333;
         margin: 0 auto;
-      }`);
+      }`)
 
       // create wordlist div
-      const helpDiv = createWordlistDialog();
+      const helpDiv = createWordlistDialog()
 
       // attach to body
-      document.body.appendChild(helpDiv);
+      document.body.appendChild(helpDiv)
 
-      wordList = document.getElementById('wordList');
+      wordList = document.getElementById('wordList')
     }
     if (wordList) {
-      wordList.innerHTML = '';
+      wordList.innerHTML = ''
       for (const word of curWords) {
-        const listItem = document.createElement('li');
-        listItem.textContent = word;
-        wordList?.appendChild(listItem);
+        const listItem = document.createElement('li')
+        listItem.textContent = word
+        wordList?.appendChild(listItem)
       }
     }
-    document.querySelector<HTMLDialogElement>('dialog#dialog')?.showModal();
-  };
+    document.querySelector<HTMLDialogElement>('dialog#dialog')?.showModal()
+  }
 
   const hideWordlist = (): void => {
-    document.querySelector<HTMLDialogElement>('dialog#dialog')?.close();
-  };
+    document.querySelector<HTMLDialogElement>('dialog#dialog')?.close()
+  }
 
   /**
    * Examples of text found:
@@ -171,57 +171,57 @@ namespace WordleMildCheat {
    * - 'N' (letter 3) is incorrect
    */
   const processCell = (element: HTMLDivElement): ProcessedCell | null => {
-    const label = element.ariaLabel;
+    const label = element.ariaLabel
     if (label) {
       // get letter, status, position from label
-      const [position, letter, status] = label.split(', ');
+      const [position, letter, status] = label.split(', ')
       if (letter && letter !== 'empty') {
         return {
           letter,
           position: Number.parseInt(position.charAt(0), 10),
           status: strToState[status],
-        };
-      }
-    }
-    return null;
-  };
-
-  const extractGameBoard = () => {
-    const boardState: ProcessedCell[] = [];
-    const board = document.querySelector<HTMLDivElement>("div[class^='Board-module_board__']");
-    if (board) {
-      const tiles = board.querySelectorAll<HTMLDivElement>("div[class^='Tile-module_tile__']");
-      for (const tile of tiles) {
-        const processedCell = processCell(tile);
-        if (processedCell !== null) {
-          boardState.push(processedCell);
         }
       }
     }
-    return boardState;
-  };
+    return null
+  }
+
+  const extractGameBoard = () => {
+    const boardState: ProcessedCell[] = []
+    const board = document.querySelector<HTMLDivElement>("div[class^='Board-module_board__']")
+    if (board) {
+      const tiles = board.querySelectorAll<HTMLDivElement>("div[class^='Tile-module_tile__']")
+      for (const tile of tiles) {
+        const processedCell = processCell(tile)
+        if (processedCell !== null) {
+          boardState.push(processedCell)
+        }
+      }
+    }
+    return boardState
+  }
 
   const sortProcessedCells = (cells: ProcessedCell[]): ProcessedCell[] => {
-    return cells.sort((a, b) => a.status - b.status);
-  };
+    return cells.sort((a, b) => a.status - b.status)
+  }
 
   const processGameBoard = (boardState: ProcessedCell[]) => {
-    let tempWordList: string[] = [...fullWordList];
+    let tempWordList: string[] = [...fullWordList]
 
     // sort boardState so all correct answers are handled first, then diff, then none
-    sortProcessedCells(boardState);
+    sortProcessedCells(boardState)
 
     for (const item of boardState) {
       if (item.status === State.correct) {
         // process all the correct answers first to shrink word list
-        tempWordList = tempWordList.filter(word => word.charAt(item.position - 1).toLowerCase() === item.letter.toLowerCase());
+        tempWordList = tempWordList.filter(word => word.charAt(item.position - 1).toLowerCase() === item.letter.toLowerCase())
       } else if (item.status === State.diff) {
         // now eliminate words where 'diff' items appear in that spot
         // and where 'diff' item doesn't appear at all
         tempWordList = tempWordList.filter(
           word =>
             word.charAt(item.position - 1).toLowerCase() !== item.letter.toLowerCase() && word.indexOf(item.letter.toLowerCase()) !== -1,
-        );
+        )
       } else if (
         item.status === State.none &&
         !boardState.some(
@@ -229,48 +229,48 @@ namespace WordleMildCheat {
         )
       ) {
         // need to be careful here, only remove 'none' if it wasn't previously 'correct' or 'diff' (since it could be a second occurance)
-        tempWordList = tempWordList.filter(word => word.indexOf(item.letter.toLowerCase()) === -1);
+        tempWordList = tempWordList.filter(word => word.indexOf(item.letter.toLowerCase()) === -1)
       }
     }
 
-    return tempWordList;
-  };
+    return tempWordList
+  }
 
   export const findAllowedWords = () => {
-    fullWordList.push(...getItem('wordList', []));
+    fullWordList.push(...getItem('wordList', []))
     if (fullWordList.length === 0) {
       // create a new instance of `MutationObserver` named `observer`,
       // passing it a callback function
-      const observer = new MutationObserver(callback);
+      const observer = new MutationObserver(callback)
 
       // call `observe()` on that MutationObserver instance,
       // passing it the element to observe, and the options object
-      observer.observe(document, { subtree: true, childList: true });
+      observer.observe(document, { subtree: true, childList: true })
     }
-  };
+  }
 
   export const addListeners = () => {
     document.addEventListener(
       'keydown',
       event => {
         if (event.defaultPrevented) {
-          return; // Do nothing if the event was already processed
+          return // Do nothing if the event was already processed
         }
 
         if (event.key === '?') {
-          event.preventDefault();
-          showWordlist(processGameBoard(extractGameBoard()));
+          event.preventDefault()
+          showWordlist(processGameBoard(extractGameBoard()))
         }
         if (event.key === 'Escape') {
-          event.preventDefault();
-          hideWordlist();
+          event.preventDefault()
+          hideWordlist()
         }
       },
       true,
-    );
-  };
+    )
+  }
 }
 // Retrieve (locally or from site) the word lists
-WordleMildCheat.findAllowedWords();
+WordleMildCheat.findAllowedWords()
 // add listeners
-WordleMildCheat.addListeners();
+WordleMildCheat.addListeners()

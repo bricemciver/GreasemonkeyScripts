@@ -11,98 +11,98 @@
 // ==/UserScript==
 
 /* jshint esversion: 6 */
-"use strict";
-(() => {
+'use strict'
+;(() => {
   // src/main/quordle-mild-cheat/quordle-mild-cheat.user.ts
-  var QuordleMildCheat;
-  ((QuordleMildCheat2) => {
-    const wordBankRegEx = /wordBank:\s*"([^"]*)"/;
-    const allowedRegEx = /allowed:\s*"([^"]*)"/;
-    const wordBankWords = [];
-    const allowedWords = [];
+  var QuordleMildCheat
+  ;(QuordleMildCheat2 => {
+    const wordBankRegEx = /wordBank:\s*"([^"]*)"/
+    const allowedRegEx = /allowed:\s*"([^"]*)"/
+    const wordBankWords = []
+    const allowedWords = []
     const setItem = (key, value) => {
-      window.sessionStorage.setItem(key, JSON.stringify(value));
-    };
+      window.sessionStorage.setItem(key, JSON.stringify(value))
+    }
     const getItem = (key, defaultVal) => {
-      const val = window.sessionStorage.getItem(key);
-      if (!val || val === "undefined") return defaultVal;
+      const val = window.sessionStorage.getItem(key)
+      if (!val || val === 'undefined') return defaultVal
       try {
-        return JSON.parse(val);
+        return JSON.parse(val)
       } catch (e) {
-        return val;
+        return val
       }
-    };
+    }
     QuordleMildCheat2.findAllowedWords = () => {
-      wordBankWords.push(...getItem("wordBank", []));
-      allowedWords.push(...getItem("allowed", []));
+      wordBankWords.push(...getItem('wordBank', []))
+      allowedWords.push(...getItem('allowed', []))
       if (!wordBankWords.length || !allowedWords.length) {
-        const script = document.querySelector("script[type='module']");
+        const script = document.querySelector("script[type='module']")
         if (script) {
           GM.xmlHttpRequest({
-            method: "GET",
+            method: 'GET',
             url: script.src,
             onload(response) {
-              const text = response.responseText;
-              const wordBankMatches = RegExp(wordBankRegEx).exec(text);
+              const text = response.responseText
+              const wordBankMatches = RegExp(wordBankRegEx).exec(text)
               if (wordBankMatches && wordBankMatches.length > 1) {
-                wordBankWords.push(...wordBankMatches[1].split(" "));
+                wordBankWords.push(...wordBankMatches[1].split(' '))
               }
-              const allowedMatches = RegExp(allowedRegEx).exec(text);
+              const allowedMatches = RegExp(allowedRegEx).exec(text)
               if (allowedMatches && allowedMatches.length > 1) {
-                allowedWords.push(...allowedMatches[1].split(" "));
+                allowedWords.push(...allowedMatches[1].split(' '))
               }
-              setItem("wordBank", wordBankWords);
-              setItem("allowed", allowedWords);
-            }
-          });
+              setItem('wordBank', wordBankWords)
+              setItem('allowed', allowedWords)
+            },
+          })
         }
       }
-    };
+    }
     const createWordlistDialog = () => {
-      const wordlist = document.createElement("dialog");
-      wordlist.classList.add("dialog");
-      wordlist.id = "dialog";
-      const header = document.createElement("h2");
-      header.textContent = "Word List";
-      wordlist.appendChild(header);
-      const listContainer = document.createElement("div");
-      listContainer.id = "wordList";
-      wordlist.appendChild(listContainer);
-      return wordlist;
-    };
+      const wordlist = document.createElement('dialog')
+      wordlist.classList.add('dialog')
+      wordlist.id = 'dialog'
+      const header = document.createElement('h2')
+      header.textContent = 'Word List'
+      wordlist.appendChild(header)
+      const listContainer = document.createElement('div')
+      listContainer.id = 'wordList'
+      wordlist.appendChild(listContainer)
+      return wordlist
+    }
     const createBoardList = (wordList, board, title) => {
-      const boardHeader = document.createElement("h2");
-      boardHeader.textContent = title;
-      wordList.appendChild(boardHeader);
-      const list = document.createElement("ul");
+      const boardHeader = document.createElement('h2')
+      boardHeader.textContent = title
+      wordList.appendChild(boardHeader)
+      const list = document.createElement('ul')
       for (const word of board) {
-        const listItem = document.createElement("li");
-        listItem.textContent = word;
-        if (wordBankWords.some((item) => item === word)) {
-          listItem.classList.add("font-bold");
+        const listItem = document.createElement('li')
+        listItem.textContent = word
+        if (wordBankWords.some(item => item === word)) {
+          listItem.classList.add('font-bold')
         }
-        list.appendChild(listItem);
+        list.appendChild(listItem)
       }
-      wordList.appendChild(list);
-    };
+      wordList.appendChild(list)
+    }
     const showWordlist = (...boards) => {
-      let wordList = document.getElementById("wordList");
+      let wordList = document.getElementById('wordList')
       if (!wordList) {
-        const head = document.getElementsByTagName("head")[0];
-        const style = document.createElement("style");
-        head.appendChild(style);
-        style.setAttribute("type", "text/css");
+        const head = document.getElementsByTagName('head')[0]
+        const style = document.createElement('style')
+        head.appendChild(style)
+        style.setAttribute('type', 'text/css')
         if (style.sheet) {
           style.sheet.insertRule(`.dialog li {
             display: block;
             padding: 2px 0px;
-        }`);
+        }`)
           style.sheet.insertRule(`.dialog ul {
             list-style: none;
             margin: 4px 0px;
             position: relative;
             padding: 0px;
-        }`);
+        }`)
           style.sheet.insertRule(`.dialog h2 {
             font-size: 0.6875rem;
             line-height: 1.5;
@@ -120,7 +120,7 @@
             color: rgb(111, 126, 140);
             margin-top: 8px;
             text-transform: uppercase;
-        }`);
+        }`)
           style.sheet.insertRule(`.dialog {
             top: 50%;
             left: 50%;
@@ -133,122 +133,131 @@
             font-family: Arial, sans-serif;
             color: #333;
             margin: 0 auto;
-        }`);
+        }`)
         }
-        const helpDiv = createWordlistDialog();
-        document.body.appendChild(helpDiv);
-        wordList = document.getElementById("wordList");
+        const helpDiv = createWordlistDialog()
+        document.body.appendChild(helpDiv)
+        wordList = document.getElementById('wordList')
       }
       if (wordList) {
-        wordList.innerHTML = "";
+        wordList.innerHTML = ''
       }
       boards.forEach((board, index) => {
         if (wordList) {
-          createBoardList(wordList, board, `Board ${index + 1}`);
+          createBoardList(wordList, board, `Board ${index + 1}`)
         }
-      });
-      const dialog = document.querySelector("dialog#dialog");
+      })
+      const dialog = document.querySelector('dialog#dialog')
       if (dialog) {
-        dialog.showModal();
+        dialog.showModal()
       }
-    };
+    }
     const hideWordlist = () => {
-      const dialog = document.querySelector("dialog#dialog");
+      const dialog = document.querySelector('dialog#dialog')
       if (dialog) {
-        dialog.close();
+        dialog.close()
       }
-    };
+    }
     QuordleMildCheat2.addListeners = () => {
       document.addEventListener(
-        "keydown",
-        (event) => {
+        'keydown',
+        event => {
           if (event.defaultPrevented) {
-            return;
+            return
           }
-          if (event.key === "?") {
-            event.preventDefault();
-            const boardArray = [];
+          if (event.key === '?') {
+            event.preventDefault()
+            const boardArray = []
             for (let i = 1; i < 5; i++) {
-              boardArray.push(processGameBoard(extractGameBoard(i)));
+              boardArray.push(processGameBoard(extractGameBoard(i)))
             }
-            showWordlist(...boardArray);
+            showWordlist(...boardArray)
           }
-          if (event.key === "Escape") {
-            event.preventDefault();
-            hideWordlist();
+          if (event.key === 'Escape') {
+            event.preventDefault()
+            hideWordlist()
           }
         },
-        true
-      );
-    };
-    const cellRegEx = /'(\w+)' \(letter (\d+)\) is (in a different spot|correct|incorrect)/;
-    const processCell = (element) => {
-      const label = element.ariaLabel;
+        true,
+      )
+    }
+    const cellRegEx = /'(\w+)' \(letter (\d+)\) is (in a different spot|correct|incorrect)/
+    const processCell = element => {
+      const label = element.ariaLabel
       if (label) {
-        const match = RegExp(cellRegEx).exec(label);
+        const match = RegExp(cellRegEx).exec(label)
         if (match && match.length > 3) {
-          const letter = match[1];
-          const position = Number.parseInt(match[2], 10);
-          const status = match[3];
+          const letter = match[1]
+          const position = Number.parseInt(match[2], 10)
+          const status = match[3]
           return {
             letter,
             position,
-            status: statusToBasic[status]
-          };
+            status: statusToBasic[status],
+          }
         }
       }
-      return null;
-    };
+      return null
+    }
     const statusToBasic = {
-      "in a different spot": "diff",
-      correct: "correct",
-      incorrect: "none"
-    };
-    const extractGameBoard = (boardNum) => {
-      const boardState = [];
-      const board = document.querySelector(`div[role="table"][aria-label="Game Board ${boardNum}"]`);
+      'in a different spot': 'diff',
+      correct: 'correct',
+      incorrect: 'none',
+    }
+    const extractGameBoard = boardNum => {
+      const boardState = []
+      const board = document.querySelector(`div[role="table"][aria-label="Game Board ${boardNum}"]`)
       if (board) {
-        const rows = board.querySelectorAll('div[role="row"]');
+        const rows = board.querySelectorAll('div[role="row"]')
         for (const row of rows) {
-          const cells = row.querySelectorAll('div[role="cell"]');
+          const cells = row.querySelectorAll('div[role="cell"]')
           for (const cell of cells) {
-            const processedCell = processCell(cell);
+            const processedCell = processCell(cell)
             if (processedCell !== null) {
-              boardState.push(processedCell);
+              boardState.push(processedCell)
             }
           }
         }
       }
-      return boardState;
-    };
-    const sortProcessedCells = (cells) => {
+      return boardState
+    }
+    const sortProcessedCells = cells => {
       const statusOrder = {
         correct: 0,
         diff: 1,
-        none: 2
-      };
-      return cells.sort((a, b) => statusOrder[a.status] - statusOrder[b.status]);
-    };
-    const processGameBoard = (boardState) => {
-      let tempWordList = [...wordBankWords, ...allowedWords];
-      sortProcessedCells(boardState);
+        none: 2,
+      }
+      return cells.sort((a, b) => statusOrder[a.status] - statusOrder[b.status])
+    }
+    const processGameBoard = boardState => {
+      let tempWordList = [...wordBankWords, ...allowedWords]
+      sortProcessedCells(boardState)
       for (const item of boardState) {
-        if (item.status === "correct") {
-          tempWordList = tempWordList.filter((word) => word.charAt(item.position - 1).toUpperCase() === item.letter.toUpperCase());
-        } else if (item.status === "diff") {
+        if (item.status === 'correct') {
+          tempWordList = tempWordList.filter(word => word.charAt(item.position - 1).toUpperCase() === item.letter.toUpperCase())
+        } else if (item.status === 'diff') {
           tempWordList = tempWordList.filter(
-            (word) => word.charAt(item.position - 1).toUpperCase() !== item.letter.toUpperCase() && word.indexOf(item.letter.toUpperCase()) !== -1
-          );
-        } else if (item.status === "none" && !boardState.some(({ letter, status }) => (status === "correct" || status === "diff") && letter === item.letter)) {
-          tempWordList = tempWordList.filter((word) => word.indexOf(item.letter.toUpperCase()) === -1);
-        } else if (item.status === "none" && boardState.some(({ letter, status }) => (status === "correct" || status === "diff") && letter === item.letter)) {
-          tempWordList = tempWordList.filter((word) => word.indexOf(item.letter.toUpperCase()) === word.lastIndexOf(item.letter.toUpperCase()));
+            word =>
+              word.charAt(item.position - 1).toUpperCase() !== item.letter.toUpperCase() && word.indexOf(item.letter.toUpperCase()) !== -1,
+          )
+        } else if (
+          item.status === 'none' &&
+          !boardState.some(({ letter, status }) => (status === 'correct' || status === 'diff') && letter === item.letter)
+        ) {
+          tempWordList = tempWordList.filter(word => word.indexOf(item.letter.toUpperCase()) === -1)
+        } else if (
+          item.status === 'none' &&
+          boardState.some(({ letter, status }) => (status === 'correct' || status === 'diff') && letter === item.letter)
+        ) {
+          tempWordList = tempWordList.filter(
+            word => word.indexOf(item.letter.toUpperCase()) === word.lastIndexOf(item.letter.toUpperCase()),
+          )
         }
       }
-      return tempWordList;
-    };
-  })(QuordleMildCheat || (QuordleMildCheat = {}));
-  QuordleMildCheat.findAllowedWords();
-  QuordleMildCheat.addListeners();
-})();
+      return tempWordList
+    }
+  })(QuordleMildCheat || (QuordleMildCheat = {}))
+  QuordleMildCheat.findAllowedWords()
+  QuordleMildCheat.addListeners()
+})()
 //# sourceMappingURL=quordle-mild-cheat.user.js.map

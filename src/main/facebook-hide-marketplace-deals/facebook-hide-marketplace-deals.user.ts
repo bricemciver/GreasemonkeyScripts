@@ -4,37 +4,37 @@ namespace FacebookHideMarketplaceDeals {
     childList: true,
     attributes: true,
     subtree: true,
-  };
+  }
 
   const removeTracking = (node: Node): void => {
     if (node.nodeType === Node.ELEMENT_NODE) {
-      const dealsLink = (node as HTMLElement).querySelector<HTMLAnchorElement>("a[href*='tracking']");
+      const dealsLink = (node as HTMLElement).querySelector<HTMLAnchorElement>("a[href*='tracking']")
       if (dealsLink) {
-        dealsLink.parentElement?.remove();
+        dealsLink.parentElement?.remove()
       }
     }
-  };
+  }
 
   // Callback function to execute when mutations are observed
   const callback: MutationCallback = mutationsList => {
     for (const mutation of mutationsList) {
       if (mutation.type === 'childList' && mutation.addedNodes.length) {
         for (const node of mutation.addedNodes) {
-          removeTracking(node);
+          removeTracking(node)
         }
       }
       if (mutation.type === 'attributes' && mutation.attributeName === 'href' && mutation.target.nodeType === Node.ELEMENT_NODE) {
-        const link = mutation.target as HTMLAnchorElement;
+        const link = mutation.target as HTMLAnchorElement
         if (link.href.includes('tracking')) {
-          link.parentElement?.remove();
+          link.parentElement?.remove()
         }
       }
     }
-  };
+  }
 
   export const main = () => {
     // Create an observer instance linked to the callback function and observe
-    new MutationObserver(callback).observe(document, config);
-  };
+    new MutationObserver(callback).observe(document, config)
+  }
 }
-FacebookHideMarketplaceDeals.main();
+FacebookHideMarketplaceDeals.main()
