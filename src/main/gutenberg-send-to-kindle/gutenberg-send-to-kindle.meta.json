@@ -1,0 +1,24 @@
+{
+  "UserScript": {
+    "name": [{ "value": "Gutenberg Send to Kindle" }],
+    "namespace": [
+      { "value": "https://github.com/bricemciver/GreasemonekeyScripts" }
+    ],
+    "description": [
+      { "value": "Adds a 'Send to Kindle' button on Project Gutenberg ebook pages to send EPUB3 files directly to your Kindle device via Amazon" }
+    ],
+    "license": [{ "value": "MIT" }],
+    "version": [{ "value": "0.1" }],
+    "match": [
+      { "value": "https://www.gutenberg.org/ebooks/*" },
+      { "value": "https://gutenberg.org/ebooks/*" }
+    ],
+    "icon": [{ "value": "https://icons.duckduckgo.com/ip3/gutenberg.org.ico" }],
+    "grant": [{ "value": "GM.xmlHttpRequest" }],
+    "connect": [
+      { "value": "amazon.com" },
+      { "value": "gutenberg.org" }
+    ],
+    "run-at": [{ "value": "document-end" }]
+  }
+}
