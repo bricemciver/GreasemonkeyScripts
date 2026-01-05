@@ -19,7 +19,6 @@
   var __defProp = Object.defineProperty;
   var __defProps = Object.defineProperties;
   var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
-  var __getOwnPropNames = Object.getOwnPropertyNames;
   var __getOwnPropSymbols = Object.getOwnPropertySymbols;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
   var __propIsEnum = Object.prototype.propertyIsEnumerable;
@@ -36,12 +35,6 @@
     return a;
   };
   var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-  var __esm = (fn, res) => function __init() {
-    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
-  };
-  var __commonJS = (cb, mod) => function __require() {
-    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
-  };
   var __async = (__this, __arguments, generator) => {
     return new Promise((resolve, reject) => {
       var fulfilled = (value) => {
@@ -64,20 +57,17 @@
   };
 
   // node_modules/uuid/dist/stringify.js
+  var byteToHex = [];
+  for (let i = 0; i < 256; ++i) {
+    byteToHex.push((i + 256).toString(16).slice(1));
+  }
   function unsafeStringify(arr, offset = 0) {
     return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
   }
-  var byteToHex;
-  var init_stringify = __esm({
-    "node_modules/uuid/dist/stringify.js"() {
-      byteToHex = [];
-      for (let i = 0; i < 256; ++i) {
-        byteToHex.push((i + 256).toString(16).slice(1));
-      }
-    }
-  });
 
   // node_modules/uuid/dist/rng.js
+  var getRandomValues;
+  var rnds8 = new Uint8Array(16);
   function rng() {
     if (!getRandomValues) {
       if (typeof crypto === "undefined" || !crypto.getRandomValues) {
@@ -87,21 +77,10 @@
     }
     return getRandomValues(rnds8);
   }
-  var getRandomValues, rnds8;
-  var init_rng = __esm({
-    "node_modules/uuid/dist/rng.js"() {
-      rnds8 = new Uint8Array(16);
-    }
-  });
 
   // node_modules/uuid/dist/native.js
-  var randomUUID, native_default;
-  var init_native = __esm({
-    "node_modules/uuid/dist/native.js"() {
-      randomUUID = typeof crypto !== "undefined" && crypto.randomUUID && crypto.randomUUID.bind(crypto);
-      native_default = { randomUUID };
-    }
-  });
+  var randomUUID = typeof crypto !== "undefined" && crypto.randomUUID && crypto.randomUUID.bind(crypto);
+  var native_default = { randomUUID };
 
   // node_modules/uuid/dist/v4.js
   function _v4(options, buf, offset) {
@@ -131,22 +110,7 @@
     }
     return _v4(options, buf, offset);
   }
-  var v4_default;
-  var init_v4 = __esm({
-    "node_modules/uuid/dist/v4.js"() {
-      init_native();
-      init_rng();
-      init_stringify();
-      v4_default = v4;
-    }
-  });
-
-  // node_modules/uuid/dist/index.js
-  var init_dist = __esm({
-    "node_modules/uuid/dist/index.js"() {
-      init_v4();
-    }
-  });
+  var v4_default = v4;
 
   // src/main/gutenberg-send-to-kindle/gutenberg-send-to-kindle.user.ts
   var require_gutenberg_send_to_kindle_user = __commonJS({
@@ -335,8 +299,7 @@
             log("HEAD returned Content-Length", size);
             return size;
           } else {
-            log("HEAD did not return Content-Length");
-            return null;
+            msg = String(error);
           }
         });
         const initSendToKindle = (fileSize, csrfToken) => __async(null, null, function* () {
@@ -525,35 +488,94 @@
             log("No EPUB3 version available on this page");
             return;
           }
-          const buttonContainer = document.createElement("div");
-          buttonContainer.style.cssText = `
+          if (msg === "CSRF_NOT_FOUND") {
+            showMessage(
+              "Could not read Amazon's security token. Try refreshing Amazon or logging in.",
+              "error"
+            );
+            log("CSRF token not found in Amazon page response", error);
+            return;
+          }
+          showMessage(
+            "Unable to fetch security token from Amazon. Please refresh and try again.",
+            "error"
+          );
+          log("Failed to get CSRF token", error);
+          return;
+        }
+        log("Step 1: Initializing Send to Kindle", { fileSize: headSize });
+        const initData = yield initSendToKindle(headSize, csrfToken);
+        log("Downloading EPUB after init to prepare upload");
+        const epubData = yield downloadEpub(epubInfo.url);
+        log("Step 2: Uploading EPUB");
+        const uploadData = yield uploadEpub(
+          initData.uploadUrl,
+          epubData,
+          csrfToken
+        );
+        log("Step 3: Sending to Kindle");
+        const sendData = yield sendToKindle(
+          initData.stkToken,
+          epubInfo.title,
+          epubInfo.author,
+          uploadData["Content-Length"],
+          epubInfo.filename,
+          csrfToken
+        );
+        log("Send to Kindle completed successfully", sendData);
+        showMessage(`Sent "${epubInfo.title}" to your Kindle!`, "success");
+      } catch (error) {
+        let errorMessage;
+        if (error instanceof Error) {
+          errorMessage = error.message;
+        } else {
+          errorMessage = String(error);
+        }
+        log("Error sending to Kindle", error);
+        showMessage(`Error: ${errorMessage}`, "error");
+      }
+    });
+    const addSendToKindleButton = () => {
+      let epubLink = null;
+      const epubLinks = document.querySelectorAll(
+        'a[class*="link"][title*="Download"]'
+      );
+      for (const link of epubLinks) {
+        if (link.textContent.includes("Send-to-Kindle")) {
+          epubLink = link;
+          break;
+        }
+      }
+      if (!epubLink) {
+        log("No EPUB3 version available on this page");
+        return;
+      }
+      const buttonContainer = document.createElement("div");
+      buttonContainer.style.cssText = `
       margin: 8px 0 8px 8px;
       display: inline-block;
     `;
-          const button = document.createElement("button");
+      const button = document.createElement("button");
+      button.textContent = "📧 Send to Kindle";
+      button.classList.add("gstk-button");
+      button.addEventListener("click", (e) => {
+        e.preventDefault();
+        button.disabled = true;
+        button.textContent = "⏳ Sending...";
+        sendEpubToKindle().finally(() => {
+          button.disabled = false;
           button.textContent = "📧 Send to Kindle";
-          button.classList.add("gstk-button");
-          button.addEventListener("click", (e) => {
-            e.preventDefault();
-            button.disabled = true;
-            button.textContent = "⏳ Sending...";
-            sendEpubToKindle().finally(() => {
-              button.disabled = false;
-              button.textContent = "📧 Send to Kindle";
-            });
-          });
-          buttonContainer.appendChild(button);
-          epubLink.after(buttonContainer);
-          log("Send to Kindle button added successfully");
-        };
-        GutenbergSendToKindle2.main = () => {
-          injectStyles();
-          addSendToKindleButton();
-        };
-      })(GutenbergSendToKindle || (GutenbergSendToKindle = {}));
-      GutenbergSendToKindle.main();
-    }
-  });
-  require_gutenberg_send_to_kindle_user();
+        });
+      });
+      buttonContainer.appendChild(button);
+      epubLink.after(buttonContainer);
+      log("Send to Kindle button added successfully");
+    };
+    GutenbergSendToKindle2.main = () => {
+      injectStyles();
+      addSendToKindleButton();
+    };
+  })(GutenbergSendToKindle || (GutenbergSendToKindle = {}));
+  GutenbergSendToKindle.main();
 })();
 //# sourceMappingURL=gutenberg-send-to-kindle.user.js.map

@@ -1,0 +1,41 @@
+{
+  "UserScript": {
+    "name": [{ "value": "Amazon CamelCamelCamel + Keepa Price Charts" }],
+    "namespace": [
+      { "value": "https://github.com/bricemciver/GreasemonekeyScripts" }
+    ],
+    "description": [
+      { "value": "Add CamelCamelCamel and Keepa price charts to Amazon product pages." }
+    ],
+    "author": [{ "value": "miki.it" }],
+    "license": [{ "value": "MIT" }],
+    "version": [{ "value": "2.0.0" }],
+    "match": [
+      { "value": "https://www.amazon.com/*" },
+      { "value": " https://www.amazon.co.uk/*" },
+      { "value": "https://www.amazon.de/*" },
+      { "value": "https://www.amazon.fr/*" },
+      { "value": "https://www.amazon.it/*" },
+      { "value": "https://www.amazon.es/*" },
+      { "value": "https://www.amazon.ca/*" },
+      { "value": "https://www.amazon.co.jp/*" },
+      { "value": "https://www.amazon.in/*" },
+      { "value": "https://www.amazon.com.br/*" },
+      { "value": "https://www.amazon.com.mx/*" },
+      { "value": "https://www.amazon.com.au/*" },
+      { "value": "https://www.amazon.nl/*" },
+      { "value": "https://www.amazon.sg/*" },
+      { "value": "https://www.amazon.ae/*" },
+      { "value": "https://www.amazon.sa/*" },
+      { "value": "https://www.amazon.se/*" },
+      { "value": "https://www.amazon.pl/*" },
+      { "value": "https://www.amazon.com.tr/*" },
+      { "value": "https://www.amazon.eg/*" },
+      { "value": "https://www.amazon.com.be/*" }
+    ],
+    "icon": [{ "value": "https://icons.duckduckgo.com/ip3/amazon.com.ico" }],
+    "grant": [{ "value": "GM_addStyle" }],
+    "run-at": [{ "value": "document-idle" }],
+    "no-frames": [{ "value": true }]
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "UserScript": {
+    "name": [{ "value": "Simple Sponsor Skipper" }],
+    "author": [{ "value": "mthsk" }],
+    "namespace": [
+      { "value": "https://github.com/bricemciver/GreasemonekeyScripts" }
+    ],
+    "description": [
+      {
+        "value": "Skips annoying intros, sponsors and w/e on YouTube and its frontends like Invidious and CloudTube using the SponsorBlock API."
+      }
+    ],
+    "license": [{ "value": "AGPL-3.0-or-later" }],
+    "version": [{ "value": "2024.06" }],
+    "grant": [
+      { "value": "GM.getValue" },
+      { "value": "GM.setValue" },
+      { "value": "GM.notification" },
+      { "value": "GM.openInTab" },
+      { "value": "GM.registerMenuCommand" },
+      { "value": "GM.xmlHttpRequest" }
+    ],
+    "connect": [{ "value": "sponsor.ajay.app" }],
+    "match": [
+      { "value": "*://m.youtube.com/*" },
+      { "value": "*://youtu.be/*" },
+      { "value": "*://www.youtube.com/*" },
+      { "value": "*://www.youtube-nocookie.com/embed/*" },
+      { "value": "*://odysee.com/*" },
+      { "value": "*://yt.artemislena.eu/*" },
+      { "value": "*://tube.cadence.moe/*" },
+      { "value": "*://y.com.sb/*" },
+      { "value": "*://invidious.esmailelbob.xyz/*" },
+      { "value": "*://invidious.flokinet.to/*" },
+      { "value": "*://inv.frail.com.br/*" },
+      { "value": "*://invidious.garudalinux.org/*" },
+      { "value": "*://invidious.kavin.rocks/*" },
+      { "value": "*://inv.nadeko.net/*" },
+      { "value": "*://invidious.namazso.eu/*" },
+      { "value": "*://iv.nboeck.de/*" },
+      { "value": "*://invidious.nerdvpn.de/*" },
+      { "value": "*://youtube.owacon.moe/*" },
+      { "value": "*://inv.pistasjis.net/*" },
+      { "value": "*://invidious.projectsegfau.lt/*" },
+      { "value": "*://inv.bp.projectsegfau.lt/*" },
+      { "value": "*://inv.in.projectsegfau.lt/*" },
+      { "value": "*://inv.us.projectsegfau.lt/*" },
+      { "value": "*://vid.puffyan.us/*" },
+      { "value": "*://invidious.sethforprivacy.com/*" },
+      { "value": "*://invidious.slipfox.xyz/*" },
+      { "value": "*://invidious.snopyta.org/*" },
+      { "value": "*://inv.vern.cc/*" },
+      { "value": "*://invidious.weblibre.org/*" },
+      { "value": "*://youchu.be/*" },
+      { "value": "*://yewtu.be/*" }
+    ],
+    "allFrames": [{ "value": "true" }],
+    "run-at": [{ "value": "document-start" }],
+    "icon": [{ "value": "https://icons.duckduckgo.com/ip3/sponsor.ajay.app.ico" }]
+  }
+}

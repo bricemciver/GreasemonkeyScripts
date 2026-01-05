@@ -1,6 +1,7 @@
 {
   "name": "greasemonkeyscripts",
   "version": "1.0.0",
+  "type": "module",
   "description": "My collection of GreaseMonkey scripts",
   "scripts": {
     "format": "npx @biomejs/biome format --write",
@@ -34,7 +35,7 @@
     "typescript-eslint": "^8.1.0"
   },
   "dependencies": {
-    "chessops": "^0.14.2",
+    "chessops": "^0.15.0",
     "glob": "^11.0.0",
     "uuid": "^13.0.0"
   }
