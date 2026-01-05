@@ -66,15 +66,16 @@
     const goodreadsRegex = /"aggregateRating":({"@type":"AggregateRating","ratingValue":.*?,"ratingCount":.*?,"reviewCount":.*?})/;
     const extractASINs = () => {
       const asins = [];
-      for (const item of document.querySelectorAll("bds-unified-book-faceout")) {
-        const asin = item.getAttribute("data-csa-c-item-id");
+      const books = document.querySelectorAll("bds-unified-book-faceout");
+      for (const item of Array.from(books)) {
+        const asin = item.dataset.csaCItemId;
         if (asin && asinRegex.test(asin)) {
           asins.push(asin);
         }
       }
       const asinMeta = document.querySelector("div[data-asin]");
       if (asinMeta) {
-        const asin = asinMeta.getAttribute("data-asin");
+        const asin = asinMeta.dataset.asin;
         if (asin && asinRegex.test(asin)) {
           asins.push(asin);
         }
@@ -110,10 +111,10 @@
       content += "</div>";
       container.innerHTML = content;
       const currentBooks = document.querySelectorAll("bds-unified-book-faceout");
-      for (const book of currentBooks) {
+      for (const book of Array.from(currentBooks)) {
         const bookInfoDiv = (_a = book.shadowRoot) == null ? void 0 : _a.querySelector("div[data-csa-c-item-id]");
         if (bookInfoDiv) {
-          const bookAsin = bookInfoDiv.getAttribute("data-csa-c-item-id");
+          const bookAsin = bookInfoDiv.dataset.csaCItemId;
           if (bookAsin && bookAsin === asin) {
             const ratings = (_b = book.shadowRoot) == null ? void 0 : _b.querySelector("div.star-rating");
             if (ratings) {
@@ -136,13 +137,13 @@
           const aggregateMatch = goodreadsRegex.exec(goodreadsData.responseText);
           if (aggregateMatch && aggregateMatch.length > 1) {
             const aggregateData = JSON.parse(aggregateMatch[1]);
-            const goodreadsData2 = {
+            const aggregateGoodreadsData = {
               rating: aggregateData.ratingValue,
               ratingCount: aggregateData.ratingCount,
               reviewCount: aggregateData.reviewCount,
               bookUrl: url
             };
-            insertGoodreadsData(asin, goodreadsData2);
+            insertGoodreadsData(asin, aggregateGoodreadsData);
           }
         } catch (error) {
           console.error("Error fetching Goodreads data:", error);
@@ -151,7 +152,9 @@
     });
     AmazonGoodreadsMeta2.init = () => __async(null, null, function* () {
       const asins = extractASINs();
-      if (!asins || asins.length === 0) return;
+      if (!asins || asins.length === 0) {
+        return;
+      }
       try {
         yield processAsins(asins);
       } catch (error) {

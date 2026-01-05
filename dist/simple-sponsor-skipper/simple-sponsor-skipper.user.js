@@ -98,6 +98,56 @@
 // @icon https://icons.duckduckgo.com/ip3/sponsor.ajay.app.ico
 // ==/UserScript==
 
+// ==UserScript==
+// @name Simple Sponsor Skipper
+// @author mthsk
+// @namespace https://github.com/bricemciver/GreasemonekeyScripts
+// @description Skips annoying intros, sponsors and w/e on YouTube and its frontends like Invidious and CloudTube using the SponsorBlock API.
+// @license AGPL-3.0-or-later
+// @version 2024.06
+// @grant GM.getValue
+// @grant GM.setValue
+// @grant GM.notification
+// @grant GM.openInTab
+// @grant GM.registerMenuCommand
+// @grant GM.xmlHttpRequest
+// @connect sponsor.ajay.app
+// @match *://m.youtube.com/*
+// @match *://youtu.be/*
+// @match *://www.youtube.com/*
+// @match *://www.youtube-nocookie.com/embed/*
+// @match *://odysee.com/*
+// @match *://yt.artemislena.eu/*
+// @match *://tube.cadence.moe/*
+// @match *://y.com.sb/*
+// @match *://invidious.esmailelbob.xyz/*
+// @match *://invidious.flokinet.to/*
+// @match *://inv.frail.com.br/*
+// @match *://invidious.garudalinux.org/*
+// @match *://invidious.kavin.rocks/*
+// @match *://inv.nadeko.net/*
+// @match *://invidious.namazso.eu/*
+// @match *://iv.nboeck.de/*
+// @match *://invidious.nerdvpn.de/*
+// @match *://youtube.owacon.moe/*
+// @match *://inv.pistasjis.net/*
+// @match *://invidious.projectsegfau.lt/*
+// @match *://inv.bp.projectsegfau.lt/*
+// @match *://inv.in.projectsegfau.lt/*
+// @match *://inv.us.projectsegfau.lt/*
+// @match *://vid.puffyan.us/*
+// @match *://invidious.sethforprivacy.com/*
+// @match *://invidious.slipfox.xyz/*
+// @match *://invidious.snopyta.org/*
+// @match *://inv.vern.cc/*
+// @match *://invidious.weblibre.org/*
+// @match *://youchu.be/*
+// @match *://yewtu.be/*
+// @allFrames true
+// @run-at document-start
+// @icon https://icons.duckduckgo.com/ip3/sponsor.ajay.app.ico
+// ==/UserScript==
+
 /* jshint esversion: 6 */
 "use strict";
 (() => {
