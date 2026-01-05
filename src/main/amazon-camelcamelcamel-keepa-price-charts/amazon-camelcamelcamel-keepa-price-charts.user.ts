@@ -146,10 +146,10 @@ namespace AmazonCamelCamelCamelKeepaPriceCharts {
     }
 
     // Method 6: Detail page JSON (LD+JSON)
-    const ldJsonScripts = document.querySelectorAll(
+    const ldJsonScripts = document.querySelectorAll<HTMLScriptElement>(
       'script[type="application/ld+json"]',
     );
-    for (const script of ldJsonScripts) {
+    for (const script of Array.from(ldJsonScripts)) {
       try {
         const data = JSON.parse(script.textContent || "");
         if (data?.sku) {

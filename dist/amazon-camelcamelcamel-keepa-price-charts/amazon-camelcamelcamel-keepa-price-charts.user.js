@@ -158,7 +158,7 @@
       const ldJsonScripts = document.querySelectorAll(
         'script[type="application/ld+json"]'
       );
-      for (const script of ldJsonScripts) {
+      for (const script of Array.from(ldJsonScripts)) {
         try {
           const data = JSON.parse(script.textContent || "");
           if (data == null ? void 0 : data.sku) {
