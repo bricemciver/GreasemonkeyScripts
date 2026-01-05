@@ -2305,9 +2305,7 @@
                   if (data == null ? void 0 : data.ok) {
                     const chessDBResult = yield data.json();
                     if (chessDBResult.moves.length === 0) {
-                      console.info(
-                        "No moves found in database for this position."
-                      );
+                      console.info("No moves found in database for this position.");
                       updateMoveDisplay(null);
                       internalObserver.disconnect();
                       return;

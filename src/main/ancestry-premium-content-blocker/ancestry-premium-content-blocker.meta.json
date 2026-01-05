@@ -1,19 +1,14 @@
 {
   "UserScript": {
     "name": [{ "value": "Ancestry Premium Content Blocker" }],
-    "namespace": [
-      { "value": "https://github.com/bricemciver/GreasemonekeyScripts" }
-    ],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
     "version": [{ "value": "1.0.0" }],
     "description": [
       {
         "value": "Preload links and disable those that redirect to signup pages"
       }
     ],
-    "match": [
-      { "value": "https://*.ancestry.com/*" },
-      { "value": "https://ancestry.com/*" }
-    ],
+    "match": [{ "value": "https://*.ancestry.com/*" }, { "value": "https://ancestry.com/*" }],
     "grant": [{ "value": "none" }],
     "run-at": [{ "value": "document-idle" }]
   }

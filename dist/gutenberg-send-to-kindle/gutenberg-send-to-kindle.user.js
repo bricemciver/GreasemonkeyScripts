@@ -160,9 +160,7 @@
       const html = response.responseText || "";
       const signInSpanPattern = /<span[^>]*id=["']s2k-dnd-sign-in-button-text["'][^>]*>[\s\S]*?Sign\s*in[\s\S]*?<\/span>/i;
       if (signInSpanPattern.test(html)) {
-        log(
-          "getCsrfToken: found s2k sign-in span in amazon page response — user not signed in"
-        );
+        log("getCsrfToken: found s2k sign-in span in amazon page response — user not signed in");
         throw new Error("NOT_LOGGED_IN");
       }
       const m = CSRFPattern.exec(html);
@@ -235,9 +233,7 @@
       }, TOAST_TIMEOUT_MS);
     };
     const getEpubInfo = () => {
-      const epub3Candidates = Array.from(
-        document.querySelectorAll('a[href*=".epub3."]')
-      );
+      const epub3Candidates = Array.from(document.querySelectorAll('a[href*=".epub3."]'));
       let epubLink = null;
       const exactEpub3Text = "EPUB3 (E-readers incl. Send-to-Kindle)";
       for (const a of epub3Candidates) {
@@ -284,19 +280,15 @@
         log(`Failed to download EPUB: ${e}`);
         throw e;
       });
-      log(
-        `EPUB downloaded successfully, size: ${response.response.byteLength} bytes`
-      );
+      log(`EPUB downloaded successfully, size: ${response.response.byteLength} bytes`);
       return response.response;
     });
     const headEpub = (url) => __async(null, null, function* () {
       log(`Performing HEAD request for EPUB: ${url}`);
-      const response = yield GM.xmlHttpRequest({ method: "HEAD", url }).catch(
-        (e) => {
-          log("HEAD request failed", e);
-          return null;
-        }
-      );
+      const response = yield GM.xmlHttpRequest({ method: "HEAD", url }).catch((e) => {
+        log("HEAD request failed", e);
+        return null;
+      });
       const headers = (response == null ? void 0 : response.responseHeaders) || "";
       const m = new RegExp(ContentLengthPattern).exec(headers);
       if (m == null ? void 0 : m[1]) {
@@ -425,10 +417,7 @@
         const headSize = yield headEpub(epubInfo.url);
         if (!headSize) {
           log("HEAD did not provide Content-Length; aborting send to Kindle.");
-          showMessage(
-            "Unable to determine EPUB size; cannot send to Kindle.",
-            "error"
-          );
+          showMessage("Unable to determine EPUB size; cannot send to Kindle.", "error");
           return;
         }
         log("Fetching CSRF token from Amazon (deferred until metadata ready)");
@@ -443,25 +432,16 @@
             msg = String(error);
           }
           if (msg === "NOT_LOGGED_IN") {
-            showMessage(
-              "You must be signed into Amazon for Send to Kindle to work. Please sign in and try again.",
-              "error"
-            );
+            showMessage("You must be signed into Amazon for Send to Kindle to work. Please sign in and try again.", "error");
             log("User not signed into Amazon (CSRF fetch indicated login page)");
             return;
           }
           if (msg === "CSRF_NOT_FOUND") {
-            showMessage(
-              "Could not read Amazon's security token. Try refreshing Amazon or logging in.",
-              "error"
-            );
+            showMessage("Could not read Amazon's security token. Try refreshing Amazon or logging in.", "error");
             log("CSRF token not found in Amazon page response", error);
             return;
           }
-          showMessage(
-            "Unable to fetch security token from Amazon. Please refresh and try again.",
-            "error"
-          );
+          showMessage("Unable to fetch security token from Amazon. Please refresh and try again.", "error");
           log("Failed to get CSRF token", error);
           return;
         }
@@ -470,11 +450,7 @@
         log("Downloading EPUB after init to prepare upload");
         const epubData = yield downloadEpub(epubInfo.url);
         log("Step 2: Uploading EPUB");
-        const uploadData = yield uploadEpub(
-          initData.uploadUrl,
-          epubData,
-          csrfToken
-        );
+        const uploadData = yield uploadEpub(initData.uploadUrl, epubData, csrfToken);
         log("Step 3: Sending to Kindle");
         const sendData = yield sendToKindle(
           initData.stkToken,
@@ -499,9 +475,7 @@
     });
     const addSendToKindleButton = () => {
       let epubLink = null;
-      const epubLinks = document.querySelectorAll(
-        'a[class*="link"][title*="Download"]'
-      );
+      const epubLinks = document.querySelectorAll('a[class*="link"][title*="Download"]');
       for (const link of Array.from(epubLinks)) {
         if (link.textContent.includes("Send-to-Kindle")) {
           epubLink = link;

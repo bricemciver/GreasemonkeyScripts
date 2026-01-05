@@ -38,17 +38,9 @@
   ((AncestryPremiumContentBlocker2) => {
     const CACHE_NAME = "ancestry-link-cache";
     const CACHE_DURATION = 3 * 24 * 60 * 60 * 1e3;
-    const SIGNUP_INDICATORS = [
-      "/account/signin",
-      "/secure/login",
-      "subscribe",
-      "membership",
-      "cs/offers"
-    ];
+    const SIGNUP_INDICATORS = ["/account/signin", "/secure/login", "subscribe", "membership", "cs/offers"];
     const isSignupPage = (url, content) => {
-      return SIGNUP_INDICATORS.some(
-        (indicator) => url.toLowerCase().includes(indicator) || content.toLowerCase().includes(indicator)
-      );
+      return SIGNUP_INDICATORS.some((indicator) => url.toLowerCase().includes(indicator) || content.toLowerCase().includes(indicator));
     };
     const getCachedResult = (url) => __async(null, null, function* () {
       try {

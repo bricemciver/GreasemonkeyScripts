@@ -2,9 +2,7 @@
   "UserScript": {
     "name": [{ "value": "Simple Sponsor Skipper" }],
     "author": [{ "value": "mthsk" }],
-    "namespace": [
-      { "value": "https://github.com/bricemciver/GreasemonekeyScripts" }
-    ],
+    "namespace": [{ "value": "https://github.com/bricemciver/GreasemonekeyScripts" }],
     "description": [
       {
         "value": "Skips annoying intros, sponsors and w/e on YouTube and its frontends like Invidious and CloudTube using the SponsorBlock API."
