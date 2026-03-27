@@ -4,15 +4,37 @@
 
 ## Overview
 
-{{Have AI agent fill this in}}
+This document serves as the canonical source of instructions for AI agents working on the Greasemonkey scripts project. It outlines the project's purpose, tooling, workflows, and standards that agents should follow when generating, modifying, or maintaining userscripts. The guide covers the tech stack (TypeScript, Oxfmt, Oxlint, ESBuild), code navigation preferences (LSP over Grep), commit conventions, project directory layout, and development commands. Agents should consult this file for context on how to properly interact with the codebase, adhere to formatting/linting requirements, and produce consistent, well-documented changes.
 
 ## Tech Stack
 
 - **Language**: TypeScript 5
-- **Formatting/Linting**: BiomeJS
+- **Formatting**: Oxfmt
+- **Linting**: Oxlint
 - **Build**: ESBuild
 - **Target**: Browser extensions (Greasemonkey/Tampermonkey)
 - **Output**: Userscripts (.user.js files)
+
+## Code Intelligence
+
+Prefer LSP over Grep/Read for code navigation — it's faster, precise, and avoids reading entire files:
+
+- `workspaceSymbol` to find where something is defined
+- `findReferences` to see all usages across the codebase
+- `goToDefinition` / `goToImplementation` to jump to source
+- `hover` for type info without reading the file
+
+Use Grep only when LSP isn't available or for text/pattern searches (comments, strings, config).
+
+After writing or editing code, check LSP diagnostics and fix errors before proceeding.
+
+## Commit Attribution
+
+AI commits MUST include:
+
+```
+Co-Authored-By: <agent model name> <agent model email>
+```
 
 ## Project Structure
 
