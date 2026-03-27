@@ -28,6 +28,13 @@ Use Grep only when LSP isn't available or for text/pattern searches (comments, s
 
 After writing or editing code, check LSP diagnostics and fix errors before proceeding.
 
+## Coding Standards
+
+- Follow existing conventions — check neighboring files
+- Only use libraries already in the codebase
+- Never expose secrets or keys
+- When modifying files, cover all occurrences
+
 ## Commit Attribution
 
 AI commits MUST include:
@@ -35,6 +42,14 @@ AI commits MUST include:
 ```
 Co-Authored-By: <agent model name> <agent model email>
 ```
+
+## Linting & Formatting
+
+- This project uses **Oxlint** and **Oxfmt** — NOT ESLint or Prettier
+- Never run `eslint`, `npx eslint`, or any ESLint CLI — use `npm run lint` (Oxlint) instead
+- Never run `prettier` — use `npm run format` (Oxfmt) instead
+- ESLint packages in the repo are legacy/e2e test app dependencies — ignore them
+- Do not create, modify, or suggest `.eslintrc`, `eslint.config.*`, or `.prettierrc` files
 
 ## Project Structure
 
