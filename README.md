@@ -6,15 +6,15 @@ Parent project to hold all my Greasemonkey scripts
 
 - [INSTALLATION](#installation)
 - [SCRIPTS](#scripts)
-  - [Sites](#sites)
-    - [Amazon](#amazon)
-    - [Ancestry](#ancestry)
-    - [EBay](#ebay)
-    - [Equip-Bid](#equip-bid)
-    - [Wirecutter](#wirecutter)
+    - [Sites](#sites)
+        - [Amazon](#amazon)
+        - [Ancestry](#ancestry)
+        - [EBay](#ebay)
+        - [Equip-Bid](#equip-bid)
+        - [Wirecutter](#wirecutter)
 - [DEVELOPMENT](#development)
 - [SEE ALSO](#see-also)
-  - [Sites](#sites-1)
+    - [Sites](#sites-1)
 
 <!-- TOC END -->
 

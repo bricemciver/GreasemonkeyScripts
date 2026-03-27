@@ -1,2 +1,4 @@
-.scannerwork
+.claude/
+.scannerwork/
+.vscode/
 node_modules/

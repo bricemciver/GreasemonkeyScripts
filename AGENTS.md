@@ -3,7 +3,7 @@
 > **IMPORTANT**: AGENTS.md files are the source of truth for AI agent instructions. Always update the relevant AGENTS.md file when adding or modifying agent guidance. Do not add to CLAUDE.md or Cursor rules.
 
 ## Overview
-  
+
 {{Have AI agent fill this in}}
 
 ## Tech Stack
@@ -15,6 +15,7 @@
 - **Output**: Userscripts (.user.js files)
 
 ## Project Structure
+
 ```
 /
 ├── src/
@@ -34,6 +35,7 @@ npm install
 ```
 
 ### Formatting
+
 ```bash
 # Check formatting of files
 npm run format:check
