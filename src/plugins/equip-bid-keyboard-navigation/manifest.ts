@@ -10,5 +10,6 @@ export function manifest(): MonkeyUserScript {
     icon: 'https://www.google.com/s2/favicons?sz=64&domain=equip-bid.com',
     grant: ['GM_xmlhttpRequest', 'GM.xmlHttpRequest'],
     connect: 'equip-bid.com',
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
   }
 }

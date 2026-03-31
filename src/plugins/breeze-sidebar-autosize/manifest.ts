@@ -8,5 +8,6 @@ export function manifest(): MonkeyUserScript {
     version: '0.2',
     match: 'https://*.breezechms.com/*',
     icon: 'https://www.google.com/s2/favicons?sz=64&domain=breezechms.com',
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
   }
 }

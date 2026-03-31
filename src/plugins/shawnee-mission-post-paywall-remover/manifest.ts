@@ -9,5 +9,6 @@ export function manifest(): MonkeyUserScript {
     match: ['https://shawneemissionpost.com/*', 'https://johnsoncountypost.com/*', 'https://bluevalleypost.com/*'],
     icon: 'https://www.google.com/s2/favicons?sz=64&domain=johnsoncountypost.com',
     grant: 'none',
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
   }
 }

@@ -6,6 +6,7 @@ export function manifest(): MonkeyUserScript {
     description: 'Shows the ratings from Goodreads on Amazon book pages',
     license: 'MIT',
     version: '0.0.2',
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
     match: [
       'https://amazon.com/*',
       'https://*.amazon.com/*',

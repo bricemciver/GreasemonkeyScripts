@@ -11,5 +11,6 @@ export function manifest(): MonkeyUserScript {
     match: 'https://www.kansascity.com/*',
     icon: 'https://icons.duckduckgo.com/ip3/kansascity.com.ico',
     grant: 'none',
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
   }
 }

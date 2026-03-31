@@ -9,5 +9,6 @@ export function manifest(): MonkeyUserScript {
     match: 'https://www.nytimes.com/wirecutter/*',
     icon: 'https://www.google.com/s2/favicons?sz=64&domain=nytimes.com',
     grant: 'none',
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
   }
 }

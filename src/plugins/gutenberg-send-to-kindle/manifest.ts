@@ -12,5 +12,6 @@ export function manifest(): MonkeyUserScript {
     grant: 'GM.xmlHttpRequest',
     connect: ['amazon.com', 'gutenberg.org'],
     'run-at': 'document-end',
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
   }
 }

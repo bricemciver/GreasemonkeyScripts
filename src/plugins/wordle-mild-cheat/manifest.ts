@@ -10,5 +10,6 @@ export function manifest(): MonkeyUserScript {
     icon: 'https://www.google.com/s2/favicons?sz=64&domain=nytimes.com',
     grant: ['GM.xmlHttpRequest', 'GM_xmlhttpRequest'],
     'run-at': 'document-start',
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
   }
 }

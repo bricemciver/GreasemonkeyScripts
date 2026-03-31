@@ -11,5 +11,6 @@ export function manifest(): MonkeyUserScript {
     match: '*://www.microcenter.com/*',
     icon: 'https://icons.duckduckgo.com/ip3/microcenter.com.ico',
     grant: 'none',
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
   }
 }

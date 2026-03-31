@@ -9,5 +9,6 @@ export function manifest(): MonkeyUserScript {
     match: 'https://www.merriam-webster.com/games/quordle/*',
     icon: 'https://www.google.com/s2/favicons?sz=64&domain=merriam-webster.com',
     grant: ['GM.xmlHttpRequest', 'GM_xmlhttpRequest'],
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
   }
 }

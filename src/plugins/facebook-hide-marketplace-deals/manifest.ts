@@ -8,6 +8,7 @@ export function manifest(): MonkeyUserScript {
     version: '0.0.2',
     match: '*://*.facebook.com/marketplace/*',
     icon: 'https://www.google.com/s2/favicons?sz=64&domain=facebook.com',
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
     grant: 'none',
   }
 }
