@@ -12,34 +12,33 @@
 // @grant        none
 // ==/UserScript==
 
-;(function () {
-  var targetNode = document.documentElement
-  var config = {
-    childList: true,
-    subtree: true,
-    attributes: true,
-  }
-  var callback = (mutationsList) => {
-    for (const mutation of mutationsList) {
-      if (mutation.type === 'childList') hidePaywallElement(mutation)
-      if (mutation.type === 'attributes') unblurElement(mutation)
-    }
-  }
-  var unblurElement = (mutation) => {
-    if (mutation.target.nodeType === Node.ELEMENT_NODE) {
-      const element = mutation.target
-      if (element.classList.contains('wkwp-blur')) element.classList.remove('wkwp-blur')
-    }
-  }
-  var hidePaywallElement = (mutation) => {
-    for (const node of Array.from(mutation.addedNodes))
-      if (node.nodeType === Node.ELEMENT_NODE) {
-        const element = node
-        if (element.classList.contains('wkwp-paywall')) element.setAttribute('style', 'display: none')
-      }
-  }
-  var main = () => {
-    new MutationObserver(callback).observe(targetNode, config)
-  }
-  main()
-})()
+(function() {
+var targetNode = document.documentElement;
+	var config = {
+		childList: true,
+		subtree: true,
+		attributes: true
+	};
+	var callback = (mutationsList) => {
+		for (const mutation of mutationsList) {
+			if (mutation.type === "childList") hidePaywallElement(mutation);
+			if (mutation.type === "attributes") unblurElement(mutation);
+		}
+	};
+	var unblurElement = (mutation) => {
+		if (mutation.target.nodeType === Node.ELEMENT_NODE) {
+			const element = mutation.target;
+			if (element.classList.contains("wkwp-blur")) element.classList.remove("wkwp-blur");
+		}
+	};
+	var hidePaywallElement = (mutation) => {
+		for (const node of Array.from(mutation.addedNodes)) if (node.nodeType === Node.ELEMENT_NODE) {
+			const element = node;
+			if (element.classList.contains("wkwp-paywall")) element.setAttribute("style", "display: none");
+		}
+	};
+	var main = () => {
+		new MutationObserver(callback).observe(targetNode, config);
+	};
+	main();
+})();

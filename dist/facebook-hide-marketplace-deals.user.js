@@ -10,34 +10,29 @@
 // @grant        none
 // ==/UserScript==
 
-;(function () {
-  var config = {
-    childList: true,
-    attributes: true,
-    subtree: true,
-  }
-  var removeTracking = (node) => {
-    if (node.nodeType === Node.ELEMENT_NODE) {
-      const dealsLink = node.querySelector("a[href*='tracking']")
-      if (dealsLink) dealsLink.parentElement?.remove()
-    }
-  }
-  var callback = (mutationsList) => {
-    for (const mutation of mutationsList) {
-      if (mutation.type === 'childList' && mutation.addedNodes.length)
-        for (const node of mutation.addedNodes) removeTracking(node)
-      if (
-        mutation.type === 'attributes' &&
-        mutation.attributeName === 'href' &&
-        mutation.target.nodeType === Node.ELEMENT_NODE
-      ) {
-        const link = mutation.target
-        if (link.href.includes('tracking')) link.parentElement?.remove()
-      }
-    }
-  }
-  var main = () => {
-    new MutationObserver(callback).observe(document, config)
-  }
-  main()
-})()
+(function() {
+var config = {
+		childList: true,
+		attributes: true,
+		subtree: true
+	};
+	var removeTracking = (node) => {
+		if (node.nodeType === Node.ELEMENT_NODE) {
+			const dealsLink = node.querySelector("a[href*='tracking']");
+			if (dealsLink) dealsLink.parentElement?.remove();
+		}
+	};
+	var callback = (mutationsList) => {
+		for (const mutation of mutationsList) {
+			if (mutation.type === "childList" && mutation.addedNodes.length) for (const node of mutation.addedNodes) removeTracking(node);
+			if (mutation.type === "attributes" && mutation.attributeName === "href" && mutation.target.nodeType === Node.ELEMENT_NODE) {
+				const link = mutation.target;
+				if (link.href.includes("tracking")) link.parentElement?.remove();
+			}
+		}
+	};
+	var main = () => {
+		new MutationObserver(callback).observe(document, config);
+	};
+	main();
+})();

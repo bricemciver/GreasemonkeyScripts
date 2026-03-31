@@ -34,23 +34,17 @@
 // @match        https://*.amazon.com.au/*
 // ==/UserScript==
 
-;(function () {
-  var findAndRemoveSponsoredItems = () => {
-    const sponsoredItems = document.evaluate(
-      "//span[text()='Sponsored']",
-      document,
-      null,
-      XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
-      null,
-    )
-    for (let i = 0; i < sponsoredItems.snapshotLength; i++) {
-      const node = sponsoredItems.snapshotItem(i)
-      if (node && node.nodeType === Node.ELEMENT_NODE) {
-        let parent = node
-        while (parent && !parent.hasAttribute('data-asin') && parent.parentElement) parent = parent.parentElement
-        if (parent?.hasAttribute('data-asin')) parent.style.display = 'none'
-      }
-    }
-  }
-  findAndRemoveSponsoredItems()
-})()
+(function() {
+var findAndRemoveSponsoredItems = () => {
+		const sponsoredItems = document.evaluate("//span[text()='Sponsored']", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+		for (let i = 0; i < sponsoredItems.snapshotLength; i++) {
+			const node = sponsoredItems.snapshotItem(i);
+			if (node && node.nodeType === Node.ELEMENT_NODE) {
+				let parent = node;
+				while (parent && !parent.hasAttribute("data-asin") && parent.parentElement) parent = parent.parentElement;
+				if (parent?.hasAttribute("data-asin")) parent.style.display = "none";
+			}
+		}
+	};
+	findAndRemoveSponsoredItems();
+})();

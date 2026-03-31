@@ -11,18 +11,16 @@
 // @grant        none
 // ==/UserScript==
 
-;(function () {
-  var hidePaywall = () => {
-    new MutationObserver((records) => {
-      for (const record of records)
-        for (const addedNode of record.addedNodes)
-          if (addedNode.nodeName === 'MCC-PAYWALL') {
-            if (addedNode.parentNode) addedNode.parentNode.removeChild(addedNode)
-          }
-    }).observe(document.body, {
-      childList: true,
-      subtree: true,
-    })
-  }
-  hidePaywall()
-})()
+(function() {
+var hidePaywall = () => {
+		new MutationObserver((records) => {
+			for (const record of records) for (const addedNode of record.addedNodes) if (addedNode.nodeName === "MCC-PAYWALL") {
+				if (addedNode.parentNode) addedNode.parentNode.removeChild(addedNode);
+			}
+		}).observe(document.body, {
+			childList: true,
+			subtree: true
+		});
+	};
+	hidePaywall();
+})();
