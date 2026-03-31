@@ -142,4 +142,3 @@
   })(AmazonGoodreadsMeta || (AmazonGoodreadsMeta = {}));
   void AmazonGoodreadsMeta.init();
 })();
-//# sourceMappingURL=amazon-goodreads-meta.user.js.map

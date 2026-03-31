@@ -62,4 +62,3 @@
   })(AmazonHideSponsored || (AmazonHideSponsored = {}));
   AmazonHideSponsored.findAndRemoveSponsoredItems();
 })();
-//# sourceMappingURL=amazon-hide-sponsored.user.js.map

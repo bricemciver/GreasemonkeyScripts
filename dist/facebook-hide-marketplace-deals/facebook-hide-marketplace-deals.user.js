@@ -48,4 +48,3 @@
   })(FacebookHideMarketplaceDeals || (FacebookHideMarketplaceDeals = {}));
   FacebookHideMarketplaceDeals.main();
 })();
-//# sourceMappingURL=facebook-hide-marketplace-deals.user.js.map

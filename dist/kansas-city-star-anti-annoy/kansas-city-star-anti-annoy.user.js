@@ -14,4 +14,3 @@
 "use strict";
 (() => {
 })();
-//# sourceMappingURL=kansas-city-star-anti-annoy.user.js.map

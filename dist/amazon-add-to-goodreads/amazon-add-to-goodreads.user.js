@@ -76,4 +76,3 @@
   })(AmazonAddToGoodreads || (AmazonAddToGoodreads = {}));
   AmazonAddToGoodreads.main();
 })();
-//# sourceMappingURL=amazon-add-to-goodreads.user.js.map

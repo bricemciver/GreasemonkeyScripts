@@ -178,4 +178,3 @@
   EbaySellerHider.updateFilter();
   EbaySellerHider.findSponsoredClass();
 })();
-//# sourceMappingURL=ebay-seller-hider.user.js.map

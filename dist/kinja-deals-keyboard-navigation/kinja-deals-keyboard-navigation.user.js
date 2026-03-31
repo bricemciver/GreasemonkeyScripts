@@ -95,4 +95,3 @@
   KinjaDealsKeyboardNavigation.removeCruft();
   KinjaDealsKeyboardNavigation.main();
 })();
-//# sourceMappingURL=kinja-deals-keyboard-navigation.user.js.map

@@ -32,143 +32,6 @@
 // @no-frames true
 // ==/UserScript==
 
-// ==UserScript==
-// @name Amazon CamelCamelCamel + Keepa Price Charts
-// @namespace https://github.com/bricemciver/GreasemonekeyScripts
-// @description Add CamelCamelCamel and Keepa price charts to Amazon product pages.
-// @author miki.it
-// @license MIT
-// @version 2.0.0
-// @match https://www.amazon.com/*
-// @match  https://www.amazon.co.uk/*
-// @match https://www.amazon.de/*
-// @match https://www.amazon.fr/*
-// @match https://www.amazon.it/*
-// @match https://www.amazon.es/*
-// @match https://www.amazon.ca/*
-// @match https://www.amazon.co.jp/*
-// @match https://www.amazon.in/*
-// @match https://www.amazon.com.br/*
-// @match https://www.amazon.com.mx/*
-// @match https://www.amazon.com.au/*
-// @match https://www.amazon.nl/*
-// @match https://www.amazon.sg/*
-// @match https://www.amazon.ae/*
-// @match https://www.amazon.sa/*
-// @match https://www.amazon.se/*
-// @match https://www.amazon.pl/*
-// @match https://www.amazon.com.tr/*
-// @match https://www.amazon.eg/*
-// @match https://www.amazon.com.be/*
-// @icon https://icons.duckduckgo.com/ip3/amazon.com.ico
-// @grant GM_addStyle
-// @run-at document-idle
-// @no-frames true
-// ==/UserScript==
-
-// ==UserScript==
-// @name Amazon CamelCamelCamel + Keepa Price Charts
-// @namespace https://github.com/bricemciver/GreasemonekeyScripts
-// @description Add CamelCamelCamel and Keepa price charts to Amazon product pages.
-// @author miki.it
-// @license MIT
-// @version 2.0.0
-// @match https://www.amazon.com/*
-// @match  https://www.amazon.co.uk/*
-// @match https://www.amazon.de/*
-// @match https://www.amazon.fr/*
-// @match https://www.amazon.it/*
-// @match https://www.amazon.es/*
-// @match https://www.amazon.ca/*
-// @match https://www.amazon.co.jp/*
-// @match https://www.amazon.in/*
-// @match https://www.amazon.com.br/*
-// @match https://www.amazon.com.mx/*
-// @match https://www.amazon.com.au/*
-// @match https://www.amazon.nl/*
-// @match https://www.amazon.sg/*
-// @match https://www.amazon.ae/*
-// @match https://www.amazon.sa/*
-// @match https://www.amazon.se/*
-// @match https://www.amazon.pl/*
-// @match https://www.amazon.com.tr/*
-// @match https://www.amazon.eg/*
-// @match https://www.amazon.com.be/*
-// @icon https://icons.duckduckgo.com/ip3/amazon.com.ico
-// @grant GM_addStyle
-// @run-at document-idle
-// @no-frames true
-// ==/UserScript==
-
-// ==UserScript==
-// @name Amazon CamelCamelCamel + Keepa Price Charts
-// @namespace https://github.com/bricemciver/GreasemonekeyScripts
-// @description Add CamelCamelCamel and Keepa price charts to Amazon product pages.
-// @author miki.it
-// @license MIT
-// @version 2.0.0
-// @match https://www.amazon.com/*
-// @match  https://www.amazon.co.uk/*
-// @match https://www.amazon.de/*
-// @match https://www.amazon.fr/*
-// @match https://www.amazon.it/*
-// @match https://www.amazon.es/*
-// @match https://www.amazon.ca/*
-// @match https://www.amazon.co.jp/*
-// @match https://www.amazon.in/*
-// @match https://www.amazon.com.br/*
-// @match https://www.amazon.com.mx/*
-// @match https://www.amazon.com.au/*
-// @match https://www.amazon.nl/*
-// @match https://www.amazon.sg/*
-// @match https://www.amazon.ae/*
-// @match https://www.amazon.sa/*
-// @match https://www.amazon.se/*
-// @match https://www.amazon.pl/*
-// @match https://www.amazon.com.tr/*
-// @match https://www.amazon.eg/*
-// @match https://www.amazon.com.be/*
-// @icon https://icons.duckduckgo.com/ip3/amazon.com.ico
-// @grant GM_addStyle
-// @run-at document-idle
-// @no-frames true
-// ==/UserScript==
-
-// ==UserScript==
-// @name Amazon CamelCamelCamel + Keepa Price Charts
-// @namespace https://github.com/bricemciver/GreasemonekeyScripts
-// @description Add CamelCamelCamel and Keepa price charts to Amazon product pages.
-// @author miki.it
-// @license MIT
-// @version 2.0.0
-// @match https://www.amazon.com/*
-// @match  https://www.amazon.co.uk/*
-// @match https://www.amazon.de/*
-// @match https://www.amazon.fr/*
-// @match https://www.amazon.it/*
-// @match https://www.amazon.es/*
-// @match https://www.amazon.ca/*
-// @match https://www.amazon.co.jp/*
-// @match https://www.amazon.in/*
-// @match https://www.amazon.com.br/*
-// @match https://www.amazon.com.mx/*
-// @match https://www.amazon.com.au/*
-// @match https://www.amazon.nl/*
-// @match https://www.amazon.sg/*
-// @match https://www.amazon.ae/*
-// @match https://www.amazon.sa/*
-// @match https://www.amazon.se/*
-// @match https://www.amazon.pl/*
-// @match https://www.amazon.com.tr/*
-// @match https://www.amazon.eg/*
-// @match https://www.amazon.com.be/*
-// @icon https://icons.duckduckgo.com/ip3/amazon.com.ico
-// @grant GM_addStyle
-// @run-at document-idle
-// @no-frames true
-// ==/UserScript==
-
-/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/amazon-camelcamelcamel-keepa-price-charts/amazon-camelcamelcamel-keepa-price-charts.user.ts
@@ -252,23 +115,22 @@
       return match[1];
     };
     const getASIN = () => {
-      var _a, _b;
       const asinInput = document.getElementById(
         "ASIN"
       );
-      if (asinInput == null ? void 0 : asinInput.value) {
+      if (asinInput?.value) {
         log("ASIN found via #ASIN input");
         return asinInput.value;
       }
       const productDiv = document.getElementById("dp");
-      if ((_a = productDiv == null ? void 0 : productDiv.dataset) == null ? void 0 : _a.asin) {
+      if (productDiv?.dataset?.asin) {
         log("ASIN found via #dp data-asin");
         return productDiv.dataset.asin;
       }
       const dataAsinElement = document.querySelector(
         'input[data-asin]:not([data-asin=""], div[data-asin]:not([data-asin=""])'
       );
-      if ((_b = dataAsinElement == null ? void 0 : dataAsinElement.dataset) == null ? void 0 : _b.asin) {
+      if (dataAsinElement?.dataset?.asin) {
         log("ASIN found via [data-asin] selector");
         return dataAsinElement.dataset.asin;
       }
@@ -297,7 +159,7 @@
       for (const script of Array.from(ldJsonScripts)) {
         try {
           const data = JSON.parse(script.textContent || "");
-          if (data == null ? void 0 : data.sku) {
+          if (data?.sku) {
             log("ASIN found via LD+JSON");
             return data.sku;
           }
@@ -466,7 +328,6 @@
       return wrapper;
     };
     const addCamelChart = (camelCountry, asin, refresh, chartsContent) => {
-      var _a;
       const camelChart = createChartElement(
         "CamelCamelCamel",
         `https://${camelCountry}.camelcamelcamel.com/product/${asin}`,
@@ -478,7 +339,7 @@
       if (refresh) {
         const currentChart = document.getElementById("camelChart");
         if (currentChart) {
-          (_a = currentChart.parentNode) == null ? void 0 : _a.append(camelChart);
+          currentChart.parentNode?.append(camelChart);
           setTimeout(() => {
             currentChart.style.display = "none";
             camelChart.style.display = "initial";
@@ -490,7 +351,6 @@
       }
     };
     const addKeepaChart = (keepaDomain, asin, tld, refresh, chartsContent) => {
-      var _a;
       const keepaChart = createChartElement(
         "Keepa",
         `https://keepa.com/#!product/${keepaDomain}-${asin}`,
@@ -502,7 +362,7 @@
       if (refresh) {
         const currentChart = document.getElementById("keepaChart");
         if (currentChart) {
-          (_a = currentChart.parentNode) == null ? void 0 : _a.append(keepaChart);
+          currentChart.parentNode?.append(keepaChart);
           setTimeout(() => {
             currentChart.style.display = "none";
             keepaChart.style.display = "initial";
@@ -640,4 +500,3 @@
   })(AmazonCamelCamelCamelKeepaPriceCharts || (AmazonCamelCamelCamelKeepaPriceCharts = {}));
   AmazonCamelCamelCamelKeepaPriceCharts.main();
 })();
-//# sourceMappingURL=amazon-camelcamelcamel-keepa-price-charts.user.js.map

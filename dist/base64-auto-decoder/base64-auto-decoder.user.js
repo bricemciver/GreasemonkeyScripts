@@ -153,4 +153,3 @@
   })(Base64AutoDecoder || (Base64AutoDecoder = {}));
   Base64AutoDecoder.main();
 })();
-//# sourceMappingURL=base64-auto-decoder.user.js.map

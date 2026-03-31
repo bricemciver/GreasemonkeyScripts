@@ -23,4 +23,3 @@
   })(BreezeSidebarAutosize || (BreezeSidebarAutosize = {}));
   BreezeSidebarAutosize.replaceCss();
 })();
-//# sourceMappingURL=breeze-sidebar-autosize.user.js.map

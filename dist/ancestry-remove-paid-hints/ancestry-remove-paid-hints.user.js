@@ -190,4 +190,3 @@
   })(AncestryRemovePaidHints || (AncestryRemovePaidHints = {}));
   void AncestryRemovePaidHints.main();
 })();
-//# sourceMappingURL=ancestry-remove-paid-hints.user.js.map

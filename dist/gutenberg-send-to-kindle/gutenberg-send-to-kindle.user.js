@@ -478,4 +478,3 @@
   })(GutenbergSendToKindle || (GutenbergSendToKindle = {}));
   GutenbergSendToKindle.main();
 })();
-//# sourceMappingURL=gutenberg-send-to-kindle.user.js.map

@@ -12,4 +12,3 @@
 "use strict";
 (() => {
 })();
-//# sourceMappingURL=wirecutter-anti-modal.user.js.map

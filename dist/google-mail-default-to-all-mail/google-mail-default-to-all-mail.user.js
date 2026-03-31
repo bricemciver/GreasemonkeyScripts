@@ -2,4 +2,3 @@
 (() => {
 })();
 // @license       MIT
-//# sourceMappingURL=google-mail-default-to-all-mail.user.js.map

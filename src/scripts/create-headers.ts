@@ -7,7 +7,7 @@ import { argv, exit } from 'node:process';
  * Represents the UserScript metadata block structure
  */
 interface UserScriptMetadata {
-  [key: string]: string | string[] | { [key: string]: string };
+  [key: string]: { "value": string }[];
 }
 
 /**
@@ -20,20 +20,8 @@ const createUserScriptHeader = (metadata: UserScriptMetadata): string => {
   
   for (const [key, value] of Object.entries(metadata)) {
     // Handle array values (like @match, @include)
-    if (Array.isArray(value)) {
-      for (const item of value) {
-        header += `// @${key} ${item}\n`;
-      }
-    } 
-    // Handle object values (less common, but possible)
-    else if (typeof value === 'object' && value !== null) {
-      for (const [subKey, subValue] of Object.entries(value)) {
-        header += `// @${key}.${subKey} ${subValue}\n`;
-      }
-    }
-    // Handle string values
-    else {
-      header += `// @${key} ${value}\n`;
+    for (const item of value) {
+      header += `// @${key} ${item.value}\n`;
     }
   }
   

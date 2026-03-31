@@ -2316,4 +2316,3 @@
   })(LichessOpeningExplorer || (LichessOpeningExplorer = {}));
   void LichessOpeningExplorer.main();
 })();
-//# sourceMappingURL=lichess-opening-explorer.user.js.map

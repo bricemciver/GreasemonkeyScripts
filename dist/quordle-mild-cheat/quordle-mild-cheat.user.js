@@ -249,4 +249,3 @@
   QuordleMildCheat.findAllowedWords().catch((e) => console.error(e));
   QuordleMildCheat.addListeners();
 })();
-//# sourceMappingURL=quordle-mild-cheat.user.js.map

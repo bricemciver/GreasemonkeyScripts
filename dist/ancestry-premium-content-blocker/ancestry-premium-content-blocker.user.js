@@ -160,4 +160,3 @@
   })(AncestryPremiumContentBlocker || (AncestryPremiumContentBlocker = {}));
   AncestryPremiumContentBlocker.init();
 })();
-//# sourceMappingURL=ancestry-premium-content-blocker.user.js.map

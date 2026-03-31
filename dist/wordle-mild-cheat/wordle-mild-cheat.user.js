@@ -14,4 +14,3 @@
 "use strict";
 (() => {
 })();
-//# sourceMappingURL=wordle-mild-cheat.user.js.map

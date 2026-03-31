@@ -274,4 +274,3 @@
   OctordleMildCheat.findAllowedWords();
   OctordleMildCheat.addListeners();
 })();
-//# sourceMappingURL=octordle-mild-cheat.user.js.map
