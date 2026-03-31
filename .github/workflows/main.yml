@@ -26,13 +26,12 @@ jobs:
           node-version: 24
           cache: 'pnpm'
 
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Check if version has been updated
         id: check
         uses: EndBug/version-check@v3
-
-      - name: Install Dependencies
-        if: steps.check.outputs.changed == 'true'
-        run: pnpm install --frozen-lockfile 
 
       - name: Build
         if: steps.check.outputs.changed == 'true'
