@@ -8,8 +8,7 @@
   "license": "ISC",
   "scripts": {
     "build": "tsx src/build.ts",
-    "test": "vitest run",
-    "postinstall": "simple-git-hooks"
+    "test": "vitest run"
   },
   "workspaces": [
     "packages/*"
@@ -28,9 +27,7 @@
     "@types/tampermonkey": "^5.0.4",
     "bundle-require": "^5.1.0",
     "chokidar": "^5.0.0",
-    "lint-staged": "^16.2.1",
     "prettier": "^3.8.1",
-    "simple-git-hooks": "^2.13.1",
     "tsx": "^4.21.0",
     "typescript": "^5.8.3",
     "vite": "^8.0.3",
@@ -40,14 +37,6 @@
   "dependencies": {
     "chessops": "^0.15.0",
     "uuid": "^13.0.0"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "npx lint-staged"
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx,css,vue}": [
-      "prettier --write"
-    ]
   },
   "packageManager": "pnpm@10.15.1"
 }
