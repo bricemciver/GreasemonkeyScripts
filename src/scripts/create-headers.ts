@@ -55,10 +55,11 @@ async function generateUserScriptHeaders(globPattern: string, outputDir: string)
         const existingContent = fs.readFileSync(outputFilePath, 'utf-8');
         fs.writeFileSync(outputFilePath, `${userScriptHeader}\n${existingContent}`);
       }
-    } catch (e) {
-      console.error(`Error processing ${filePath.fullpath()}: ${e}`);
-      continue;
-    }
+     } catch (e) {
+       const errorMessage = e instanceof Error ? e.message : String(e);
+       console.error(`Error processing ${filePath.fullpath()}: ${errorMessage}`);
+       continue;
+     }
   }
 }
 
@@ -66,7 +67,7 @@ const [, , sourcePattern, outputDir] = process.argv;
 
 if (!sourcePattern || !outputDir) {
   console.error('Usage: npx ts-node create-headers.ts <source_pattern> <output_dir>');
-  process.exit(1);
+  (process as any).exit(1);
 }
 
 void generateUserScriptHeaders(sourcePattern, outputDir);
