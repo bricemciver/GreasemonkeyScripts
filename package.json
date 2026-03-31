@@ -1,42 +1,53 @@
 {
   "name": "greasemonkeyscripts",
-  "version": "1.0.0",
-  "type": "module",
   "description": "My collection of GreaseMonkey scripts",
-  "scripts": {
-    "format": "npx @biomejs/biome format --write",
-    "format:check": "npx @biomejs/biome format",
-    "lint": "npx @biomejs/biome lint --write",
-    "lint:check": "npx @biomejs/biome lint",
-    "create-headers": "npx ts-node ./src/scripts/create-headers.ts \"./src/main/**/*.meta.json\" ./dist",
-    "build": "npx esbuild ./src/main/**/*.ts --bundle --sourcemap --charset=utf8 --target=es6 --log-level=warning --banner:js='/* jshint esversion: 6 */' --outdir=./dist && npm run create-headers",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/bricemciver/GreasemonkeyScripts.git"
-  },
+  "version": "1.0.1",
+  "type": "module",
+  "private": true,
   "author": "Brice McIver",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/bricemciver/GreasemonkeyScripts/issues"
+  "scripts": {
+    "build": "tsx src/build.ts",
+    "test": "vitest run",
+    "postinstall": "simple-git-hooks"
   },
-  "homepage": "https://github.com/bricemciver/GreasemonkeyScripts#readme",
+  "workspaces": [
+    "packages/*"
+  ],
+  "prettier": {
+    "tabWidth": 2,
+    "printWidth": 120,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "arrowParens": "always",
+    "endOfLine": "lf"
+  },
   "devDependencies": {
-    "@eslint/eslintrc": "^3.1.0",
-    "@eslint/js": "^9.9.0",
-    "@types/glob": "^8.1.0",
-    "@types/jquery": "^3.5.32",
-    "@types/node": "^22.3.0",
-    "@types/tampermonkey": "^5.0.3",
-    "esbuild": "^0.25.5",
-    "globals": "^16.2.0",
-    "typescript": "^5.5.4",
-    "typescript-eslint": "^8.1.0"
+    "@types/node": "^22.15.30",
+    "@types/tampermonkey": "^5.0.4",
+    "bundle-require": "^5.1.0",
+    "chokidar": "^5.0.0",
+    "lint-staged": "^16.2.1",
+    "prettier": "^3.8.1",
+    "simple-git-hooks": "^2.13.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.8.3",
+    "vite": "^8.0.3",
+    "vite-plugin-monkey": "^7.1.4",
+    "zx": "^8.8.5"
   },
   "dependencies": {
     "chessops": "^0.15.0",
-    "glob": "^11.0.0",
     "uuid": "^13.0.0"
-  }
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,css,vue}": [
+      "prettier --write"
+    ]
+  },
+  "packageManager": "pnpm@10.15.1"
 }
