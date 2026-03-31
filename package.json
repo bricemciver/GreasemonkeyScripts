@@ -1,42 +1,52 @@
 {
   "name": "greasemonkeyscripts",
-  "description": "My collection of GreaseMonkey scripts",
   "version": "1.0.1",
-  "type": "module",
   "private": true,
-  "author": "Brice McIver",
+  "description": "My collection of GreaseMonkey scripts",
   "license": "ISC",
+  "author": "Brice McIver",
+  "workspaces": [
+    "packages/*"
+  ],
+  "type": "module",
   "scripts": {
     "build": "tsx src/build.ts",
     "test": "vitest run"
   },
-  "workspaces": [
-    "packages/*"
-  ],
-  "prettier": {
-    "tabWidth": 2,
-    "printWidth": 120,
-    "semi": false,
-    "singleQuote": true,
-    "trailingComma": "all",
-    "arrowParens": "always",
-    "endOfLine": "lf"
+  "dependencies": {
+    "chessops": "^0.15.0",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.15.30",
     "@types/tampermonkey": "^5.0.4",
     "bundle-require": "^5.1.0",
     "chokidar": "^5.0.0",
+    "lint-staged": "^16.4.0",
     "prettier": "^3.8.1",
+    "simple-git-hooks": "^2.13.1",
     "tsx": "^4.21.0",
     "typescript": "^5.8.3",
     "vite": "^8.0.3",
     "vite-plugin-monkey": "^7.1.4",
     "zx": "^8.8.5"
   },
-  "dependencies": {
-    "chessops": "^0.15.0",
-    "uuid": "^13.0.0"
+  "simple-git-hooks": {
+    "pre-commit": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,css,vue}": [
+      "prettier --write"
+    ]
+  },
+  "prettier": {
+    "arrowParens": "always",
+    "endOfLine": "lf",
+    "printWidth": 120,
+    "semi": false,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "all"
   },
   "packageManager": "pnpm@10.15.1"
 }
