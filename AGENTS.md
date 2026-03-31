@@ -68,34 +68,34 @@ Co-Authored-By: <agent model name> <agent model email>
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 ```
 
 ### Formatting
 
 ```bash
 # Check formatting of files
-npm run format:check
+pnpm run format:check
 
 # Correct formatting of files
-npm run format
+pnpm run format
 ```
 
 ### Linting
 
 ```bash
 # Check linting of files
-npm run lint:check
+pnpm run lint:check
 
 # Correct linting of files
-npm run lint
+pnpm run lint
 ```
 
 ### Build
 
 ```bash
 # Compile all user scripts to dist/
-npm run build
+pnpm run build
 ```
 
 ## Code Comments

@@ -9,10 +9,10 @@
   "packageManager": "pnpm@10.33.0",
   "description": "My collection of GreaseMonkey scripts",
   "scripts": {
-    "format": "oxfmt . --write",
-    "format:check": "oxfmt . --check",
-    "lint": "oxlint . --fix --type-aware",
-    "lint:check": "oxlint . --type-aware",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
+    "lint": "oxlint --fix --type-aware",
+    "lint:check": "oxlint --type-aware",
     "create-headers": "pnpm ts-node ./src/scripts/create-headers.ts \"./src/main/**/*.meta.json\" ./dist",
     "build": "pnpm esbuild ./src/main/**/*.ts --bundle --sourcemap --charset=utf8 --target=es6 --log-level=warning --banner:js='/* jshint esversion: 6 */' --outdir=./dist && pnpm run create-headers",
     "test": "echo \"Error: no test specified\" && exit 1"
