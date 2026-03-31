@@ -1,0 +1,1 @@
+This script no longer works as NYT has changed the format of their site.

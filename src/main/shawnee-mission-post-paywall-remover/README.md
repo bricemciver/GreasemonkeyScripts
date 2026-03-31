@@ -1,0 +1,1 @@
+Use a generic modal blocker like https://gitflic.ru/project/magnolia1234/bpc_uploads instead of this script.

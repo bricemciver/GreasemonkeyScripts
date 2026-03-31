@@ -1,6 +1,7 @@
-import fs from 'node:fs';
 import { glob } from 'glob';
-import path from 'node:path';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { basename, dirname, join } from 'node:path';
+import { argv, exit } from 'node:process';
 
 type Metadata = {
   UserScript: object;
@@ -39,35 +40,35 @@ async function generateUserScriptHeaders(globPattern: string, outputDir: string)
       continue;
     }
     try {
-      const metaData = JSON.parse(fs.readFileSync(filePath.fullpath(), 'utf-8')) as Metadata;
+      const metaData = JSON.parse(readFileSync(filePath.fullpath(), 'utf-8')) as Metadata;
       if (!metaData.UserScript) {
         continue;
       }
       const userScriptHeader = createUserScriptHeader(metaData.UserScript);
 
       const relativeFilePath = filePath.fullpath().replace(parentDir, '');
-      const outputFilePath = path.join(
+      const outputFilePath = join(
         outputDir,
-        path.dirname(relativeFilePath),
-        `${path.basename(relativeFilePath, '.meta.json')}.user.js`,
+        dirname(relativeFilePath),
+        `${basename(relativeFilePath, '.meta.json')}.user.js`,
       );
-      if (fs.existsSync(outputFilePath)) {
-        const existingContent = fs.readFileSync(outputFilePath, 'utf-8');
-        fs.writeFileSync(outputFilePath, `${userScriptHeader}\n${existingContent}`);
+      if (existsSync(outputFilePath)) {
+        const existingContent = readFileSync(outputFilePath, 'utf-8');
+        writeFileSync(outputFilePath, `${userScriptHeader}\n${existingContent}`);
       }
-     } catch (e) {
-       const errorMessage = e instanceof Error ? e.message : String(e);
-       console.error(`Error processing ${filePath.fullpath()}: ${errorMessage}`);
-       continue;
-     }
+    } catch (e) {
+      const errorMessage = e instanceof Error ? e.message : String(e);
+      console.error(`Error processing ${filePath.fullpath()}: ${errorMessage}`);
+      continue;
+    }
   }
 }
 
-const [, , sourcePattern, outputDir] = process.argv;
+const [, , sourcePattern, outputDir] = argv;
 
 if (!sourcePattern || !outputDir) {
   console.error('Usage: npx ts-node create-headers.ts <source_pattern> <output_dir>');
-  (process as any).exit(1);
+  exit(1);
 }
 
 void generateUserScriptHeaders(sourcePattern, outputDir);
