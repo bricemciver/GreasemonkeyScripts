@@ -29,7 +29,7 @@ jobs:
         run: pnpm run build
 
       - name: Commit and Push Changes
-        uses: EndBug/add-and-commit@v9
+        uses: EndBug/add-and-commit@v10
         with:
           committer_name: GitHub Actions
           # https://github.blog/changelog/2021-02-08-github-actions-skip-pull-request-and-push-workflows-with-skip-ci/
