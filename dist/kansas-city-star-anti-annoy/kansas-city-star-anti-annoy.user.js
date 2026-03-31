@@ -11,30 +11,7 @@
 // @grant none
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
-  // src/main/kansas-city-star-anti-annoy/kansas-city-star-anti-annoy.user.ts
-  var KansasCityStarAntiAnnoy;
-  ((KansasCityStarAntiAnnoy2) => {
-    KansasCityStarAntiAnnoy2.hidePaywall = () => {
-      const observer = new MutationObserver((records) => {
-        for (const record of records) {
-          for (const addedNode of record.addedNodes) {
-            if (addedNode.nodeName === "MCC-PAYWALL") {
-              if (addedNode.parentNode) {
-                addedNode.parentNode.removeChild(addedNode);
-              }
-            }
-          }
-        }
-      });
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true
-      });
-    };
-  })(KansasCityStarAntiAnnoy || (KansasCityStarAntiAnnoy = {}));
-  KansasCityStarAntiAnnoy.hidePaywall();
 })();
 //# sourceMappingURL=kansas-city-star-anti-annoy.user.js.map

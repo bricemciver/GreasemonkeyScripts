@@ -8,7 +8,6 @@
 // @icon https://www.google.com/s2/favicons?sz=64&domain=ebay.com
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/ebay-seller-hider/ebay-seller-hider.user.ts
@@ -21,7 +20,6 @@
     let hideSponsored = true;
     let sponsorClass = "";
     const hideItem = (seller) => {
-      var _a, _b;
       const itemRegExp = RegExp(/\((.*)\) (.*)%/).exec(seller.innerText);
       if (itemRegExp) {
         const [, reviews, feedback] = itemRegExp;
@@ -39,7 +37,7 @@
               (item) => item.textContent === "Sponsored"
             );
             if (sponsoredSpan) {
-              const labelAttr = (_b = (_a = sponsoredSpan.parentElement) == null ? void 0 : _a.parentElement) == null ? void 0 : _b.getAttribute("aria-labelledBy");
+              const labelAttr = sponsoredSpan.parentElement?.parentElement?.getAttribute("aria-labelledBy");
               if (labelAttr && labelAttr === sponsorClass) {
                 hideSponsoredPost = true;
               }
@@ -133,11 +131,10 @@
       return group;
     };
     EbaySellerHider2.getPresets = () => {
-      var _a, _b;
       filterReviews = localStorage.getItem("filterReviews") !== "false";
-      reviewMin = Number.parseInt((_a = localStorage.getItem("reviewMin")) != null ? _a : "10", 10);
+      reviewMin = Number.parseInt(localStorage.getItem("reviewMin") ?? "10", 10);
       filterFeedback = localStorage.getItem("filterFeedback") !== "false";
-      feedbackMin = Number.parseFloat((_b = localStorage.getItem("feedbackMin")) != null ? _b : "95.0");
+      feedbackMin = Number.parseFloat(localStorage.getItem("feedbackMin") ?? "95.0");
       hideSponsored = localStorage.getItem("hideSponsored") !== "false";
     };
     EbaySellerHider2.addFilter = () => {
@@ -158,10 +155,9 @@
       }
     };
     EbaySellerHider2.findSponsoredClass = () => {
-      var _a;
       const styleBlock = Array.from(document.head.getElementsByTagName("style")).find((item) => item.sheet !== null);
       if (styleBlock) {
-        const cssRuleList = (_a = styleBlock.sheet) == null ? void 0 : _a.cssRules;
+        const cssRuleList = styleBlock.sheet?.cssRules;
         if (cssRuleList) {
           const rule = Array.from(cssRuleList).find(
             (item) => item.cssText.includes("inline") && item.cssText.includes("span.")

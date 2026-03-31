@@ -11,7 +11,6 @@
 // @run-at document-start
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/octordle-mild-cheat/octordle-mild-cheat.user.ts
@@ -176,8 +175,7 @@
       }
     };
     const processCell = (pos, element) => {
-      var _a;
-      const letter = (_a = element.children[0].textContent) != null ? _a : "";
+      const letter = element.children[0].textContent ?? "";
       if (element.classList.contains("exact-match")) {
         return {
           letter: letter.trim(),

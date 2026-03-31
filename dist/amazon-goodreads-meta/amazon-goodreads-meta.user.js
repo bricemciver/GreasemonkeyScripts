@@ -35,30 +35,8 @@
 // @icon https://www.google.com/s2/favicons?sz=64&domain=amazon.com
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
-  var __async = (__this, __arguments, generator) => {
-    return new Promise((resolve, reject) => {
-      var fulfilled = (value) => {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      };
-      var rejected = (value) => {
-        try {
-          step(generator.throw(value));
-        } catch (e) {
-          reject(e);
-        }
-      };
-      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-      step((generator = generator.apply(__this, __arguments)).next());
-    });
-  };
-
   // src/main/amazon-goodreads-meta/amazon-goodreads-meta.user.ts
   var AmazonGoodreadsMeta;
   ((AmazonGoodreadsMeta2) => {
@@ -89,7 +67,6 @@
       });
     };
     const insertGoodreadsData = (asin, goodreadsData) => {
-      var _a, _b, _c, _d;
       const container = document.createElement("div");
       container.style.padding = "6px";
       container.style.margin = "5px 0";
@@ -112,13 +89,13 @@
       container.innerHTML = content;
       const currentBooks = document.querySelectorAll("bds-unified-book-faceout");
       for (const book of Array.from(currentBooks)) {
-        const bookInfoDiv = (_a = book.shadowRoot) == null ? void 0 : _a.querySelector("div[data-csa-c-item-id]");
+        const bookInfoDiv = book.shadowRoot?.querySelector("div[data-csa-c-item-id]");
         if (bookInfoDiv) {
           const bookAsin = bookInfoDiv.dataset.csaCItemId;
           if (bookAsin && bookAsin === asin) {
-            const ratings = (_b = book.shadowRoot) == null ? void 0 : _b.querySelector("div.star-rating");
+            const ratings = book.shadowRoot?.querySelector("div.star-rating");
             if (ratings) {
-              (_c = ratings.parentNode) == null ? void 0 : _c.insertBefore(container, ratings.nextSibling);
+              ratings.parentNode?.insertBefore(container, ratings.nextSibling);
               break;
             }
           }
@@ -126,13 +103,13 @@
       }
       const reviewElement = document.getElementById("reviewFeatureGroup");
       if (reviewElement) {
-        (_d = reviewElement.parentNode) == null ? void 0 : _d.insertBefore(container, reviewElement.nextSibling);
+        reviewElement.parentNode?.insertBefore(container, reviewElement.nextSibling);
       }
     };
-    const processAsins = (asins) => __async(null, null, function* () {
+    const processAsins = async (asins) => {
       for (const asin of asins) {
         try {
-          const goodreadsData = yield fetchGoodreadsDataForASIN(asin);
+          const goodreadsData = await fetchGoodreadsDataForASIN(asin);
           const response = goodreadsData;
           const url = response.finalUrl;
           const aggregateMatch = goodreadsRegex.exec(response.responseText);
@@ -150,18 +127,18 @@
           console.error("Error fetching Goodreads data:", error);
         }
       }
-    });
-    AmazonGoodreadsMeta2.init = () => __async(null, null, function* () {
+    };
+    AmazonGoodreadsMeta2.init = async () => {
       const asins = extractASINs();
       if (!asins || asins.length === 0) {
         return;
       }
       try {
-        yield processAsins(asins);
+        await processAsins(asins);
       } catch (error) {
         console.error("Error in Goodreads script:", error);
       }
-    });
+    };
   })(AmazonGoodreadsMeta || (AmazonGoodreadsMeta = {}));
   void AmazonGoodreadsMeta.init();
 })();

@@ -13,30 +13,8 @@
 // @run-at document-start
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
-  var __async = (__this, __arguments, generator) => {
-    return new Promise((resolve, reject) => {
-      var fulfilled = (value) => {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      };
-      var rejected = (value) => {
-        try {
-          step(generator.throw(value));
-        } catch (e) {
-          reject(e);
-        }
-      };
-      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-      step((generator = generator.apply(__this, __arguments)).next());
-    });
-  };
-
   // src/main/ancestry-remove-paid-hints/ancestry-remove-paid-hints.user.ts
   var AncestryRemovePaidHints;
   ((AncestryRemovePaidHints2) => {
@@ -72,8 +50,7 @@
     const initDB = () => new Promise((resolve, reject) => {
       const openRequest = window.indexedDB.open("collections_db", 1);
       openRequest.onerror = () => {
-        var _a, _b;
-        const errorMessage = `Database failed to open: ${(_b = (_a = openRequest == null ? void 0 : openRequest.error) == null ? void 0 : _a.message) != null ? _b : "Unknown error"}`;
+        const errorMessage = `Database failed to open: ${openRequest?.error?.message ?? "Unknown error"}`;
         console.error(errorMessage);
         reject(new Error(errorMessage));
       };
@@ -156,7 +133,7 @@
                 const section = link.closest("section");
                 if (li) {
                   li.remove();
-                  if ((section == null ? void 0 : section.querySelectorAll("li[role='group']").length) === 1) {
+                  if (section?.querySelectorAll("li[role='group']").length === 1) {
                     section.remove();
                   }
                 }
@@ -177,7 +154,7 @@
         const section = link.closest("section");
         if (li) {
           li.remove();
-          if ((section == null ? void 0 : section.querySelectorAll("li[role='group']").length) === 1) {
+          if (section?.querySelectorAll("li[role='group']").length === 1) {
             section.remove();
           }
         }
@@ -200,8 +177,8 @@
       const observer = new MutationObserver(callback);
       observer.observe(document, config);
     };
-    AncestryRemovePaidHints2.main = () => __async(null, null, function* () {
-      const db = yield initDB();
+    AncestryRemovePaidHints2.main = async () => {
+      const db = await initDB();
       if (db instanceof IDBDatabase) {
         if (window.location.href.indexOf("offers/join") !== -1) {
           handleOfferPage(db, window.location);
@@ -209,7 +186,7 @@
           mutationObserverSetup(db);
         }
       }
-    });
+    };
   })(AncestryRemovePaidHints || (AncestryRemovePaidHints = {}));
   void AncestryRemovePaidHints.main();
 })();

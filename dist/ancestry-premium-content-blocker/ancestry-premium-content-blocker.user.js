@@ -9,30 +9,8 @@
 // @run-at document-idle
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
-  var __async = (__this, __arguments, generator) => {
-    return new Promise((resolve, reject) => {
-      var fulfilled = (value) => {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      };
-      var rejected = (value) => {
-        try {
-          step(generator.throw(value));
-        } catch (e) {
-          reject(e);
-        }
-      };
-      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-      step((generator = generator.apply(__this, __arguments)).next());
-    });
-  };
-
   // src/main/ancestry-premium-content-blocker/ancestry-premium-content-blocker.user.ts
   var AncestryPremiumContentBlocker;
   ((AncestryPremiumContentBlocker2) => {
@@ -44,16 +22,16 @@
         (indicator) => url.toLowerCase().includes(indicator) || content.toLowerCase().includes(indicator)
       );
     };
-    const getCachedResult = (url) => __async(null, null, function* () {
+    const getCachedResult = async (url) => {
       try {
-        const cache = yield caches.open(CACHE_NAME);
-        const response = yield cache.match(url);
+        const cache = await caches.open(CACHE_NAME);
+        const response = await cache.match(url);
         if (!response) {
           return null;
         }
-        const data = yield response.json();
+        const data = await response.json();
         if (Date.now() - data.timestamp > CACHE_DURATION) {
-          yield cache.delete(url);
+          await cache.delete(url);
           return null;
         }
         return data;
@@ -61,10 +39,10 @@
         console.error("Error reading cache:", e);
         return null;
       }
-    });
-    const cacheResult = (url, isSignup) => __async(null, null, function* () {
+    };
+    const cacheResult = async (url, isSignup) => {
       try {
-        const cache = yield caches.open(CACHE_NAME);
+        const cache = await caches.open(CACHE_NAME);
         const data = {
           url,
           isSignupPage: isSignup,
@@ -73,17 +51,17 @@
         const response = new Response(JSON.stringify(data), {
           headers: { "Content-Type": "application/json" }
         });
-        yield cache.put(url, response);
+        await cache.put(url, response);
       } catch (e) {
         console.error("Error writing to cache:", e);
       }
-    });
-    const checkLink = (link) => __async(null, null, function* () {
+    };
+    const checkLink = async (link) => {
       const url = link.href;
       if (!url.startsWith("http") || !url.includes("ancestry.com")) {
         return;
       }
-      const cached = yield getCachedResult(url);
+      const cached = await getCachedResult(url);
       if (cached) {
         if (cached.isSignupPage) {
           disableLink(link);
@@ -91,7 +69,7 @@
         return;
       }
       try {
-        const response = yield fetch(url, {
+        const response = await fetch(url, {
           method: "HEAD",
           redirect: "follow",
           credentials: "include"
@@ -99,18 +77,18 @@
         const finalUrl = response.url;
         const isSignup = isSignupPage(finalUrl, "");
         if (!isSignup && response.ok) {
-          const fullResponse = yield fetch(url, {
+          const fullResponse = await fetch(url, {
             redirect: "follow",
             credentials: "include"
           });
-          const text = yield fullResponse.text();
+          const text = await fullResponse.text();
           const isSignupContent = isSignupPage(fullResponse.url, text);
-          yield cacheResult(url, isSignupContent);
+          await cacheResult(url, isSignupContent);
           if (isSignupContent) {
             disableLink(link);
           }
         } else {
-          yield cacheResult(url, isSignup);
+          await cacheResult(url, isSignup);
           if (isSignup) {
             disableLink(link);
           }
@@ -118,7 +96,7 @@
       } catch (e) {
         console.error(`Error checking link ${url}:`, e);
       }
-    });
+    };
     const disableLink = (link) => {
       link.style.opacity = "0.5";
       link.style.cursor = "not-allowed";
@@ -141,17 +119,17 @@
         link.appendChild(indicator);
       }
     };
-    const processLinks = () => __async(null, null, function* () {
+    const processLinks = async () => {
       const links = document.querySelectorAll("a[href]");
       console.log(`Processing ${links.length} links on page`);
       const batchSize = 5;
       for (let i = 0; i < links.length; i += batchSize) {
         const batch = Array.from(links).slice(i, i + batchSize);
-        yield Promise.all(batch.map((link) => checkLink(link)));
-        yield new Promise((resolve) => setTimeout(resolve, 100));
+        await Promise.all(batch.map((link) => checkLink(link)));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
       console.log("Finished processing links");
-    });
+    };
     const processNode = (node) => {
       if (node.nodeType === Node.ELEMENT_NODE) {
         const element = node;
@@ -171,14 +149,14 @@
         }
       }
     });
-    AncestryPremiumContentBlocker2.init = () => __async(null, null, function* () {
+    AncestryPremiumContentBlocker2.init = async () => {
       console.log("Ancestry Link Checker initialized");
-      yield processLinks();
+      await processLinks();
       observer.observe(document.body, {
         childList: true,
         subtree: true
       });
-    });
+    };
   })(AncestryPremiumContentBlocker || (AncestryPremiumContentBlocker = {}));
   AncestryPremiumContentBlocker.init();
 })();

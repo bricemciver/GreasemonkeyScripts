@@ -11,7 +11,6 @@
 // @connect equip-bid.com
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/equip-bid-keyboard-navigation/equip-bid-keyboard-navigation.user.ts
@@ -51,12 +50,10 @@
       }
     };
     const showHelp = () => {
-      var _a;
-      (_a = document.querySelector("dialog.ShortcutsHelp")) == null ? void 0 : _a.showModal();
+      document.querySelector("dialog.ShortcutsHelp")?.showModal();
     };
     const hideHelp = () => {
-      var _a;
-      (_a = document.querySelector("dialog.ShortcutsHelp")) == null ? void 0 : _a.close();
+      document.querySelector("dialog.ShortcutsHelp")?.close();
     };
     const createHelp = () => {
       const helpDiv = document.createElement("dialog");

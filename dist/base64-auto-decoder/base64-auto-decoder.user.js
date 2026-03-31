@@ -19,7 +19,6 @@
 // @updateURL https://update.greasyfork.org/scripts/485772/FMHY%20Base64%20Auto%20Decoder.meta.js
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/base64-auto-decoder/base64-auto-decoder.user.ts

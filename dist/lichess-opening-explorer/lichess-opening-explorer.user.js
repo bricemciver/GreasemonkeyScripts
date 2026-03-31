@@ -10,30 +10,8 @@
 // @icon https://icons.duckduckgo.com/ip3/lichess.org.ico
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
-  var __async = (__this, __arguments, generator) => {
-    return new Promise((resolve, reject) => {
-      var fulfilled = (value) => {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      };
-      var rejected = (value) => {
-        try {
-          step(generator.throw(value));
-        } catch (e) {
-          reject(e);
-        }
-      };
-      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-      step((generator = generator.apply(__this, __arguments)).next());
-    });
-  };
-
   // node_modules/.pnpm/@badrap+result@0.3.1/node_modules/@badrap/result/dist/mjs/index.mjs
   var _Result = class {
     unwrap(ok, err) {
@@ -2218,7 +2196,6 @@
   ((LichessOpeningExplorer2) => {
     const CACHE_NAME = "lichess-cache";
     const getLichessGame = () => {
-      var _a;
       console.info("=== LICHESS GAME EXTRACTOR ===\n");
       const moveContainer = document.querySelector("rm6, l4x");
       if (!moveContainer) {
@@ -2229,7 +2206,7 @@
       const pos = startingPosition(game.headers).unwrap();
       const uciMoves = [];
       for (const moveEl of moveElements) {
-        const move = (_a = moveEl.textContent) == null ? void 0 : _a.trim();
+        const move = moveEl.textContent?.trim();
         if (move) {
           const chessMove = parseSan(pos, move);
           if (!chessMove) {
@@ -2243,16 +2220,16 @@
       console.info("Moves found:", pos.fullmoves);
       return uciMoves;
     };
-    const fetchWithCache = (url) => __async(null, null, function* () {
+    const fetchWithCache = async (url) => {
       try {
-        const cache = yield caches.open(CACHE_NAME);
-        const cachedResponse = yield cache.match(url);
+        const cache = await caches.open(CACHE_NAME);
+        const cachedResponse = await cache.match(url);
         if (cachedResponse) {
           console.log("Cache hit:", url);
           return cachedResponse;
         }
         console.log("Cache miss, fetching:", url);
-        const response = yield GM.xmlHttpRequest({
+        const response = await GM.xmlHttpRequest({
           method: "GET",
           url,
           responseType: "json"
@@ -2264,13 +2241,13 @@
           statusText,
           headers: { "Content-Type": "application/json" }
         });
-        yield cache.put(url, cacheableResponse);
-        return yield cache.match(url);
+        await cache.put(url, cacheableResponse);
+        return await cache.match(url);
       } catch (error) {
         console.error("Fetch error:", error);
         throw error;
       }
-    });
+    };
     const updateMoveDisplay = (move) => {
       let container = document.getElementById("lichess-top-move");
       if (!container) {
@@ -2288,11 +2265,11 @@
       }
       container.textContent = move ? `Top Move: ${move}` : "";
     };
-    LichessOpeningExplorer2.main = () => __async(null, null, function* () {
+    LichessOpeningExplorer2.main = async () => {
       console.info("Lichess Opening Explorer script loaded.");
       const targetNode = document.body;
       const config = { childList: true, subtree: true };
-      const callback = (mutationsList, internalObserver) => __async(null, null, function* () {
+      const callback = async (mutationsList, internalObserver) => {
         for (const mutation of mutationsList) {
           if (mutation.type === "childList") {
             for (const node of mutation.addedNodes) {
@@ -2301,9 +2278,9 @@
                 const result = getLichessGame();
                 if (result.length > 0) {
                   const url = `https://explorer.lichess.ovh/masters?since=2008&play=${result.join(",")}`;
-                  const data = yield fetchWithCache(url);
-                  if (data == null ? void 0 : data.ok) {
-                    const chessDBResult = yield data.json();
+                  const data = await fetchWithCache(url);
+                  if (data?.ok) {
+                    const chessDBResult = await data.json();
                     if (chessDBResult.moves.length === 0) {
                       console.info("No moves found in database for this position.");
                       updateMoveDisplay(null);
@@ -2320,22 +2297,22 @@
             }
           }
         }
-      });
+      };
       const observer = new MutationObserver(callback);
       observer.observe(targetNode, config);
       const initialResult = getLichessGame();
       if (initialResult.length > 0) {
         const url = `https://explorer.lichess.ovh/masters?since=2008&play=${initialResult.join(",")}`;
-        const data = yield fetchWithCache(url);
+        const data = await fetchWithCache(url);
         if (data) {
-          const chessDBResult = yield data.json();
+          const chessDBResult = await data.json();
           if (chessDBResult.moves.length > 0) {
             updateMoveDisplay(chessDBResult.moves[0].uci);
             console.info("Top Move:", chessDBResult.moves[0].uci);
           }
         }
       }
-    });
+    };
   })(LichessOpeningExplorer || (LichessOpeningExplorer = {}));
   void LichessOpeningExplorer.main();
 })();

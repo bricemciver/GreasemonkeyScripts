@@ -9,7 +9,6 @@
 // @grant none
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/kinja-deals-keyboard-navigation/kinja-deals-keyboard-navigation.user.ts
@@ -45,7 +44,6 @@
       }
     };
     KinjaDealsKeyboardNavigation2.removeCruft = () => {
-      var _a, _b;
       for (const element of document.querySelectorAll(".js_movable_ad_slot")) {
         element.remove();
       }
@@ -55,17 +53,16 @@
       for (const element of Array.from(document.getElementsByTagName("span")).filter(
         (item) => item.textContent === "G/O Media may get a commission"
       )) {
-        (_a = element.closest("aside")) == null ? void 0 : _a.remove();
+        element.closest("aside")?.remove();
       }
       for (const element of document.querySelectorAll("#sidebar_wrapper")) {
-        (_b = element.closest("aside")) == null ? void 0 : _b.remove();
+        element.closest("aside")?.remove();
       }
     };
     const createEntries = (containerDiv) => {
-      var _a;
       let newElement = null;
       for (const element of Array.from(containerDiv.children)) {
-        if (element.tagName === "H2" && ((_a = element.textContent) == null ? void 0 : _a.length) && element.textContent.length > 0) {
+        if (element.tagName === "H2" && element.textContent?.length && element.textContent.length > 0) {
           newElement = document.createElement("div");
           newElement.className = "inlineFrame";
           element.insertAdjacentElement("beforebegin", newElement);

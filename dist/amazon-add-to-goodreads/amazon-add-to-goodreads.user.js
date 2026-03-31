@@ -37,7 +37,6 @@
 // @grant none
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/amazon-add-to-goodreads/amazon-add-to-goodreads.user.ts
@@ -49,7 +48,7 @@
       const asin = array && array.length > 1 ? array[1] : "";
       console.log(`ASIN in pathname: ${asin}`);
       const dp = document.getElementById("dp");
-      return (dp == null ? void 0 : dp.className.includes("book")) ? asin : "";
+      return dp?.className.includes("book") ? asin : "";
     };
     const findInsertPoint = () => document.getElementById("averageCustomerReviews");
     const insertElement = (isbn, insertPoint) => {

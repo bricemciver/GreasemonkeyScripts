@@ -13,49 +13,8 @@
 // @run-at document-end
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
-  var __defProp = Object.defineProperty;
-  var __defProps = Object.defineProperties;
-  var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
-  var __getOwnPropSymbols = Object.getOwnPropertySymbols;
-  var __hasOwnProp = Object.prototype.hasOwnProperty;
-  var __propIsEnum = Object.prototype.propertyIsEnumerable;
-  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-  var __spreadValues = (a, b) => {
-    for (var prop in b || (b = {}))
-      if (__hasOwnProp.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
-    if (__getOwnPropSymbols)
-      for (var prop of __getOwnPropSymbols(b)) {
-        if (__propIsEnum.call(b, prop))
-          __defNormalProp(a, prop, b[prop]);
-      }
-    return a;
-  };
-  var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-  var __async = (__this, __arguments, generator) => {
-    return new Promise((resolve, reject) => {
-      var fulfilled = (value) => {
-        try {
-          step(generator.next(value));
-        } catch (e) {
-          reject(e);
-        }
-      };
-      var rejected = (value) => {
-        try {
-          step(generator.throw(value));
-        } catch (e) {
-          reject(e);
-        }
-      };
-      var step = (x) => x.done ? resolve(x.value) : Promise.resolve(x.value).then(fulfilled, rejected);
-      step((generator = generator.apply(__this, __arguments)).next());
-    });
-  };
-
   // node_modules/.pnpm/uuid@13.0.0/node_modules/uuid/dist/stringify.js
   var byteToHex = [];
   for (let i = 0; i < 256; ++i) {
@@ -84,9 +43,8 @@
 
   // node_modules/.pnpm/uuid@13.0.0/node_modules/uuid/dist/v4.js
   function _v4(options, buf, offset) {
-    var _a, _b, _c;
     options = options || {};
-    const rnds = (_c = (_b = options.random) != null ? _b : (_a = options.rng) == null ? void 0 : _a.call(options)) != null ? _c : rng();
+    const rnds = options.random ?? options.rng?.() ?? rng();
     if (rnds.length < 16) {
       throw new Error("Random bytes length must be >= 16");
     }
@@ -147,13 +105,13 @@
         throw new Error(`Failed to parse response: ${e}`);
       }
     };
-    const getCsrfToken = () => __async(null, null, function* () {
+    const getCsrfToken = async () => {
       if (cachedCsrfToken) {
         log("Using cached CSRF token");
         return cachedCsrfToken;
       }
       log("Fetching CSRF token from Amazon sendtokindle page");
-      const response = yield GM.xmlHttpRequest({
+      const response = await GM.xmlHttpRequest({
         method: "GET",
         url: AMAZON_SENDTOKINDLE_URL
       });
@@ -164,7 +122,7 @@
         throw new Error("NOT_LOGGED_IN");
       }
       const m = CSRFPattern.exec(html);
-      if (m == null ? void 0 : m[1]) {
+      if (m?.[1]) {
         cachedCsrfToken = m[1];
         log("Retrieved CSRF token", { token: cachedCsrfToken });
         return cachedCsrfToken;
@@ -172,7 +130,7 @@
       const excerpt = (html.substring(0, 1e3) || "").split(/\s+/).join(" ");
       log("Warning: Could not find CSRF token in Amazon page excerpt:", excerpt);
       throw new Error("CSRF_NOT_FOUND");
-    });
+    };
     const log = (message, data) => {
       const timestamp = (/* @__PURE__ */ new Date()).toISOString();
       if (data) {
@@ -182,7 +140,6 @@
       }
     };
     const injectStyles = () => {
-      var _a;
       const styleId = "gstk-injected-styles";
       if (document.getElementById(styleId)) {
         return;
@@ -220,7 +177,7 @@
       const styleEl = document.createElement("style");
       styleEl.id = styleId;
       styleEl.textContent = css;
-      (_a = document.head) == null ? void 0 : _a.appendChild(styleEl);
+      document.head?.appendChild(styleEl);
     };
     const showMessage = (message, type = "info") => {
       const messageEl = document.createElement("div");
@@ -270,9 +227,9 @@
       });
       return { url: epubUrl, filename, title, author };
     };
-    const downloadEpub = (url) => __async(null, null, function* () {
+    const downloadEpub = async (url) => {
       log(`Downloading EPUB from ${url}`);
-      const response = yield GM.xmlHttpRequest({
+      const response = await GM.xmlHttpRequest({
         url,
         method: "GET",
         responseType: "arraybuffer"
@@ -282,17 +239,17 @@
       });
       log(`EPUB downloaded successfully, size: ${response.response.byteLength} bytes`);
       return response.response;
-    });
-    const headEpub = (url) => __async(null, null, function* () {
+    };
+    const headEpub = async (url) => {
       log(`Performing HEAD request for EPUB: ${url}`);
-      const response = yield GM.xmlHttpRequest({ method: "HEAD", url }).catch((e) => {
+      const response = await GM.xmlHttpRequest({ method: "HEAD", url }).catch((e) => {
         log("HEAD request failed", e);
         return null;
       });
       if (!response) return null;
       const headers = response.responseHeaders || "";
       const m = new RegExp(ContentLengthPattern).exec(headers);
-      if (m == null ? void 0 : m[1]) {
+      if (m?.[1]) {
         const size = Number.parseInt(m[1], 10);
         log("HEAD returned Content-Length", size);
         return size;
@@ -300,8 +257,8 @@
         log("HEAD did not return Content-Length");
         return null;
       }
-    });
-    const initSendToKindle = (fileSize, csrfToken) => __async(null, null, function* () {
+    };
+    const initSendToKindle = async (fileSize, csrfToken) => {
       log("Initializing Send to Kindle", { fileSize });
       const payload = {
         fileSize,
@@ -311,13 +268,14 @@
         fileExtension: "epub"
       };
       log("Sending init request to Amazon (/sendtokindle/init)");
-      const response = yield GM.xmlHttpRequest({
+      const response = await GM.xmlHttpRequest({
         method: "POST",
         url: `${AMAZON_SENDTOKINDLE_URL}/init`,
-        headers: __spreadProps(__spreadValues({}, baseHeaders), {
+        headers: {
+          ...baseHeaders,
           "anti-csrftoken-a2z": csrfToken,
           Accept: "*/*"
-        }),
+        },
         data: JSON.stringify(payload)
       }).catch((e) => {
         log("Init request failed", e);
@@ -331,20 +289,21 @@
         throw new Error(`Init failed with status code: ${data.statusCode}`);
       }
       return data;
-    });
-    const uploadEpub = (uploadUrl, epubData, csrfToken) => __async(null, null, function* () {
+    };
+    const uploadEpub = async (uploadUrl, epubData, csrfToken) => {
       log("Uploading EPUB to Kindle", {
         uploadUrl,
         dataSize: epubData.byteLength
       });
       log("Sending upload request");
-      const response = yield GM.xmlHttpRequest({
+      const response = await GM.xmlHttpRequest({
         method: "PUT",
         url: uploadUrl,
-        headers: __spreadProps(__spreadValues({}, baseHeaders), {
+        headers: {
+          ...baseHeaders,
           "Content-Type": EPUB_CONTENT_TYPE,
           "anti-csrftoken-a2z": csrfToken
-        }),
+        },
         data: epubData,
         responseType: "arraybuffer"
       }).catch((e) => {
@@ -357,8 +316,8 @@
       const data = parseJsonResponse(text);
       log("Upload response received", data);
       return data;
-    });
-    const sendToKindle = (stkToken, title, author, contentLength, filename, csrfToken) => __async(null, null, function* () {
+    };
+    const sendToKindle = async (stkToken, title, author, contentLength, filename, csrfToken) => {
       log("Sending to Kindle", {
         stkToken,
         title,
@@ -382,13 +341,14 @@
         batchId: v4_default()
       };
       log("Sending final send request (/sendtokindle/send-v2)");
-      const response = yield GM.xmlHttpRequest({
+      const response = await GM.xmlHttpRequest({
         method: "POST",
         url: `${AMAZON_SENDTOKINDLE_URL}/send-v2`,
-        headers: __spreadProps(__spreadValues({}, baseHeaders), {
+        headers: {
+          ...baseHeaders,
           "anti-csrftoken-a2z": csrfToken,
           Accept: "*/*"
-        }),
+        },
         data: JSON.stringify(payload)
       }).catch((e) => {
         log(`Send request failed: ${e}`);
@@ -399,8 +359,8 @@
       const data = parseJsonResponse(response.responseText);
       log("Send response received", data);
       return data;
-    });
-    const sendEpubToKindle = () => __async(null, null, function* () {
+    };
+    const sendEpubToKindle = async () => {
       try {
         showMessage("Preparing to send to Kindle...", "info");
         log("Starting send to Kindle process");
@@ -415,7 +375,7 @@
           showMessage("Sending cancelled — title/author required.", "error");
           return;
         }
-        const headSize = yield headEpub(epubInfo.url);
+        const headSize = await headEpub(epubInfo.url);
         if (!headSize) {
           log("HEAD did not provide Content-Length; aborting send to Kindle.");
           showMessage("Unable to determine EPUB size; cannot send to Kindle.", "error");
@@ -424,7 +384,7 @@
         log("Fetching CSRF token from Amazon (deferred until metadata ready)");
         let csrfToken;
         try {
-          csrfToken = yield getCsrfToken();
+          csrfToken = await getCsrfToken();
         } catch (error) {
           let msg;
           if (error instanceof Error) {
@@ -450,13 +410,13 @@
           return;
         }
         log("Step 1: Initializing Send to Kindle", { fileSize: headSize });
-        const initData = yield initSendToKindle(headSize, csrfToken);
+        const initData = await initSendToKindle(headSize, csrfToken);
         log("Downloading EPUB after init to prepare upload");
-        const epubData = yield downloadEpub(epubInfo.url);
+        const epubData = await downloadEpub(epubInfo.url);
         log("Step 2: Uploading EPUB");
-        const uploadData = yield uploadEpub(initData.uploadUrl, epubData, csrfToken);
+        const uploadData = await uploadEpub(initData.uploadUrl, epubData, csrfToken);
         log("Step 3: Sending to Kindle");
-        const sendData = yield sendToKindle(
+        const sendData = await sendToKindle(
           initData.stkToken,
           epubInfo.title,
           epubInfo.author,
@@ -476,7 +436,7 @@
         log("Error sending to Kindle", error);
         showMessage(`Error: ${errorMessage}`, "error");
       }
-    });
+    };
     const addSendToKindleButton = () => {
       let epubLink = null;
       const epubLinks = document.querySelectorAll('a[class*="link"][title*="Download"]');

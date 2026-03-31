@@ -34,7 +34,7 @@ namespace QuordleMildCheat {
     }
   };
 
-  export const findAllowedWords = () => {
+  export const findAllowedWords = async () => {
     // see if we need to retrieve
     wordBankWords.push(...getItem('wordBank', []));
     allowedWords.push(...getItem('allowed', []));
@@ -43,26 +43,21 @@ namespace QuordleMildCheat {
 
       // Get the script
       if (script) {
-        GM.xmlHttpRequest({
-          method: 'GET',
-          url: script.src,
-          onload(response: unknown) {
-            const text = (response as any).responseText;
-            // get wordBank words
-            const wordBankMatches = RegExp(wordBankRegEx).exec(text);
-            if (wordBankMatches && wordBankMatches.length > 1) {
-              wordBankWords.push(...wordBankMatches[1].split(' '));
-            }
-            // get allowed words
-            const allowedMatches = RegExp(allowedRegEx).exec(text);
-            if (allowedMatches && allowedMatches.length > 1) {
-              allowedWords.push(...allowedMatches[1].split(' '));
-            }
-            // store in session so we don't retrieve every time
-            setItem('wordBank', wordBankWords);
-            setItem('allowed', allowedWords);
-          },
-        });
+        const response = await GM.xmlHttpRequest({method: 'GET',url: script.src}).catch(e => console.error(e));
+        const text = response?.responseText ?? '';
+        // get wordBank words
+        const wordBankMatches = RegExp(wordBankRegEx).exec(text);
+        if (wordBankMatches && wordBankMatches.length > 1) {
+          wordBankWords.push(...wordBankMatches[1].split(' '));
+        }
+        // get allowed words
+        const allowedMatches = RegExp(allowedRegEx).exec(text);
+        if (allowedMatches && allowedMatches.length > 1) {
+          allowedWords.push(...allowedMatches[1].split(' '));
+        }
+        // store in session so we don't retrieve every time
+        setItem('wordBank', wordBankWords);
+        setItem('allowed', allowedWords);
       }
     }
   };
@@ -241,10 +236,10 @@ namespace QuordleMildCheat {
     // get rows
     if (board) {
       const rows = board.querySelectorAll<HTMLDivElement>('div[role="row"]');
-      for (const row of rows) {
+      for (const row of Array.from(rows)) {
         // get all cells in a row
         const cells = row.querySelectorAll<HTMLDivElement>('div[role="cell"]');
-        for (const cell of cells) {
+        for (const cell of Array.from(cells)) {
           // get the letter, position, and status
           const processedCell = processCell(cell);
           if (processedCell !== null) {
@@ -308,6 +303,6 @@ namespace QuordleMildCheat {
   };
 }
 // Retrieve (locally or from site) the word lists
-QuordleMildCheat.findAllowedWords();
+QuordleMildCheat.findAllowedWords().catch(e => console.error(e));;
 // add listeners
 QuordleMildCheat.addListeners();

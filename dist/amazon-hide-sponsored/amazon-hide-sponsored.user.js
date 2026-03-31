@@ -33,7 +33,6 @@
 // @icon https://www.google.com/s2/favicons?sz=64&domain=amazon.com
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/amazon-hide-sponsored/amazon-hide-sponsored.user.ts
@@ -54,7 +53,7 @@
           while (parent && !parent.hasAttribute("data-asin") && parent.parentElement) {
             parent = parent.parentElement;
           }
-          if (parent == null ? void 0 : parent.hasAttribute("data-asin")) {
+          if (parent?.hasAttribute("data-asin")) {
             parent.style.display = "none";
           }
         }

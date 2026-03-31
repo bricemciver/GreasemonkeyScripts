@@ -10,7 +10,6 @@
 // @grant GM_xmlhttpRequest
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/quordle-mild-cheat/quordle-mild-cheat.user.ts
@@ -32,29 +31,24 @@
         return val;
       }
     };
-    QuordleMildCheat2.findAllowedWords = () => {
+    QuordleMildCheat2.findAllowedWords = async () => {
       wordBankWords.push(...getItem("wordBank", []));
       allowedWords.push(...getItem("allowed", []));
       if (!wordBankWords.length || !allowedWords.length) {
         const script = document.querySelector("script[type='module']");
         if (script) {
-          GM.xmlHttpRequest({
-            method: "GET",
-            url: script.src,
-            onload(response) {
-              const text = response.responseText;
-              const wordBankMatches = RegExp(wordBankRegEx).exec(text);
-              if (wordBankMatches && wordBankMatches.length > 1) {
-                wordBankWords.push(...wordBankMatches[1].split(" "));
-              }
-              const allowedMatches = RegExp(allowedRegEx).exec(text);
-              if (allowedMatches && allowedMatches.length > 1) {
-                allowedWords.push(...allowedMatches[1].split(" "));
-              }
-              setItem("wordBank", wordBankWords);
-              setItem("allowed", allowedWords);
-            }
-          });
+          const response = await GM.xmlHttpRequest({ method: "GET", url: script.src }).catch((e) => console.error(e));
+          const text = response?.responseText ?? "";
+          const wordBankMatches = RegExp(wordBankRegEx).exec(text);
+          if (wordBankMatches && wordBankMatches.length > 1) {
+            wordBankWords.push(...wordBankMatches[1].split(" "));
+          }
+          const allowedMatches = RegExp(allowedRegEx).exec(text);
+          if (allowedMatches && allowedMatches.length > 1) {
+            allowedWords.push(...allowedMatches[1].split(" "));
+          }
+          setItem("wordBank", wordBankWords);
+          setItem("allowed", allowedWords);
         }
       }
     };
@@ -209,9 +203,9 @@
       const board = document.querySelector(`div[role="table"][aria-label="Game Board ${boardNum}"]`);
       if (board) {
         const rows = board.querySelectorAll('div[role="row"]');
-        for (const row of rows) {
+        for (const row of Array.from(rows)) {
           const cells = row.querySelectorAll('div[role="cell"]');
-          for (const cell of cells) {
+          for (const cell of Array.from(cells)) {
             const processedCell = processCell(cell);
             if (processedCell !== null) {
               boardState.push(processedCell);
@@ -252,7 +246,7 @@
       return tempWordList;
     };
   })(QuordleMildCheat || (QuordleMildCheat = {}));
-  QuordleMildCheat.findAllowedWords();
+  QuordleMildCheat.findAllowedWords().catch((e) => console.error(e));
   QuordleMildCheat.addListeners();
 })();
 //# sourceMappingURL=quordle-mild-cheat.user.js.map

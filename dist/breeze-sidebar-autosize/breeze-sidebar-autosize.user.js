@@ -8,7 +8,6 @@
 // @icon https://www.google.com/s2/favicons?sz=64&domain=breezechms.com
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/breeze-sidebar-autosize/breeze-sidebar-autosize.user.ts

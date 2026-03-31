@@ -9,7 +9,6 @@
 // @grant none
 // ==/UserScript==
 
-/* jshint esversion: 6 */
 "use strict";
 (() => {
   // src/main/facebook-hide-marketplace-deals/facebook-hide-marketplace-deals.user.ts
@@ -21,16 +20,14 @@
       subtree: true
     };
     const removeTracking = (node) => {
-      var _a;
       if (node.nodeType === Node.ELEMENT_NODE) {
         const dealsLink = node.querySelector("a[href*='tracking']");
         if (dealsLink) {
-          (_a = dealsLink.parentElement) == null ? void 0 : _a.remove();
+          dealsLink.parentElement?.remove();
         }
       }
     };
     const callback = (mutationsList) => {
-      var _a;
       for (const mutation of mutationsList) {
         if (mutation.type === "childList" && mutation.addedNodes.length) {
           for (const node of mutation.addedNodes) {
@@ -40,7 +37,7 @@
         if (mutation.type === "attributes" && mutation.attributeName === "href" && mutation.target.nodeType === Node.ELEMENT_NODE) {
           const link = mutation.target;
           if (link.href.includes("tracking")) {
-            (_a = link.parentElement) == null ? void 0 : _a.remove();
+            link.parentElement?.remove();
           }
         }
       }

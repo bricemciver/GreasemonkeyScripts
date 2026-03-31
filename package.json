@@ -8,15 +8,17 @@
   },
   "packageManager": "pnpm@10.33.0",
   "description": "My collection of GreaseMonkey scripts",
-  "scripts": {
-    "format": "oxfmt",
-    "format:check": "oxfmt --check",
-    "lint": "oxlint --fix --type-aware",
-    "lint:check": "oxlint --type-aware",
-    "create-headers": "pnpm ts-node ./src/scripts/create-headers.ts \"./src/main/**/*.meta.json\" ./dist",
-    "build": "pnpm esbuild ./src/main/**/*.ts --bundle --sourcemap --charset=utf8 --target=es6 --log-level=warning --banner:js='/* jshint esversion: 6 */' --outdir=./dist && pnpm run create-headers",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+    "scripts": {
+     "format": "oxfmt",
+     "format:check": "oxfmt --check",
+     "lint": "oxlint --fix --type-aware",
+     "lint:check": "oxlint --type-aware",
+     "create-headers": "pnpm ts-node ./src/scripts/create-headers.ts \"./src/main/**/*.meta.json\" ./dist",
+     "build:dev": "pnpm esbuild ./src/main/**/*.ts --bundle --format=iife --sourcemap=inline --charset=utf8 --target=es2020 --log-level=info --outdir=./dist && pnpm run create-headers",
+     "build:prod": "pnpm esbuild ./src/main/**/*.ts --bundle --format=iife --charset=utf8 --target=es2020 --log-level=warning --outdir=./dist && pnpm run create-headers",
+     "build": "pnpm run build:prod",
+     "test": "echo \"Error: no test specified\" && exit 1"
+   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/bricemciver/GreasemonkeyScripts.git"
