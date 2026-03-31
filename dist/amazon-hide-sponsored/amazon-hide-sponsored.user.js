@@ -40,7 +40,13 @@
   var AmazonHideSponsored;
   ((AmazonHideSponsored2) => {
     AmazonHideSponsored2.findAndRemoveSponsoredItems = () => {
-      const sponsoredItems = document.evaluate("//span[text()='Sponsored']", document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+      const sponsoredItems = document.evaluate(
+        "//span[text()='Sponsored']",
+        document,
+        null,
+        XPathResult.ORDERED_NODE_SNAPSHOT_TYPE,
+        null
+      );
       for (let i = 0; i < sponsoredItems.snapshotLength; i++) {
         const node = sponsoredItems.snapshotItem(i);
         if (node && node.nodeType === Node.ELEMENT_NODE) {

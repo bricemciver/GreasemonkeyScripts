@@ -11,24 +11,23 @@ namespace AncestryRemovePaidHints {
       const getRequest = db.transaction('collections_os', 'readonly').objectStore('collections_os').get(dbid);
       getRequest.onsuccess = () => {
         const result = getRequest.result;
-        const putOS = db.transaction('collections_os', 'readwrite').objectStore('collections_os');
-        if (result) {
-          putOS.put({
-            dbid,
-            name: result.name,
-            tree: result.tree,
-            paid: true,
-            visible: false,
-          });
-        } else {
-          putOS.put({
-            dbid,
-            name: '',
-            tree: false,
-            paid: true,
-            visible: false,
-          });
+        const paidOffer = {
+          dbid,
+          name: '',
+          tree: false,
+          paid: true,
+          visible: false
         }
+        if (typeof result === "object" && result !== null) {
+          if ("name" in result) {
+            paidOffer.name = (result as { name: string }).name
+          }
+          if ("tree" in result) {
+            paidOffer.tree = (result as { tree: boolean }).tree
+          }
+        }
+        const putOS = db.transaction('collections_os', 'readwrite').objectStore('collections_os');
+        putOS.put(paidOffer);
       };
     }
   };
@@ -95,10 +94,10 @@ namespace AncestryRemovePaidHints {
               GM.xmlHttpRequest({
                 method: 'GET',
                 url: link.href,
-                onreadystatechange(response) {
-                  if (response.readyState === Tampermonkey.ReadyState.HeadersReceived) {
+                onreadystatechange(response: unknown) {
+                  if ((response as any).readyState === Tampermonkey.ReadyState.HeadersReceived) {
                     // HeadersReceived
-                    const location = response.finalUrl;
+                    const location = (response as any).finalUrl;
                     if (location) {
                       // find out if this is a paid link
                       const denyRegex = /offers\/join/;
@@ -140,7 +139,7 @@ namespace AncestryRemovePaidHints {
                 },
               });
             } else {
-              hide = !result.visible;
+              hide = !(result).visible;
             }
             if (hide) {
               // remove hint from view
@@ -148,7 +147,7 @@ namespace AncestryRemovePaidHints {
               const section = link.closest('section');
               if (li) {
                 li.remove();
-                if (section && section.querySelectorAll("li[role='group']").length === 1) {
+                if (section?.querySelectorAll("li[role='group']").length === 1) {
                   section.remove();
                 }
               }
@@ -174,7 +173,7 @@ namespace AncestryRemovePaidHints {
       const section = link.closest('section');
       if (li) {
         li.remove();
-        if (section && section.querySelectorAll("li[role='group']").length === 1) {
+        if (section?.querySelectorAll("li[role='group']").length === 1) {
           section.remove();
         }
       }
@@ -221,4 +220,4 @@ namespace AncestryRemovePaidHints {
     }
   };
 }
-AncestryRemovePaidHints.main();
+void AncestryRemovePaidHints.main();

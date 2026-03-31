@@ -1,3 +1,4 @@
+/* oxlint-disable max-lines */
 import { v4 as uuidv4 } from 'uuid';
 namespace GutenbergSendToKindle {
   interface InitResponse {
@@ -72,7 +73,7 @@ namespace GutenbergSendToKindle {
     }
 
     log('Fetching CSRF token from Amazon sendtokindle page');
-    const response = await GM.xmlHttpRequest({
+    const response = await GM.xmlHttpRequest<string>({
       method: 'GET',
       url: AMAZON_SENDTOKINDLE_URL,
     });
@@ -218,7 +219,7 @@ namespace GutenbergSendToKindle {
 
   const downloadEpub = async (url: string): Promise<ArrayBuffer> => {
     log(`Downloading EPUB from ${url}`);
-    const response = await GM.xmlHttpRequest({
+    const response = await GM.xmlHttpRequest<ArrayBuffer>({
       url,
       method: 'GET',
       responseType: 'arraybuffer',
@@ -227,16 +228,17 @@ namespace GutenbergSendToKindle {
       throw e;
     });
     log(`EPUB downloaded successfully, size: ${response.response.byteLength} bytes`);
-    return response.response as ArrayBuffer;
+    return response.response;
   };
 
   const headEpub = async (url: string): Promise<number | null> => {
     log(`Performing HEAD request for EPUB: ${url}`);
-    const response = await GM.xmlHttpRequest({ method: 'HEAD', url }).catch(e => {
+    const response = await GM.xmlHttpRequest<unknown>({ method: 'HEAD', url }).catch(e => {
       log('HEAD request failed', e);
       return null;
     });
-    const headers = response?.responseHeaders || '';
+    if (!response) return null;
+    const headers = response.responseHeaders || '';
     const m = new RegExp(ContentLengthPattern).exec(headers);
     if (m?.[1]) {
       const size = Number.parseInt(m[1], 10);
@@ -271,7 +273,7 @@ namespace GutenbergSendToKindle {
     }).catch(e => {
       log('Init request failed', e);
       throw e;
-    });
+    }) as any;
     log('Init response status', response.status);
     ensureStatus(response);
     const data = parseJsonResponse<InitResponse>(response.responseText);
@@ -301,7 +303,7 @@ namespace GutenbergSendToKindle {
     }).catch(e => {
       log(`Upload request failed: ${e}`);
       throw e;
-    });
+    }) as any;
     log('Upload response status', response.status);
     ensureStatus(response);
     const text = new TextDecoder().decode(response.response as ArrayBuffer);
@@ -355,7 +357,7 @@ namespace GutenbergSendToKindle {
     }).catch(e => {
       log(`Send request failed: ${e}`);
       throw e;
-    });
+    }) as any;
     log('Send response status', response.status);
     ensureStatus(response);
     const data = parseJsonResponse<SendResponse>(response.responseText);
@@ -492,7 +494,7 @@ namespace GutenbergSendToKindle {
       e.preventDefault();
       button.disabled = true;
       button.textContent = '⏳ Sending...';
-      sendEpubToKindle().finally(() => {
+      void sendEpubToKindle().finally(() => {
         button.disabled = false;
         button.textContent = '📧 Send to Kindle';
       });

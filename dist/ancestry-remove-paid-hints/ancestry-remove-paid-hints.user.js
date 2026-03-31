@@ -49,24 +49,23 @@
         const getRequest = db.transaction("collections_os", "readonly").objectStore("collections_os").get(dbid);
         getRequest.onsuccess = () => {
           const result = getRequest.result;
-          const putOS = db.transaction("collections_os", "readwrite").objectStore("collections_os");
-          if (result) {
-            putOS.put({
-              dbid,
-              name: result.name,
-              tree: result.tree,
-              paid: true,
-              visible: false
-            });
-          } else {
-            putOS.put({
-              dbid,
-              name: "",
-              tree: false,
-              paid: true,
-              visible: false
-            });
+          const paidOffer = {
+            dbid,
+            name: "",
+            tree: false,
+            paid: true,
+            visible: false
+          };
+          if (typeof result === "object" && result !== null) {
+            if ("name" in result) {
+              paidOffer.name = result.name;
+            }
+            if ("tree" in result) {
+              paidOffer.tree = result.tree;
+            }
           }
+          const putOS = db.transaction("collections_os", "readwrite").objectStore("collections_os");
+          putOS.put(paidOffer);
         };
       }
     };
@@ -157,7 +156,7 @@
                 const section = link.closest("section");
                 if (li) {
                   li.remove();
-                  if (section && section.querySelectorAll("li[role='group']").length === 1) {
+                  if ((section == null ? void 0 : section.querySelectorAll("li[role='group']").length) === 1) {
                     section.remove();
                   }
                 }
@@ -178,7 +177,7 @@
         const section = link.closest("section");
         if (li) {
           li.remove();
-          if (section && section.querySelectorAll("li[role='group']").length === 1) {
+          if ((section == null ? void 0 : section.querySelectorAll("li[role='group']").length) === 1) {
             section.remove();
           }
         }
@@ -212,6 +211,6 @@
       }
     });
   })(AncestryRemovePaidHints || (AncestryRemovePaidHints = {}));
-  AncestryRemovePaidHints.main();
+  void AncestryRemovePaidHints.main();
 })();
 //# sourceMappingURL=ancestry-remove-paid-hints.user.js.map

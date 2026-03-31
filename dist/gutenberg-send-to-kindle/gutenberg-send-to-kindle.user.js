@@ -56,7 +56,7 @@
     });
   };
 
-  // node_modules/uuid/dist/stringify.js
+  // node_modules/.pnpm/uuid@13.0.0/node_modules/uuid/dist/stringify.js
   var byteToHex = [];
   for (let i = 0; i < 256; ++i) {
     byteToHex.push((i + 256).toString(16).slice(1));
@@ -65,7 +65,7 @@
     return (byteToHex[arr[offset + 0]] + byteToHex[arr[offset + 1]] + byteToHex[arr[offset + 2]] + byteToHex[arr[offset + 3]] + "-" + byteToHex[arr[offset + 4]] + byteToHex[arr[offset + 5]] + "-" + byteToHex[arr[offset + 6]] + byteToHex[arr[offset + 7]] + "-" + byteToHex[arr[offset + 8]] + byteToHex[arr[offset + 9]] + "-" + byteToHex[arr[offset + 10]] + byteToHex[arr[offset + 11]] + byteToHex[arr[offset + 12]] + byteToHex[arr[offset + 13]] + byteToHex[arr[offset + 14]] + byteToHex[arr[offset + 15]]).toLowerCase();
   }
 
-  // node_modules/uuid/dist/rng.js
+  // node_modules/.pnpm/uuid@13.0.0/node_modules/uuid/dist/rng.js
   var getRandomValues;
   var rnds8 = new Uint8Array(16);
   function rng() {
@@ -78,11 +78,11 @@
     return getRandomValues(rnds8);
   }
 
-  // node_modules/uuid/dist/native.js
+  // node_modules/.pnpm/uuid@13.0.0/node_modules/uuid/dist/native.js
   var randomUUID = typeof crypto !== "undefined" && crypto.randomUUID && crypto.randomUUID.bind(crypto);
   var native_default = { randomUUID };
 
-  // node_modules/uuid/dist/v4.js
+  // node_modules/.pnpm/uuid@13.0.0/node_modules/uuid/dist/v4.js
   function _v4(options, buf, offset) {
     var _a, _b, _c;
     options = options || {};
@@ -289,7 +289,8 @@
         log("HEAD request failed", e);
         return null;
       });
-      const headers = (response == null ? void 0 : response.responseHeaders) || "";
+      if (!response) return null;
+      const headers = response.responseHeaders || "";
       const m = new RegExp(ContentLengthPattern).exec(headers);
       if (m == null ? void 0 : m[1]) {
         const size = Number.parseInt(m[1], 10);
@@ -432,7 +433,10 @@
             msg = String(error);
           }
           if (msg === "NOT_LOGGED_IN") {
-            showMessage("You must be signed into Amazon for Send to Kindle to work. Please sign in and try again.", "error");
+            showMessage(
+              "You must be signed into Amazon for Send to Kindle to work. Please sign in and try again.",
+              "error"
+            );
             log("User not signed into Amazon (CSRF fetch indicated login page)");
             return;
           }
@@ -498,7 +502,7 @@
         e.preventDefault();
         button.disabled = true;
         button.textContent = "⏳ Sending...";
-        sendEpubToKindle().finally(() => {
+        void sendEpubToKindle().finally(() => {
           button.disabled = false;
           button.textContent = "📧 Send to Kindle";
         });

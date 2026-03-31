@@ -193,4 +193,4 @@ namespace LichessOpeningExplorer {
   };
 }
 
-LichessOpeningExplorer.main();
+void LichessOpeningExplorer.main();

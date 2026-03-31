@@ -64,7 +64,7 @@ To work with these scripts locally:
 ```sh
 git clone https://github.com/bricemciver/GreasemonkeyScripts.git
 cd GreasemonkeyScripts
-npm install
+pnpm install
 ```
 
 ## Build
@@ -72,7 +72,7 @@ npm install
 To build all scripts for deployment:
 
 ```sh
-npm run build
+pnpm run build
 ```
 
 ## Lint and Format
@@ -80,27 +80,27 @@ npm run build
 To check code style and formatting:
 
 ```sh
-npm run lint:check
-npm run format:check
+pnpm run lint:check
+pnpm run format:check
 ```
 
 To automatically fix lint and formatting issues:
 
 ```sh
-npm run lint
-npm run format
+pnpm run lint
+pnpm run format
 ```
 
 ## Folder Structure
 
 - `src/main/` – Main userscript source files
 - `src/scripts/` – Build and utility scripts
-- `dist/` – Compiled output (not tracked in git)
+- `dist/` – Compiled output
 
 ## Requirements
 
-- Node.js (v18+ recommended)
-- npm
+- Node.js (managed by Volta, v24 used in this project)
+- pnpm
 
 ## License
 

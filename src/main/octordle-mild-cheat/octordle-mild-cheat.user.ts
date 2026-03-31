@@ -21,7 +21,7 @@ namespace OctordleMildCheat {
    * @param key key to set
    * @param value value to set
    */
-  const setItem = (key: string, value: any) => {
+  const setItem = (key: string, value: unknown) => {
     window.sessionStorage.setItem(key, JSON.stringify(value));
   };
 
@@ -30,7 +30,7 @@ namespace OctordleMildCheat {
    * @param key key to get
    * @param defaultVal value to return if key doesn't exist
    */
-  const getItem = (key: string, defaultVal: any) => {
+  const getItem = (key: string, defaultVal: unknown) => {
     const val = window.sessionStorage.getItem(key);
     if (!val || val === 'undefined') return defaultVal;
     try {
@@ -50,11 +50,11 @@ namespace OctordleMildCheat {
         const element = mutation.addedNodes[0] as HTMLScriptElement;
         if (element.type === 'module') {
           // Get the script
-          GM.xmlHttpRequest({
+          void GM.xmlHttpRequest({
             method: 'GET',
             url: element.src,
-            onload(response) {
-              const text = response.responseText;
+            onload(response: unknown) {
+              const text = (response as any).responseText;
               // get wordBank words
               const wordBankMatches = RegExp(wordBankRegEx).exec(text);
               if (wordBankMatches && wordBankMatches.length > 1) {

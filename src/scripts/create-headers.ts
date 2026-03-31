@@ -69,4 +69,4 @@ if (!sourcePattern || !outputDir) {
   process.exit(1);
 }
 
-generateUserScriptHeaders(sourcePattern, outputDir);
+void generateUserScriptHeaders(sourcePattern, outputDir);

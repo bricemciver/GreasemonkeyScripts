@@ -34,7 +34,7 @@
     });
   };
 
-  // node_modules/@badrap/result/dist/mjs/index.mjs
+  // node_modules/.pnpm/@badrap+result@0.3.1/node_modules/@badrap/result/dist/mjs/index.mjs
   var _Result = class {
     unwrap(ok, err) {
       const r = this._chain((value) => Result.ok(ok ? ok(value) : value), (error) => err ? Result.ok(err(error)) : Result.err(error));
@@ -47,7 +47,7 @@
       return this._chain((value) => Result.ok(ok(value)), (error) => Result.err(err ? err(error) : error));
     }
     chain(ok, err) {
-      return this._chain(ok, err !== null && err !== void 0 ? err : (error) => Result.err(error));
+      return this._chain(ok, err !== null && err !== void 0 ? err : ((error) => Result.err(error)));
     }
   };
   var _Ok = class extends _Result {
@@ -108,7 +108,7 @@
     Result2.all = all;
   })(Result || (Result = {}));
 
-  // node_modules/chessops/dist/esm/squareSet.js
+  // node_modules/.pnpm/chessops@0.15.0/node_modules/chessops/dist/esm/squareSet.js
   var popcnt32 = (n) => {
     n = n - (n >>> 1 & 1431655765);
     n = (n & 858993459) + (n >>> 2 & 858993459);
@@ -300,7 +300,7 @@
     }
   };
 
-  // node_modules/chessops/dist/esm/types.js
+  // node_modules/.pnpm/chessops@0.15.0/node_modules/chessops/dist/esm/types.js
   var FILE_NAMES = ["a", "b", "c", "d", "e", "f", "g", "h"];
   var RANK_NAMES = ["1", "2", "3", "4", "5", "6", "7", "8"];
   var COLORS = ["white", "black"];
@@ -308,7 +308,7 @@
   var CASTLING_SIDES = ["a", "h"];
   var isDrop = (v) => "role" in v;
 
-  // node_modules/chessops/dist/esm/util.js
+  // node_modules/.pnpm/chessops@0.15.0/node_modules/chessops/dist/esm/util.js
   var defined = (v) => v !== void 0;
   var opposite = (color) => color === "white" ? "black" : "white";
   var squareRank = (square) => square >> 3;
@@ -358,7 +358,7 @@
   var kingCastlesTo = (color, side) => color === "white" ? side === "a" ? 2 : 6 : side === "a" ? 58 : 62;
   var rookCastlesTo = (color, side) => color === "white" ? side === "a" ? 3 : 5 : side === "a" ? 59 : 61;
 
-  // node_modules/chessops/dist/esm/attacks.js
+  // node_modules/.pnpm/chessops@0.15.0/node_modules/chessops/dist/esm/attacks.js
   var computeRange = (square, deltas) => {
     let range = SquareSet.empty();
     for (const delta of deltas) {
@@ -448,7 +448,7 @@
   };
   var between = (a, b) => ray(a, b).intersect(SquareSet.full().shl64(a).xor(SquareSet.full().shl64(b))).withoutFirst();
 
-  // node_modules/chessops/dist/esm/board.js
+  // node_modules/.pnpm/chessops@0.15.0/node_modules/chessops/dist/esm/board.js
   var Board = class _Board {
     constructor() {
     }
@@ -575,7 +575,7 @@
     }
   };
 
-  // node_modules/chessops/dist/esm/chess.js
+  // node_modules/.pnpm/chessops@0.15.0/node_modules/chessops/dist/esm/chess.js
   var IllegalSetup;
   (function(IllegalSetup2) {
     IllegalSetup2["Empty"] = "ERR_EMPTY";
@@ -1116,7 +1116,7 @@
     };
   };
 
-  // node_modules/chessops/dist/esm/setup.js
+  // node_modules/.pnpm/chessops@0.15.0/node_modules/chessops/dist/esm/setup.js
   var MaterialSide = class _MaterialSide {
     constructor() {
     }
@@ -1227,7 +1227,7 @@
     }
   };
 
-  // node_modules/chessops/dist/esm/fen.js
+  // node_modules/.pnpm/chessops@0.15.0/node_modules/chessops/dist/esm/fen.js
   var INITIAL_BOARD_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR";
   var INITIAL_EPD = INITIAL_BOARD_FEN + " w KQkq -";
   var INITIAL_FEN = INITIAL_EPD + " 0 1";
@@ -1425,7 +1425,7 @@
     });
   };
 
-  // node_modules/chessops/dist/esm/variant.js
+  // node_modules/.pnpm/chessops@0.15.0/node_modules/chessops/dist/esm/variant.js
   var Crazyhouse = class extends Position {
     constructor() {
       super("crazyhouse");
@@ -2043,7 +2043,7 @@
     }
   };
 
-  // node_modules/chessops/dist/esm/pgn.js
+  // node_modules/.pnpm/chessops@0.15.0/node_modules/chessops/dist/esm/pgn.js
   var defaultGame = (initHeaders = defaultHeaders) => ({
     headers: initHeaders(),
     moves: new Node()
@@ -2152,7 +2152,7 @@
       return Result.ok(defaultPosition(rules));
   };
 
-  // node_modules/chessops/dist/esm/san.js
+  // node_modules/.pnpm/chessops@0.15.0/node_modules/chessops/dist/esm/san.js
   var parseSan = (pos, san) => {
     const ctx = pos.ctx();
     const match = san.match(/^([NBRQK])?([a-h])?([1-8])?[-x]?([a-h][1-8])(?:=?([nbrqkNBRQK]))?[+#]?$/);
@@ -2337,6 +2337,6 @@
       }
     });
   })(LichessOpeningExplorer || (LichessOpeningExplorer = {}));
-  LichessOpeningExplorer.main();
+  void LichessOpeningExplorer.main();
 })();
 //# sourceMappingURL=lichess-opening-explorer.user.js.map

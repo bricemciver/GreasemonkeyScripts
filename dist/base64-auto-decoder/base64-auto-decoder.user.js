@@ -66,7 +66,9 @@
               element.appendChild(link);
             } else {
               const lines = decodedString.split("\n");
-              const links = lines.map((line) => isURL(line.trim()) ? `<a href='${line.trim()}'>${line.trim()}</a>` : line.trim());
+              const links = lines.map(
+                (line) => isURL(line.trim()) ? `<a href='${line.trim()}'>${line.trim()}</a>` : line.trim()
+              );
               element.innerHTML = links.join("<br>");
             }
           }

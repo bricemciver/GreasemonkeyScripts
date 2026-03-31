@@ -45,10 +45,11 @@
               method: "GET",
               url: element.src,
               onload(response) {
-                const sonic = response.responseText.indexOf("sonic");
-                const begArray = response.responseText.lastIndexOf("[", sonic);
-                const endArray = response.responseText.indexOf("]", sonic);
-                const wordListStr = response.responseText.substring(begArray, endArray + 1);
+                const responseAny = response;
+                const sonic = responseAny.responseText.indexOf("sonic");
+                const begArray = responseAny.responseText.lastIndexOf("[", sonic);
+                const endArray = responseAny.responseText.indexOf("]", sonic);
+                const wordListStr = responseAny.responseText.substring(begArray, endArray + 1);
                 const tempArray = JSON.parse(wordListStr);
                 fullWordList.push(...tempArray);
                 setItem("wordList", fullWordList);
@@ -180,7 +181,9 @@
       sortProcessedCells(boardState);
       for (const item of boardState) {
         if (item.status === 0 /* correct */) {
-          tempWordList = tempWordList.filter((word) => word.charAt(item.position - 1).toLowerCase() === item.letter.toLowerCase());
+          tempWordList = tempWordList.filter(
+            (word) => word.charAt(item.position - 1).toLowerCase() === item.letter.toLowerCase()
+          );
         } else if (item.status === 1 /* diff */) {
           tempWordList = tempWordList.filter(
             (word) => word.charAt(item.position - 1).toLowerCase() !== item.letter.toLowerCase() && word.indexOf(item.letter.toLowerCase()) !== -1

@@ -10,6 +10,12 @@ namespace AmazonGoodreadsMeta {
     bookUrl: string;
   }
 
+  interface GmResponse {
+    finalUrl: string;
+    responseText: string;
+    status: number;
+  }
+
   // Extract ASIN from Amazon URL or page
   const extractASINs = () => {
     const asins: string[] = [];
@@ -34,7 +40,7 @@ namespace AmazonGoodreadsMeta {
     return asins;
   };
 
-  const fetchGoodreadsDataForASIN = (asin: string) => {
+  const fetchGoodreadsDataForASIN = (asin: string): Promise<GM.Response<unknown>> => {
     return GM.xmlHttpRequest({
       method: 'GET',
       url: `https://www.goodreads.com/book/isbn/${asin}`,
@@ -101,8 +107,9 @@ namespace AmazonGoodreadsMeta {
     for (const asin of asins) {
       try {
         const goodreadsData = await fetchGoodreadsDataForASIN(asin);
-        const url = goodreadsData.finalUrl;
-        const aggregateMatch = goodreadsRegex.exec(goodreadsData.responseText);
+        const response = goodreadsData as unknown as GmResponse;
+        const url = response.finalUrl;
+        const aggregateMatch = goodreadsRegex.exec(response.responseText);
         if (aggregateMatch && aggregateMatch.length > 1) {
           const aggregateData = JSON.parse(aggregateMatch[1]);
           const aggregateGoodreadsData: GoodreadsData = {
@@ -134,4 +141,4 @@ namespace AmazonGoodreadsMeta {
   };
 }
 
-AmazonGoodreadsMeta.init();
+void AmazonGoodreadsMeta.init();

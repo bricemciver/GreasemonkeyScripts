@@ -18,7 +18,7 @@ namespace WordleMildCheat {
    * @param key key to set
    * @param value value to set
    */
-  const setItem = (key: string, value: any) => {
+  const setItem = (key: string, value: unknown) => {
     window.sessionStorage.setItem(key, JSON.stringify(value));
   };
 
@@ -27,7 +27,7 @@ namespace WordleMildCheat {
    * @param key key to get
    * @param defaultVal value to return if key doesnt exist
    */
-  const getItem = (key: string, defaultVal: any) => {
+  const getItem = (key: string, defaultVal: unknown) => {
     const val = window.sessionStorage.getItem(key);
     if (!val || val === 'undefined') return defaultVal;
     try {
@@ -50,15 +50,16 @@ namespace WordleMildCheat {
           GM.xmlHttpRequest({
             method: 'GET',
             url: element.src,
-            onload(response) {
+            onload(response: unknown) {
               // find a known valid word
-              const sonic = response.responseText.indexOf('sonic');
+              const responseAny = response as any;
+              const sonic = responseAny.responseText.indexOf('sonic');
               // find the beginning of array
-              const begArray = response.responseText.lastIndexOf('[', sonic);
+              const begArray = responseAny.responseText.lastIndexOf('[', sonic);
               // find the end of array
-              const endArray = response.responseText.indexOf(']', sonic);
+              const endArray = responseAny.responseText.indexOf(']', sonic);
               // Get the word list from script
-              const wordListStr = response.responseText.substring(begArray, endArray + 1);
+              const wordListStr = responseAny.responseText.substring(begArray, endArray + 1);
               // Convert to an array object
               const tempArray = JSON.parse(wordListStr) as string[];
               fullWordList.push(...tempArray);

@@ -234,7 +234,9 @@
       sortProcessedCells(boardState);
       for (const item of boardState) {
         if (item.status === "correct") {
-          tempWordList = tempWordList.filter((word) => word.charAt(item.position - 1).toUpperCase() === item.letter.toUpperCase());
+          tempWordList = tempWordList.filter(
+            (word) => word.charAt(item.position - 1).toUpperCase() === item.letter.toUpperCase()
+          );
         } else if (item.status === "diff") {
           tempWordList = tempWordList.filter(
             (word) => word.charAt(item.position - 1).toUpperCase() !== item.letter.toUpperCase() && word.indexOf(item.letter.toUpperCase()) !== -1
@@ -242,7 +244,9 @@
         } else if (item.status === "none" && !boardState.some(({ letter, status }) => (status === "correct" || status === "diff") && letter === item.letter)) {
           tempWordList = tempWordList.filter((word) => word.indexOf(item.letter.toUpperCase()) === -1);
         } else if (item.status === "none" && boardState.some(({ letter, status }) => (status === "correct" || status === "diff") && letter === item.letter)) {
-          tempWordList = tempWordList.filter((word) => word.indexOf(item.letter.toUpperCase()) === word.lastIndexOf(item.letter.toUpperCase()));
+          tempWordList = tempWordList.filter(
+            (word) => word.indexOf(item.letter.toUpperCase()) === word.lastIndexOf(item.letter.toUpperCase())
+          );
         }
       }
       return tempWordList;

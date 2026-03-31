@@ -2,14 +2,19 @@
   "name": "greasemonkeyscripts",
   "version": "1.0.0",
   "type": "module",
+  "volta": {
+    "node": "24.14.1",
+    "pnpm": "10.33.0"
+  },
+  "packageManager": "pnpm@10.33.0",
   "description": "My collection of GreaseMonkey scripts",
   "scripts": {
-    "format": "npx oxfmt . --write",
-    "format:check": "npx oxfmt . --check",
-    "lint": "npx oxlint . --fix --type-aware",
-    "lint:check": "npx oxlint . --type-aware",
-    "create-headers": "npx ts-node ./src/scripts/create-headers.ts \"./src/main/**/*.meta.json\" ./dist",
-    "build": "npx esbuild ./src/main/**/*.ts --bundle --sourcemap --charset=utf8 --target=es6 --log-level=warning --banner:js='/* jshint esversion: 6 */' --outdir=./dist && npm run create-headers",
+    "format": "oxfmt . --write",
+    "format:check": "oxfmt . --check",
+    "lint": "oxlint . --fix --type-aware",
+    "lint:check": "oxlint . --type-aware",
+    "create-headers": "pnpm ts-node ./src/scripts/create-headers.ts \"./src/main/**/*.meta.json\" ./dist",
+    "build": "pnpm esbuild ./src/main/**/*.ts --bundle --sourcemap --charset=utf8 --target=es6 --log-level=warning --banner:js='/* jshint esversion: 6 */' --outdir=./dist && pnpm run create-headers",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,17 +28,20 @@
   },
   "homepage": "https://github.com/bricemciver/GreasemonkeyScripts#readme",
   "devDependencies": {
-    "@types/glob": "^8.1.0",
+    "@types/glob": "^9.0.0",
     "@types/jquery": "^3.5.32",
     "@types/node": "^22.3.0",
     "@types/tampermonkey": "^5.0.3",
     "esbuild": "^0.25.5",
-    "globals": "^16.2.0",
+    "oxfmt": "^0.42.0",
+    "oxlint": "^1.57.0",
+    "oxlint-tsgolint": "^0.18.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.5.4"
   },
   "dependencies": {
     "chessops": "^0.15.0",
-    "glob": "^11.0.0",
+    "glob": "^13.0.6",
     "uuid": "^13.0.0"
   }
 }

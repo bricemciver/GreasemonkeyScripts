@@ -124,6 +124,7 @@ namespace Base64AutoDecoder {
               }
             } catch (_error) {
               // If an error occurs during decoding, show it in an alert message
+              // oxlint-disable-next-line no-alert
               alert(`Unable to decode the string: ${line}`);
             }
           } else if (line.startsWith('`') && line.endsWith('`')) {
@@ -144,6 +145,7 @@ namespace Base64AutoDecoder {
                 }
               } catch (_error) {
                 // If an error occurs during decoding, show it in an alert message
+                // oxlint-disable-next-line no-alert
                 alert(`Unable to decode the string: ${textInsideBackticks}`);
               }
             }

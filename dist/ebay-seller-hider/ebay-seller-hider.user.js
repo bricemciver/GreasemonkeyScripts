@@ -35,7 +35,9 @@
           parent.style.display = filterReviews && reviewsNum < reviewMin || filterFeedback && feedbackNum < feedbackMin ? "none" : "list-item";
           if (hideSponsored && parent.style.display === "list-item") {
             let hideSponsoredPost = false;
-            const sponsoredSpan = Array.from(parent.querySelectorAll("span")).find((item) => item.textContent === "Sponsored");
+            const sponsoredSpan = Array.from(parent.querySelectorAll("span")).find(
+              (item) => item.textContent === "Sponsored"
+            );
             if (sponsoredSpan) {
               const labelAttr = (_b = (_a = sponsoredSpan.parentElement) == null ? void 0 : _a.parentElement) == null ? void 0 : _b.getAttribute("aria-labelledBy");
               if (labelAttr && labelAttr === sponsorClass) {
@@ -161,7 +163,9 @@
       if (styleBlock) {
         const cssRuleList = (_a = styleBlock.sheet) == null ? void 0 : _a.cssRules;
         if (cssRuleList) {
-          const rule = Array.from(cssRuleList).find((item) => item.cssText.includes("inline") && item.cssText.includes("span."));
+          const rule = Array.from(cssRuleList).find(
+            (item) => item.cssText.includes("inline") && item.cssText.includes("span.")
+          );
           if (rule) {
             const regex = /\.([a-zA-Z0-9_-]+)\s*\{/;
             const match = regex.exec(rule.cssText);

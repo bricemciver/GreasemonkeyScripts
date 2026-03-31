@@ -133,8 +133,9 @@
       for (const asin of asins) {
         try {
           const goodreadsData = yield fetchGoodreadsDataForASIN(asin);
-          const url = goodreadsData.finalUrl;
-          const aggregateMatch = goodreadsRegex.exec(goodreadsData.responseText);
+          const response = goodreadsData;
+          const url = response.finalUrl;
+          const aggregateMatch = goodreadsRegex.exec(response.responseText);
           if (aggregateMatch && aggregateMatch.length > 1) {
             const aggregateData = JSON.parse(aggregateMatch[1]);
             const aggregateGoodreadsData = {
@@ -162,6 +163,6 @@
       }
     });
   })(AmazonGoodreadsMeta || (AmazonGoodreadsMeta = {}));
-  AmazonGoodreadsMeta.init();
+  void AmazonGoodreadsMeta.init();
 })();
 //# sourceMappingURL=amazon-goodreads-meta.user.js.map

@@ -44,7 +44,7 @@
         if (mutation.addedNodes.length > 0 && mutation.addedNodes[0].nodeType === Node.ELEMENT_NODE && mutation.addedNodes[0].nodeName === "SCRIPT") {
           const element = mutation.addedNodes[0];
           if (element.type === "module") {
-            GM.xmlHttpRequest({
+            void GM.xmlHttpRequest({
               method: "GET",
               url: element.src,
               onload(response) {
@@ -251,15 +251,23 @@
       sortProcessedCells(boardState);
       for (const item of boardState) {
         if (item.status === 0 /* correct */) {
-          tempWordList = tempWordList.filter((word) => word.charAt(item.position).toUpperCase() === item.letter.toUpperCase());
+          tempWordList = tempWordList.filter(
+            (word) => word.charAt(item.position).toUpperCase() === item.letter.toUpperCase()
+          );
         } else if (item.status === 1 /* diff */) {
           tempWordList = tempWordList.filter(
             (word) => word.charAt(item.position).toUpperCase() !== item.letter.toUpperCase() && word.indexOf(item.letter.toUpperCase()) !== -1
           );
-        } else if (item.status === 2 /* none */ && !boardState.some(({ letter, status }) => (status === 0 /* correct */ || status === 1 /* diff */) && letter === item.letter)) {
+        } else if (item.status === 2 /* none */ && !boardState.some(
+          ({ letter, status }) => (status === 0 /* correct */ || status === 1 /* diff */) && letter === item.letter
+        )) {
           tempWordList = tempWordList.filter((word) => word.indexOf(item.letter.toUpperCase()) === -1);
-        } else if (item.status === 2 /* none */ && boardState.some(({ letter, status }) => (status === 0 /* correct */ || status === 1 /* diff */) && letter === item.letter)) {
-          tempWordList = tempWordList.filter((word) => word.indexOf(item.letter.toUpperCase()) === word.lastIndexOf(item.letter.toUpperCase()));
+        } else if (item.status === 2 /* none */ && boardState.some(
+          ({ letter, status }) => (status === 0 /* correct */ || status === 1 /* diff */) && letter === item.letter
+        )) {
+          tempWordList = tempWordList.filter(
+            (word) => word.indexOf(item.letter.toUpperCase()) === word.lastIndexOf(item.letter.toUpperCase())
+          );
         }
       }
       return tempWordList;

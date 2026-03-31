@@ -7,7 +7,7 @@
       { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_", "caughtErrorsIgnorePattern": "^_" }
     ],
 
-    "no-console": "error",
+    "no-console": "off",
     "no-alert": "error",
     "no-param-reassign": "error",
     "prefer-template": "error",
