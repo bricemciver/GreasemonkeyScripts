@@ -1,0 +1,38 @@
+import type { MonkeyUserScript } from 'vite-plugin-monkey'
+export function manifest(): MonkeyUserScript {
+  return {
+    name: 'Amazon CamelCamelCamel + Keepa Price Charts',
+    namespace: 'https://github.com/bricemciver/GreasemonekeyScripts',
+    description: 'Add CamelCamelCamel and Keepa price charts to Amazon product pages.',
+    author: 'miki.it',
+    license: 'MIT',
+    version: '2.0.0',
+    match: [
+      'https://www.amazon.com/*',
+      ' https://www.amazon.co.uk/*',
+      'https://www.amazon.de/*',
+      'https://www.amazon.fr/*',
+      'https://www.amazon.it/*',
+      'https://www.amazon.es/*',
+      'https://www.amazon.ca/*',
+      'https://www.amazon.co.jp/*',
+      'https://www.amazon.in/*',
+      'https://www.amazon.com.br/*',
+      'https://www.amazon.com.mx/*',
+      'https://www.amazon.com.au/*',
+      'https://www.amazon.nl/*',
+      'https://www.amazon.sg/*',
+      'https://www.amazon.ae/*',
+      'https://www.amazon.sa/*',
+      'https://www.amazon.se/*',
+      'https://www.amazon.pl/*',
+      'https://www.amazon.com.tr/*',
+      'https://www.amazon.eg/*',
+      'https://www.amazon.com.be/*',
+    ],
+    icon: 'https://icons.duckduckgo.com/ip3/amazon.com.ico',
+    grant: 'GM_addStyle',
+    'run-at': 'document-idle',
+    noframes: true,
+  }
+}

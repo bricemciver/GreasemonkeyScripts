@@ -10,27 +10,25 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref }}
-          fetch-depth: 0
+      - name: Checkout
+        uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v5
         with:
-          node-version: 22
-          cache: 'npm'
+          version: 'latest'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: 'pnpm'
 
       - name: Install Dependencies
-        run: npm ci
-
-      - name: Linting
-        run: npm run lint
-
-      - name: Format Source Code
-        run: npm run format
+        run: pnpm install --frozen-lockfile 
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
       - name: Commit and Push Changes
         uses: EndBug/add-and-commit@v9
