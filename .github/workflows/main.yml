@@ -1,14 +1,18 @@
 ---
+name: Release
+
 on:
-  workflow_dispatch:
   push:
     branches:
       - main
-  pull_request:
+    paths:
+      - 'package.json'
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write 
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -22,15 +26,24 @@ jobs:
           node-version: 24
           cache: 'pnpm'
 
+      - name: Check if version has been updated
+        id: check
+        uses: EndBug/version-check@v3
+
       - name: Install Dependencies
+        if: steps.check.outputs.changed == 'true'
         run: pnpm install --frozen-lockfile 
 
       - name: Build
-        run: pnpm run build
+        if: steps.check.outputs.changed == 'true'
+        run: pnpm build
 
-      - name: Commit and Push Changes
-        uses: EndBug/add-and-commit@v10
+      - name: Create Release
+        if: steps.check.outputs.changed == 'true'
+        uses: softprops/action-gh-release@v2
         with:
-          committer_name: GitHub Actions
-          # https://github.blog/changelog/2021-02-08-github-actions-skip-pull-request-and-push-workflows-with-skip-ci/
-          message: 'chore: [skip-ci] format code and generate build artifacts'
+          tag_name: 'v${{ steps.check.outputs.version }}'
+          name: 'v${{ steps.check.outputs.version }}'
+          draft: false
+          prerelease: false
+          files: dist/*.user.js
