@@ -1,3 +1,5 @@
+import { getItemFromSessionStorage, setItemInSessionStorage } from "../../common/storageUtils"
+
 const State = {
   correct: 0,
   diff: 1,
@@ -13,30 +15,6 @@ type ProcessedCell = {
 }
 
 const fullWordList: string[] = []
-
-/**
- * Set an item into storage
- * @param key key to set
- * @param value value to set
- */
-const setItem = (key: string, value: any) => {
-  window.sessionStorage.setItem(key, JSON.stringify(value))
-}
-
-/**
- * Get an item from session storage
- * @param key key to get
- * @param defaultVal value to return if key doesnt exist
- */
-const getItem = (key: string, defaultVal: any) => {
-  const val = window.sessionStorage.getItem(key)
-  if (!val || val === 'undefined') return defaultVal
-  try {
-    return JSON.parse(val)
-  } catch (_e) {
-    return val
-  }
-}
 
 const callback: MutationCallback = (mutationList, mutationObserver) => {
   for (const mutation of mutationList) {
@@ -63,7 +41,7 @@ const callback: MutationCallback = (mutationList, mutationObserver) => {
             // Convert to an array object
             const tempArray = JSON.parse(wordListStr) as string[]
             fullWordList.push(...tempArray)
-            setItem('wordList', fullWordList)
+            setItemInSessionStorage('wordList', fullWordList)
           },
         })
         mutationObserver.disconnect()
@@ -242,7 +220,7 @@ const processGameBoard = (boardState: ProcessedCell[]) => {
 }
 
 const findAllowedWords = () => {
-  fullWordList.push(...getItem('wordList', []))
+  fullWordList.push(...getItemFromSessionStorage('wordList', []))
   if (fullWordList.length === 0) {
     // create a new instance of `MutationObserver` named `observer`,
     // passing it a callback function

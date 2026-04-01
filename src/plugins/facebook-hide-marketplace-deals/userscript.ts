@@ -35,8 +35,5 @@ const callback: MutationCallback = (mutationsList) => {
   }
 }
 
-const main = () => {
-  // Create an observer instance linked to the callback function and observe
-  new MutationObserver(callback).observe(document, config)
-}
-main()
+// Create an observer instance linked to the callback function and observe
+new MutationObserver(callback).observe(document, config)

@@ -1,3 +1,5 @@
+import { getItemFromSessionStorage, setItemInSessionStorage } from "../../common/storageUtils"
+
 const State = {
   correct: 0,
   diff: 1,
@@ -16,30 +18,6 @@ const wordBankRegEx = /"([^"]*\bsonic\b[^"]*)"/
 const allowedRegEx = /"([^"]*\bcorky\b[^"]*)"/
 const wordBankWords: string[] = []
 const allowedWords: string[] = []
-
-/**
- * Set an item into storage
- * @param key key to set
- * @param value value to set
- */
-const setItem = (key: string, value: any) => {
-  window.sessionStorage.setItem(key, JSON.stringify(value))
-}
-
-/**
- * Get an item from session storage
- * @param key key to get
- * @param defaultVal value to return if key doesn't exist
- */
-const getItem = (key: string, defaultVal: any) => {
-  const val = window.sessionStorage.getItem(key)
-  if (!val || val === 'undefined') return defaultVal
-  try {
-    return JSON.parse(val)
-  } catch (_e) {
-    return val
-  }
-}
 
 const callback: MutationCallback = (mutationList, mutationObserver) => {
   for (const mutation of mutationList) {
@@ -67,8 +45,8 @@ const callback: MutationCallback = (mutationList, mutationObserver) => {
               allowedWords.push(...allowedMatches[1].split(' ').map((word) => word.toUpperCase()))
             }
             // store in session so we don't retrieve every time
-            setItem('wordBank', wordBankWords)
-            setItem('allowed', allowedWords)
+            setItemInSessionStorage('wordBank', wordBankWords)
+            setItemInSessionStorage('allowed', allowedWords)
           },
         })
         mutationObserver.disconnect()
@@ -80,8 +58,8 @@ const callback: MutationCallback = (mutationList, mutationObserver) => {
 
 const findAllowedWords = () => {
   // see if we need to retrieve
-  wordBankWords.push(...getItem('wordBank', []))
-  allowedWords.push(...getItem('allowed', []))
+  wordBankWords.push(...getItemFromSessionStorage('wordBank', []))
+  allowedWords.push(...getItemFromSessionStorage('allowed', []))
   if (!wordBankWords.length || !allowedWords.length) {
     // create a new instance of `MutationObserver` named `observer`,
     // passing it a callback function
