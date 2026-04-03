@@ -109,7 +109,7 @@ pnpm run build
 
 ## Requirements
 
-- Node.js (v18+ recommended)
+- Node.js (v24+ recommended)
 - pnpm
 
 ## License
@@ -123,4 +123,3 @@ Pull requests and suggestions are welcome!
 # SEE ALSO
 
 - [GreasyFork](https://greasyfork.org/en/users/9112-bricemciver)
-- [OpenUserJS](https://openuserjs.org/users/bricem)
