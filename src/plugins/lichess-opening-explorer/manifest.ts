@@ -10,5 +10,6 @@ export function manifest(): MonkeyUserScript {
     connect: 'explorer.lichess.ovh',
     match: 'https://lichess.org/*',
     icon: 'https://icons.duckduckgo.com/ip3/lichess.org.ico',
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
   }
 }

@@ -8,6 +8,7 @@ export function manifest(): MonkeyUserScript {
     version: '0.0.5',
     icon: 'https://www.google.com/s2/favicons?sz=64&domain=amazon.com',
     downloadURL: 'https://greasyfork.org/en/scripts/468321-amazon-add-to-goodreads-widget',
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
     match: [
       'https://openuserjs.org/scripts/*',
       'http://localhost:8080/scripts/*',

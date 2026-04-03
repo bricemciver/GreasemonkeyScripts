@@ -4,6 +4,7 @@ export function manifest(): MonkeyUserScript {
     name: 'Ancestry Premium Content Blocker',
     namespace: 'https://github.com/bricemciver/GreasemonekeyScripts',
     version: '1.0.0',
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
     description: 'Preload links and disable those that redirect to signup pages',
     match: ['https://*.ancestry.com/*', 'https://ancestry.com/*'],
     grant: 'none',

@@ -6,6 +6,7 @@ export function manifest(): MonkeyUserScript {
     description: 'Removes paid hints on the "All Hints" page and on individual person pages',
     license: 'MIT',
     version: '0.0.3',
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
     match: [
       'https://*.ancestry.com/hints/tree/*',
       'https://*.ancestry.de/hints/tree/*',

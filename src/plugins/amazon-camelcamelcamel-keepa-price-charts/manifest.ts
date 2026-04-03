@@ -7,6 +7,7 @@ export function manifest(): MonkeyUserScript {
     author: 'miki.it',
     license: 'MIT',
     version: '2.0.0',
+    supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
     match: [
       'https://www.amazon.com/*',
       ' https://www.amazon.co.uk/*',
