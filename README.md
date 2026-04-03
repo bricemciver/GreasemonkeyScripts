@@ -6,15 +6,19 @@ Parent project to hold all my Greasemonkey scripts
 
 - [INSTALLATION](#installation)
 - [SCRIPTS](#scripts)
-  - [Sites](#sites)
-    - [Amazon](#amazon)
-    - [Ancestry](#ancestry)
-    - [EBay](#ebay)
-    - [Equip-Bid](#equip-bid)
-    - [Wirecutter](#wirecutter)
+  - [Amazon](#amazon)
+  - [Ancestry](#ancestry)
+  - [Breeze](#breeze)
+  - [eBay](#ebay)
+  - [Equip-Bid](#equip-bid)
+  - [Facebook](#facebook)
+  - [Gutenberg](#gutenberg)
+  - [Lichess](#lichess)
+  - [Microcenter](#microcenter)
+  - [Pastebin Tools](#pastebin-tools)
+  - [Word Games](#word-games)
 - [DEVELOPMENT](#development)
 - [SEE ALSO](#see-also)
-  - [Sites](#sites-1)
 
 <!-- TOC END -->
 
@@ -29,33 +33,55 @@ aren't ready for release and which may not even compile.
 
 # SCRIPTS
 
-## Sites
-
-### Amazon
+## Amazon
 
 - [Amazon - Add to Goodreads widget](https://greasyfork.org/en/scripts/468321-amazon-add-to-goodreads-widget 'Homepage') - Places an "Add to Goodreads" widget on Amazon book pages
 - [Amazon - Goodreads metadata](https://greasyfork.org/en/scripts/468322-amazon-goodreads-metadata 'Homepage') - Shows the ratings from Goodreads on Amazon book pages
-- [Amazon - Hide Sponsored] - Hides sponsored items in Amazon search results
+- [Amazon - Hide Sponsored](https://greasyfork.org/en/scripts/468326-amazon-hide-sponsored 'Homepage') - Hide sponsored items from Amazon search results
+- [Amazon CamelCamelCamel + Keepa Price Charts](https://greasyfork.org/en/scripts/468328-amazon-camelcamelcamel-keepa-price-charts 'Homepage') - Add CamelCamelCamel and Keepa price charts to Amazon product pages
 
-### Ancestry
+## Ancestry
 
 - [Ancestry.com - Remove paid hints](https://greasyfork.org/en/scripts/468323-ancestry-com-remove-paid-hints 'Homepage') - Removes paid hints on the "All Hints" page and on individual person pages
+- [Ancestry Premium Content Blocker](https://greasyfork.org/en/scripts/468329-ancestry-premium-content-blocker 'Homepage') - Preload links and disable those that redirect to signup pages
 
-### EBay
+## Breeze
+
+- [Breeze Sidebar Auto-size](https://greasyfork.org/en/scripts/468330-breeze-sidebar-auto-size 'Homepage') - Size the sidebar to fit the width of the content
+
+## eBay
 
 - [eBay Seller Hider](https://greasyfork.org/en/scripts/468324-ebay-seller-hider 'Homepage') - Hide items from low/poor feedback eBay sellers and sponsored items
 
-### Equip-Bid
+## Equip-Bid
 
 - [Equip-Bid Keyboard Nav](https://greasyfork.org/en/scripts/468327-equip-bid-keyboard-nav 'Homepage') - Use Feedly-style navigation on Equip Bid auctions
 
-### Wirecutter
+## Facebook
 
-- [Wirecutter Anti-modal](https://greasyfork.org/en/scripts/468325-wirecutter-anti-modal 'Homepage') - Stop modals asking you to register before viewing articles
+- [Facebook Hide Marketplace Deals](https://greasyfork.org/en/scripts/468331-facebook-hide-marketplace-deals 'Homepage') - Hide the sponsored deals that show up in marketplace searches
 
-### Microcenter
+## Gutenberg
 
-- [Microcenter - Sort by stock] - Allows sorting search results by the number of items in stock
+- [Gutenberg Send to Kindle](https://greasyfork.org/en/scripts/468332-gutenberg-send-to-kindle 'Homepage') - Adds a 'Send to Kindle' button on Project Gutenberg ebook pages to send EPUB3 files directly to your Kindle device via Amazon
+
+## Lichess
+
+- [Lichess Opening Explorer](https://greasyfork.org/en/scripts/468333-lichess-opening-explorer 'Homepage') - Show master openings for the current position
+
+## Microcenter
+
+- [Microcenter sort by stock](https://greasyfork.org/en/scripts/468334-microcenter-sort-by-stock 'Homepage') - Adds an option to sort the search results by number in stock at the selected store
+
+## Pastebin Tools
+
+- [FMHY Base64 Auto Decoder](https://greasyfork.org/en/scripts/485772-fmhy-base64-auto-decoder 'Homepage') - Decode base64-encoded links in some pastebins and make URLs clickable
+
+## Word Games
+
+- [Wordle Mild Cheat](https://greasyfork.org/en/scripts/468335-wordle-mild-cheat 'Homepage') - Show all valid words that still exist based on your guesses
+- [Quordle Mild Cheat](https://greasyfork.org/en/scripts/468336-quordle-mild-cheat 'Homepage') - Get hints based on the words you've already tried
+- [Octordle Mild Cheat](https://greasyfork.org/en/scripts/468337-octordle-mild-cheat 'Homepage') - Give you hints for each game board based on valid remaining words
 
 # Development
 
@@ -64,7 +90,7 @@ To work with these scripts locally:
 ```sh
 git clone https://github.com/bricemciver/GreasemonkeyScripts.git
 cd GreasemonkeyScripts
-npm install
+pnpm install
 ```
 
 ## Build
@@ -72,35 +98,19 @@ npm install
 To build all scripts for deployment:
 
 ```sh
-npm run build
-```
-
-## Lint and Format
-
-To check code style and formatting:
-
-```sh
-npm run lint:check
-npm run format:check
-```
-
-To automatically fix lint and formatting issues:
-
-```sh
-npm run lint
-npm run format
+pnpm run build
 ```
 
 ## Folder Structure
 
-- `src/main/` – Main userscript source files
-- `src/scripts/` – Build and utility scripts
+- `src/plugins/` – Individual userscript plugins
+- `src/build.ts` – Build scripts
 - `dist/` – Compiled output (not tracked in git)
 
 ## Requirements
 
 - Node.js (v18+ recommended)
-- npm
+- pnpm
 
 ## License
 
@@ -111,8 +121,6 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) for detai
 Pull requests and suggestions are welcome!
 
 # SEE ALSO
-
-## Sites
 
 - [GreasyFork](https://greasyfork.org/en/users/9112-bricemciver)
 - [OpenUserJS](https://openuserjs.org/users/bricem)
