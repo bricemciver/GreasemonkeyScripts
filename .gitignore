@@ -1,3 +1,4 @@
-.scannerwork
+.scannerwork/
+.vscode/
 node_modules/
 dist/

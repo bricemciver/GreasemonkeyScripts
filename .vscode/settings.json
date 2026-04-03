@@ -1,29 +1,6 @@
 {
-  "cSpell.words": [
-    "atmb",
-    "bricemciver",
-    "classname",
-    "connatix",
-    "dbid",
-    "Feedly",
-    "Goodreads",
-    "greasemonkey",
-    "Iver",
-    "Kinja",
-    "nodenext",
-    "nofollow",
-    "noopener",
-    "noreferrer",
-    "otid",
-    "phstart",
-    "regiwall",
-    "tagblock",
-    "tampermonkey",
-    "theinventory",
-    "watchlist",
-    "Wirecutter",
-    "Wordle",
-    "wordlist",
-    "xmlhttp"
-  ]
+    "sonarlint.connectedMode.project": {
+        "connectionId": "bricemciver",
+        "projectKey": "bricemciver_GreasemonkeyScripts"
+    }
 }
