@@ -32,6 +32,9 @@ jobs:
       - name: Check if version has been updated
         id: check
         uses: EndBug/version-check@v3
+        with:
+          diff-search: true
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build
         if: steps.check.outputs.changed == 'true'
