@@ -27,7 +27,7 @@
     "simple-git-hooks": "^2.13.1",
     "tsx": "^4.21.0",
     "typescript": "^5.8.3",
-    "vite": "^8.0.3",
+    "vite": "^8.0.5",
     "vite-plugin-monkey": "^7.1.4",
     "zx": "^8.8.5"
   },
