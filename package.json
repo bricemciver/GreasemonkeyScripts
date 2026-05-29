@@ -18,7 +18,7 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
-    "@types/node": "^22.15.30",
+    "@types/node": "^22.19.19",
     "@types/tampermonkey": "^5.0.4",
     "bundle-require": "^5.1.0",
     "chokidar": "^5.0.0",
@@ -28,7 +28,7 @@
     "tsx": "^4.21.0",
     "typescript": "^5.8.3",
     "vite": "^8.0.5",
-    "vite-plugin-monkey": "^7.1.4",
+    "vite-plugin-monkey": "^8.0.6",
     "zx": "^8.8.5"
   },
   "simple-git-hooks": {
