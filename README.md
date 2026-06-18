@@ -16,6 +16,7 @@ Parent project to hold all my Greasemonkey scripts
   - [Lichess](#lichess)
   - [Microcenter](#microcenter)
   - [Pastebin Tools](#pastebin-tools)
+  - [ThisIsWhyImBroke](#thisiswhyimbroke)
   - [Word Games](#word-games)
 - [DEVELOPMENT](#development)
 - [SEE ALSO](#see-also)
@@ -76,6 +77,10 @@ aren't ready for release and which may not even compile.
 ## Pastebin Tools
 
 - [FMHY Base64 Auto Decoder](https://greasyfork.org/en/scripts/485772-fmhy-base64-auto-decoder 'Homepage') - Decode base64-encoded links in some pastebins and make URLs clickable
+
+## ThisIsWhyImBroke
+
+- [ThisIsWhyImBroke Menu Fix](https://github.com/bricemciver/GreasemonkeyScripts/releases/latest/download/thisiswhyimbroke-menu-fix.user.js 'Download') - Makes the long "Gifts by Recipient / Occasion / Category" navigation dropdowns scrollable
 
 ## Word Games
 
