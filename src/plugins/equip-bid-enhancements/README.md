@@ -9,8 +9,11 @@ A userscript that bundles several quality-of-life improvements for [equip-bid.co
 | 1   | **Auto-login**          | Re-submits your saved credentials when the one-week session cookie expires, then returns you to the page you were on. (Same behavior as the old _Auto Login_ script.)                                                                                                |
 | 2   | **Connection recovery** | equip-bid's live bidding sometimes drops its websocket and shows _"No Connection!"_ / _"Socket Connection Lost."_, requiring a manual reload. This detects that state and reloads for you (with a cancelable countdown) or offers a one-click **Reload now** button. |
 | 3   | **All-in cost badges**  | The listed bid hides the real price. A badge next to each lot's _Next Required Bid_ shows the true cost = bid + buyer's premium (default 18%) + per-lot handling (default $1.00) + optional sales tax.                                                               |
-| 4   | **Bid counts**          | The auction grid never shows how many bids a lot has — only the detail page does. Each visible lot's detail page is fetched in the background (lazily, as it scrolls into view) and the lot is badged with its bid count.                                            |
-| 5   | **Photo carousel**      | Adds a 🔍 zoom button to each grid thumbnail. It opens a lightbox showing the full-size image, then pulls the lot's _entire_ photo set from its detail page so you can flip through every photo (arrow keys / on-screen arrows) without opening the lot.             |
+| 4   | **Bid counts**          | The lot grid never shows how many bids a lot has — only the detail page does. Each visible lot's detail page is fetched in the background (lazily, as it scrolls into view) and the lot is badged with its bid count.                                                |
+| 5   | **Photo carousel**      | Adds a 🔍 zoom button to each lot thumbnail. It opens a lightbox showing the full-size image, then pulls the lot's _entire_ photo set from its detail page so you can flip through every photo (arrow keys / on-screen arrows) without opening the lot.              |
+| 6   | **Watchlist summary**   | On the dashboard Watched Lots tab, a banner totals the all-in cost to win everything at current bids, **subtotaled by auction** (since you pay and pick up per auction).                                                                                             |
+
+Features 3–6 work everywhere a lot appears — the auction grid, the single-lot detail page, and the dashboard **Watched Lots** tab.
 
 ## Installation
 
@@ -30,8 +33,8 @@ Open the Tampermonkey menu on any equip-bid.com page:
 
 - **Credentials are stored in plain text** in Tampermonkey's local storage on your machine. Only use auto-login on a device you trust.
 - Auto-reload is **rate-limited** (max 3 reloads per minute) so a real server outage can't trap you in a reload loop, and it won't fire while you're typing in an input.
-- equip-bid renders lot data as plain text and updates it over a websocket, so the on-grid features key off visible text and **re-apply themselves as the lot list changes**. If the site significantly changes its markup, a feature may quietly stop matching rather than break the page; please file an issue.
-- The **all-in figure is an estimate**. Confirm the exact premium, fees, and tax against the auction's Terms before bidding.
+- The lot features key off equip-bid's per-lot element ids/classes (e.g. `lot_next_required_bid_*`, `img.auction-img`) and **re-apply themselves as lots load and update over the websocket**. If the site significantly changes that markup, a feature may quietly stop matching rather than break the page; please file an issue.
+- The **all-in figure is an estimate** and uses one premium/handling/tax setting for every auction. Buyer's premiums and tax can differ between auctions/affiliates, so confirm the exact figures against each auction's Terms before bidding.
 - **Bid counts and the photo carousel fetch each lot's detail page in the background.** Fetching is lazy (only as a lot scrolls into view), capped at a few requests at a time, and cached per page load. The displayed **bid count is a snapshot** from when the lot was first fetched, not a live ticker.
 
 ## How auto-login works

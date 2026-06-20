@@ -194,6 +194,17 @@ const injectStyles = (): void => {
     .eqb-bidcount { display: inline-block; margin-left: 6px; padding: 1px 6px; border-radius: 10px;
       background: #eef1f6; color: #355; font-size: .8em; font-weight: 600; white-space: nowrap; }
 
+    /* watchlist all-in summary (grouped by auction) */
+    #eqb-watch-summary { margin: 0 0 16px; padding: 12px 16px; border-radius: 8px; background: #1f7a33; color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    #eqb-watch-summary .eqb-summary-head { font-size: 1rem; font-weight: 700; }
+    #eqb-watch-summary .eqb-summary-rows { margin-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+    #eqb-watch-summary .eqb-summary-row { display: flex; justify-content: space-between; gap: 12px; font-size: .9rem; }
+    #eqb-watch-summary .eqb-summary-row a { color: #cdeccd; text-decoration: underline; max-width: 70%;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #eqb-watch-summary .eqb-summary-row span { white-space: nowrap; }
+    #eqb-watch-summary .eqb-summary-note { margin-top: 8px; font-size: .75rem; color: #d6f0d6; }
+
     /* photo preview zoom button + lightbox carousel */
     .eqb-zoom { position: absolute; top: 6px; right: 6px; z-index: 5; width: 28px; height: 28px;
       border: none; border-radius: 50%; background: rgba(0,0,0,.6); color: #fff; font-size: 14px;
@@ -232,11 +243,40 @@ const injectStyles = (): void => {
 // DOM helpers
 // ===========================================================================
 
-// The leaf-most elements whose own text carries a given label, so we can attach badges
-// right next to the value rather than to some big wrapper.
-const findLabelLeaves = (root: ParentNode, label: RegExp): HTMLElement[] => {
-  const all = Array.from(root.querySelectorAll<HTMLElement>('*')).filter((el) => label.test(el.textContent ?? ''))
-  return all.filter((el) => !all.some((other) => other !== el && el.contains(other)))
+// equip-bid renders every lot from one partial that keys its fields by a stable per-lot id,
+// e.g. `lot_next_required_bid_lot_equip-bid_46563_10498416`. The suffix after the field
+// prefix is the lot key (`lot_equip-bid_46563_10498416`). Keying off these ids/classes lets
+// the same code light up the auction grid, the single-lot detail page, AND the dashboard
+// Watched Lots tab (which has no `.lot-list` wrapper at all).
+const NEXT_BID_PREFIX = 'lot_next_required_bid_'
+const CURRENT_BID_PREFIX = 'lot_current_bid_'
+const HIGH_BIDDER_PREFIX = 'lot_current_high_bidder_list_'
+
+const lotKeysOnPage = (): string[] => {
+  const keys = new Set<string>()
+  for (const el of document.querySelectorAll<HTMLElement>(`[id^="${NEXT_BID_PREFIX}"]`)) {
+    keys.add(el.id.slice(NEXT_BID_PREFIX.length))
+  }
+  return [...keys]
+}
+
+const lotEl = (prefix: string, key: string): HTMLElement | null => document.getElementById(`${prefix}${key}`)
+
+// Lot key looks like `lot_equip-bid_<auctionId>_<itemId>`.
+const auctionIdFromKey = (key: string): string | null => key.match(/_(\d+)_\d+$/)?.[1] ?? null
+
+const auctionNameFor = (auctionId: string): string => {
+  const link = document.querySelector<HTMLAnchorElement>(`a[href$="/auction/${auctionId}"]`)
+  const name = link?.textContent?.trim().replace(/\s+/g, ' ')
+  return name && name.length > 0 ? name : `Auction ${auctionId}`
+}
+
+// Pull a dollar amount out of an element's text (e.g. "$1,234.56" -> 1234.56).
+const parseUsd = (text: string | null | undefined): number | null => {
+  const m = (text ?? '').match(/\$\s*([0-9][0-9,]*(?:\.[0-9]{2})?)/)
+  if (!m) return null
+  const n = Number.parseFloat(m[1].replace(/,/g, ''))
+  return Number.isFinite(n) ? n : null
 }
 
 // Walk up from an element to find the lot detail URL for the card it belongs to.
@@ -420,35 +460,35 @@ const checkConnection = (): void => {
 // 3. All-in cost badges
 // ===========================================================================
 
-// Pull a dollar amount that follows a given label out of an element's text.
-const amountAfter = (text: string, label: RegExp): number | null => {
-  const re = new RegExp(label.source + String.raw`\s*:?\s*\$\s*([0-9][0-9,]*(?:\.[0-9]{2})?)`, 'i')
-  const m = text.match(re)
-  if (!m) return null
-  const n = Number.parseFloat(m[1].replace(/,/g, ''))
-  return Number.isFinite(n) ? n : null
-}
-
 const computeAllIn = (bid: number, fees: Fees): number => {
   const base = bid * (1 + fees.premiumPct / 100) + fees.handling
   return base * (1 + fees.taxPct / 100)
 }
 
-const applyAllInBadges = (root: ParentNode, fees: Fees): void => {
+const feesAreZero = (fees: Fees): boolean => fees.premiumPct === 0 && fees.handling === 0 && fees.taxPct === 0
+
+const allInTitle = (bid: number, fees: Fees): string => {
+  const taxNote = fees.taxPct > 0 ? `, ${fees.taxPct}% tax` : ''
+  return `Bid ${usd(bid)} + ${fees.premiumPct}% premium + ${usd(fees.handling)} handling${taxNote}`
+}
+
+const applyAllInBadges = (fees: Fees): void => {
   // Re-derive from scratch each pass so socket bid updates stay accurate.
-  root.querySelectorAll('.eqb-allin').forEach((b) => b.remove())
-  if (fees.premiumPct === 0 && fees.handling === 0 && fees.taxPct === 0) {
+  document.querySelectorAll('.eqb-allin').forEach((b) => b.remove())
+  if (feesAreZero(fees)) {
     return
   }
-  for (const el of findLabelLeaves(root, /next required bid/i)) {
-    const bid = amountAfter(el.textContent ?? '', /next required bid/i)
-    if (bid === null) continue
+  for (const key of lotKeysOnPage()) {
+    const nextEl = lotEl(NEXT_BID_PREFIX, key)
+    const bid = parseUsd(nextEl?.textContent)
+    if (!nextEl || bid === null) continue
     const badge = document.createElement('span')
     badge.className = 'eqb-allin'
     badge.textContent = `≈ ${usd(computeAllIn(bid, fees))} all-in`
-    const taxNote = fees.taxPct > 0 ? `, ${fees.taxPct}% tax` : ''
-    badge.title = `Bid ${usd(bid)} + ${fees.premiumPct}% premium + ${usd(fees.handling)} handling${taxNote}`
-    el.appendChild(badge)
+    badge.title = allInTitle(bid, fees)
+    // Insert as a sibling after the value span (which the socket overwrites in place), so
+    // our badge survives live bid updates and is refreshed by the next enhance pass.
+    nextEl.insertAdjacentElement('afterend', badge)
   }
 }
 
@@ -456,15 +496,20 @@ const applyAllInBadges = (root: ParentNode, fees: Fees): void => {
 // 4. Bid counts (lazily fetched from each lot's detail page)
 // ===========================================================================
 
-const setBidBadge = (el: HTMLElement, count: number): void => {
-  if (el.querySelector(':scope > .eqb-bidcount')) return
+// Place the badge on the high-bidder line (the socket overwrites only the inner value span,
+// so a badge on the surrounding line survives updates).
+const bidBadgeHost = (highBidderEl: HTMLElement): HTMLElement | null =>
+  highBidderEl.closest('small') ?? highBidderEl.parentElement
+
+const setBidBadge = (host: HTMLElement, count: number): void => {
+  if (host.querySelector('.eqb-bidcount')) return
   const badge = document.createElement('span')
   badge.className = 'eqb-bidcount'
   badge.textContent = count === 1 ? '1 bid' : `${count} bids`
-  el.appendChild(badge)
+  host.appendChild(badge)
 }
 
-// Fetch a lot's detail page only once it scrolls near the viewport.
+// Fetch a lot's detail page only once its high-bidder line scrolls near the viewport.
 const bidObserver = new IntersectionObserver(
   (entries) => {
     for (const entry of entries) {
@@ -472,10 +517,11 @@ const bidObserver = new IntersectionObserver(
       const el = entry.target as HTMLElement
       bidObserver.unobserve(el)
       const url = itemUrlFor(el)
-      if (!url) continue
+      const host = bidBadgeHost(el)
+      if (!url || !host) continue
       void fetchDetail(url).then((detail) => {
-        if (detail.bidCount != null && el.isConnected) {
-          setBidBadge(el, detail.bidCount)
+        if (detail.bidCount != null && host.isConnected) {
+          setBidBadge(host, detail.bidCount)
         }
       })
     }
@@ -483,13 +529,17 @@ const bidObserver = new IntersectionObserver(
   { rootMargin: '300px' },
 )
 
-const applyBidCounts = (root: ParentNode): void => {
-  for (const el of findLabelLeaves(root, /high bidder/i)) {
+const applyBidCounts = (): void => {
+  for (const key of lotKeysOnPage()) {
+    const el = lotEl(HIGH_BIDDER_PREFIX, key)
+    if (!el) continue
+    if (/be the first/i.test(el.textContent ?? '')) continue // no bids yet — nothing to fetch
+    const host = bidBadgeHost(el)
     const url = itemUrlFor(el)
-    if (!url) continue
+    if (!host || !url) continue
     const cached = detailCache.get(url)
     if (cached?.bidCount != null) {
-      setBidBadge(el, cached.bidCount)
+      setBidBadge(host, cached.bidCount)
     } else if (!el.dataset.eqbBidObserved) {
       el.dataset.eqbBidObserved = '1'
       bidObserver.observe(el)
@@ -595,10 +645,11 @@ const openLightbox = (thumbSrc: string, detailUrl: string | null): void => {
   }
 }
 
-const addPhotoPreviews = (container: ParentNode): void => {
-  for (const img of container.querySelectorAll<HTMLImageElement>('img')) {
+const addPhotoPreviews = (): void => {
+  // `img.auction-img` is the lot thumbnail on every listing (grid, detail, watched lots);
+  // targeting it avoids ever touching the site's logos, icons, or unrelated links.
+  for (const img of document.querySelectorAll<HTMLImageElement>('img.auction-img')) {
     if (img.dataset.eqbZoom || !img.src) continue
-    if (img.naturalWidth && img.naturalWidth < 60) continue // skip icons/sprites
     img.dataset.eqbZoom = '1'
 
     const parent = img.parentElement
@@ -620,6 +671,88 @@ const addPhotoPreviews = (container: ParentNode): void => {
 }
 
 // ===========================================================================
+// 6. Watchlist all-in summary (dashboard Watched Lots tab only)
+// ===========================================================================
+
+// The Watched Lots tab is identified by its filter/sort form (the auction grid has neither).
+const isWatchPage = (): boolean => !!document.querySelector('#watch_filter, #watched-sort')
+
+const findShowingRow = (): HTMLElement | null => {
+  for (const row of document.querySelectorAll<HTMLElement>('.row')) {
+    if (/showing\s+\d+\s+to\s+\d+\s+of/i.test(row.textContent ?? '')) return row
+  }
+  return null
+}
+
+type AuctionGroup = { count: number; total: number; name: string }
+
+const updateWatchSummary = (fees: Fees): void => {
+  document.getElementById('eqb-watch-summary')?.remove()
+  if (!isWatchPage() || feesAreZero(fees)) return
+
+  const keys = lotKeysOnPage()
+  if (keys.length === 0) return
+
+  // A watchlist can span multiple auctions, and you pay/pick up per auction — so subtotal
+  // by auction, then give a grand total.
+  const groups = new Map<string, AuctionGroup>()
+  let grandTotal = 0
+  for (const key of keys) {
+    const bid = parseUsd(lotEl(CURRENT_BID_PREFIX, key)?.textContent) ?? 0
+    const allIn = computeAllIn(bid, fees)
+    const auctionId = auctionIdFromKey(key) ?? 'unknown'
+    const group = groups.get(auctionId) ?? {
+      count: 0,
+      total: 0,
+      name: auctionId === 'unknown' ? 'Other' : auctionNameFor(auctionId),
+    }
+    group.count += 1
+    group.total += allIn
+    groups.set(auctionId, group)
+    grandTotal += allIn
+  }
+
+  const box = document.createElement('div')
+  box.id = 'eqb-watch-summary'
+
+  const head = document.createElement('div')
+  head.className = 'eqb-summary-head'
+  head.textContent = `Win all ${keys.length} watched lot${keys.length === 1 ? '' : 's'} at current bids ≈ ${usd(grandTotal)} all-in`
+  box.appendChild(head)
+
+  // Only break out per-auction rows when more than one auction is represented.
+  if (groups.size > 1) {
+    const rows = document.createElement('div')
+    rows.className = 'eqb-summary-rows'
+    for (const [auctionId, group] of [...groups.entries()].sort((a, b) => b[1].total - a[1].total)) {
+      const row = document.createElement('div')
+      row.className = 'eqb-summary-row'
+      const link = document.createElement('a')
+      link.href = `/auction/${auctionId}`
+      link.textContent = group.name
+      link.title = group.name
+      const amount = document.createElement('span')
+      amount.textContent = `${group.count} lot${group.count === 1 ? '' : 's'} ≈ ${usd(group.total)}`
+      row.append(link, amount)
+      rows.appendChild(row)
+    }
+    box.appendChild(rows)
+  }
+
+  const note = document.createElement('div')
+  note.className = 'eqb-summary-note'
+  const taxNote = fees.taxPct > 0 ? ` + ${fees.taxPct}% tax` : ''
+  note.textContent = `Includes ${fees.premiumPct}% premium + ${usd(fees.handling)}/lot${taxNote}. Estimate — premiums and tax can vary by auction.`
+  box.appendChild(note)
+
+  // Drop the summary just above the "Showing 1 to N of N items" row.
+  const anchor = findShowingRow()
+  if (anchor?.parentElement) {
+    anchor.parentElement.insertBefore(box, anchor)
+  }
+}
+
+// ===========================================================================
 // Orchestration — run the DOM features, re-running as the lot list mutates
 // ===========================================================================
 
@@ -630,15 +763,14 @@ let debounceTimer = 0
 const enhance = (): void => {
   observer?.disconnect()
   try {
-    // Scope every DOM change to the auction lot list. On pages without one (affiliate
-    // profiles, account, home, single-lot detail, ...) we touch nothing, so the script
-    // can't interfere with their links or layout.
-    const lotList = document.querySelector<HTMLElement>('div.lot-list')
-    if (lotList) {
-      applyAllInBadges(lotList, getFees())
-      applyBidCounts(lotList)
-      addPhotoPreviews(lotList)
-    }
+    // Every feature keys off the site's per-lot ids/classes, so it activates on the auction
+    // grid, the single-lot detail page, and the dashboard Watched Lots tab — and no-ops on
+    // pages with no lots (affiliate profiles, account, home), leaving their links untouched.
+    const fees = getFees()
+    applyAllInBadges(fees)
+    applyBidCounts()
+    addPhotoPreviews()
+    updateWatchSummary(fees)
   } catch (err) {
     console.error('[equip-bid] enhancement pass failed:', err)
   } finally {
