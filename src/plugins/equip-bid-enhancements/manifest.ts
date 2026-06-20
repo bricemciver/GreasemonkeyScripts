@@ -1,10 +1,10 @@
 import type { MonkeyUserScript } from 'vite-plugin-monkey'
 export function manifest(): MonkeyUserScript {
   return {
-    name: 'Equip-Bid Auto Login',
+    name: 'Equip-Bid Enhancements',
     namespace: 'https://github.com/bricemciver/GreasemonekeyScripts',
     description:
-      'Keep yourself logged into equip-bid.com: when the session cookie is missing or expired, silently re-submit your saved credentials and return you to the page you were headed to.',
+      'Quality-of-life improvements for equip-bid.com auctions: stay logged in, recover dropped connections, show the true all-in cost per lot, surface bid counts on the auction grid, and preview every lot photo in a carousel — all without opening each item.',
     license: 'MIT',
     version: '0.1',
     match: 'https://www.equip-bid.com/*',

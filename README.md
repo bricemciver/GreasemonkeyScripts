@@ -56,6 +56,7 @@ aren't ready for release and which may not even compile.
 
 ## Equip-Bid
 
+- [Equip-Bid Enhancements](https://github.com/bricemciver/GreasemonkeyScripts/releases/latest/download/equip-bid-enhancements.user.js 'Download') - Stay logged in, recover dropped connections, show the all-in cost per lot, surface bid counts on the grid, and preview every lot photo in a carousel
 - [Equip-Bid Keyboard Nav](https://greasyfork.org/en/scripts/468327-equip-bid-keyboard-nav 'Homepage') - Use Feedly-style navigation on Equip Bid auctions
 
 ## Facebook
