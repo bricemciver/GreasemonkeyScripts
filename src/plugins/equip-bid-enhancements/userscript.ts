@@ -1,3 +1,5 @@
+import { getItemFromSessionStorage, setItemInSessionStorage } from '../../common/storageUtils'
+
 // Equip-Bid Enhancements
 //
 // A single userscript bundling several quality-of-life fixes for equip-bid.com:
@@ -36,16 +38,26 @@ const FEE_KEYS = {
 
 type Fees = { premiumPct: number; handling: number; taxPct: number }
 
-const getFees = (): Fees => ({
-  premiumPct: GM_getValue<number>(FEE_KEYS.premiumPct, 18),
-  handling: GM_getValue<number>(FEE_KEYS.handling, 1),
-  taxPct: GM_getValue<number>(FEE_KEYS.taxPct, 0),
-})
+// Fees only change via the menu dialog, but getFees() runs on every (debounced) enhance pass,
+// so read GM storage once and serve a cached copy until saveFees() refreshes it.
+let cachedFees: Fees | null = null
+
+const getFees = (): Fees => {
+  if (!cachedFees) {
+    cachedFees = {
+      premiumPct: GM_getValue<number>(FEE_KEYS.premiumPct, 18),
+      handling: GM_getValue<number>(FEE_KEYS.handling, 1),
+      taxPct: GM_getValue<number>(FEE_KEYS.taxPct, 0),
+    }
+  }
+  return cachedFees
+}
 
 const saveFees = ({ premiumPct, handling, taxPct }: Fees): void => {
   GM_setValue(FEE_KEYS.premiumPct, premiumPct)
   GM_setValue(FEE_KEYS.handling, handling)
   GM_setValue(FEE_KEYS.taxPct, taxPct)
+  cachedFees = { premiumPct, handling, taxPct }
 }
 
 // Whether a dropped connection should reload the page automatically (with a cancelable
@@ -102,7 +114,7 @@ const isLoggedIn = (cookie: Tampermonkey.Cookie | undefined): boolean => {
   return cookie.expirationDate * 1000 > Date.now()
 }
 
-const attemptLogin = (credentials: Credentials, returnPath: string): Promise<boolean> => {
+const attemptLogin = async (credentials: Credentials, returnPath: string): Promise<boolean> => {
   const body = new URLSearchParams({
     emailAddress: credentials.email,
     password: credentials.password,
@@ -110,19 +122,17 @@ const attemptLogin = (credentials: Credentials, returnPath: string): Promise<boo
     submit: '',
   }).toString()
 
-  return new Promise((resolve) => {
-    GM_xmlhttpRequest({
+  try {
+    await GM.xmlHttpRequest({
       method: 'POST',
       url: LOGIN_ENDPOINT,
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       data: body,
-      onload: () => {
-        getSessionCookie().then((cookie) => resolve(isLoggedIn(cookie)))
-      },
-      onerror: () => resolve(false),
-      ontimeout: () => resolve(false),
     })
-  })
+  } catch {
+    return false
+  }
+  return isLoggedIn(await getSessionCookie())
 }
 
 const ensureLoggedIn = async (): Promise<void> => {
@@ -137,11 +147,11 @@ const ensureLoggedIn = async (): Promise<void> => {
     return
   }
 
-  if (sessionStorage.getItem(ATTEMPT_FLAG)) {
+  if (getItemFromSessionStorage(ATTEMPT_FLAG, false)) {
     console.warn('[equip-bid] Login already attempted for this navigation; not retrying.')
     return
   }
-  sessionStorage.setItem(ATTEMPT_FLAG, '1')
+  setItemInSessionStorage(ATTEMPT_FLAG, true)
 
   const returnPath = location.pathname + location.search
   const success = await attemptLogin(credentials, returnPath)
@@ -251,11 +261,17 @@ const injectStyles = (): void => {
 const NEXT_BID_PREFIX = 'lot_next_required_bid_'
 const CURRENT_BID_PREFIX = 'lot_current_bid_'
 const HIGH_BIDDER_PREFIX = 'lot_current_high_bidder_list_'
+const LOT_FIELD_PREFIXES = [NEXT_BID_PREFIX, CURRENT_BID_PREFIX, HIGH_BIDDER_PREFIX]
 
+// Discover lots from the union of all known field ids, not just next-required-bid: a
+// closed/ended watched lot has a current-bid/high-bidder element but no next-bid one, and
+// would otherwise be invisible to every feature (e.g. dropped from the watch-summary total).
 const lotKeysOnPage = (): string[] => {
   const keys = new Set<string>()
-  for (const el of document.querySelectorAll<HTMLElement>(`[id^="${NEXT_BID_PREFIX}"]`)) {
-    keys.add(el.id.slice(NEXT_BID_PREFIX.length))
+  for (const prefix of LOT_FIELD_PREFIXES) {
+    for (const el of document.querySelectorAll<HTMLElement>(`[id^="${prefix}"]`)) {
+      keys.add(el.id.slice(prefix.length))
+    }
   }
   return [...keys]
 }
@@ -265,10 +281,20 @@ const lotEl = (prefix: string, key: string): HTMLElement | null => document.getE
 // Lot key looks like `lot_equip-bid_<auctionId>_<itemId>`.
 const auctionIdFromKey = (key: string): string | null => key.match(/_(\d+)_\d+$/)?.[1] ?? null
 
+// Auction names are stable for the page lifetime; memoize so the watch summary doesn't re-run
+// an un-indexed `href$=` document scan per auction on every enhance pass. Only cache a real
+// match — keep retrying the fallback so a name that loads later still gets picked up.
+const auctionNameCache = new Map<string, string>()
 const auctionNameFor = (auctionId: string): string => {
+  const cached = auctionNameCache.get(auctionId)
+  if (cached) return cached
   const link = document.querySelector<HTMLAnchorElement>(`a[href$="/auction/${auctionId}"]`)
   const name = link?.textContent?.trim().replace(/\s+/g, ' ')
-  return name && name.length > 0 ? name : `Auction ${auctionId}`
+  if (name && name.length > 0) {
+    auctionNameCache.set(auctionId, name)
+    return name
+  }
+  return `Auction ${auctionId}`
 }
 
 // Pull a dollar amount out of an element's text (e.g. "$1,234.56" -> 1234.56).
@@ -296,6 +322,8 @@ const itemUrlFor = (el: Element): string | null => {
 
 type LotDetail = { bidCount: number | null; images: string[] }
 
+const EMPTY_DETAIL: LotDetail = { bidCount: null, images: [] }
+
 const detailCache = new Map<string, LotDetail>()
 const inflight = new Map<string, Promise<LotDetail>>()
 
@@ -314,12 +342,17 @@ const parseDetail = (html: string): LotDetail => {
   const bidMatch = html.match(/(\d+)\s*bid\(s\)/i)
   const bidCount = bidMatch ? Number.parseInt(bidMatch[1], 10) : null
 
-  // Photos live in a `dataSource: [{ ..., "image": "https:\/\/..." }]` JSON array.
+  // Photos live in a `dataSource: [{ ..., "image": "https:\/\/..." }]` JSON array. Scope the
+  // scan to that array — a page-wide search would also sweep in `"image"` keys from unrelated
+  // blobs (related-lots widgets, JSON-LD, share meta) and pollute the carousel.
   const images: string[] = []
-  const re = /"image"\s*:\s*"(https:[^"]+)"/g
-  let m: RegExpExecArray | null
-  while ((m = re.exec(html))) {
-    images.push(m[1].replace(/\\\//g, '/'))
+  const dataSource = html.match(/dataSource\s*:\s*(\[[\s\S]*?\])/)
+  if (dataSource) {
+    const re = /"image"\s*:\s*"(https:[^"]+)"/g
+    let m: RegExpExecArray | null
+    while ((m = re.exec(dataSource[1]))) {
+      images.push(m[1].replace(/\\\//g, '/'))
+    }
   }
   return { bidCount, images: [...new Set(images)] }
 }
@@ -330,25 +363,26 @@ const fetchDetail = (url: string): Promise<LotDetail> => {
   const existing = inflight.get(url)
   if (existing) return existing
 
-  const promise = new Promise<LotDetail>((resolve) => {
-    const run = (): void => {
+  const promise = new Promise<LotDetail | null>((resolve) => {
+    const run = async (): Promise<void> => {
       activeFetches += 1
-      GM_xmlhttpRequest({
-        method: 'GET',
-        url,
-        onload: (res) => resolve(parseDetail(res.responseText)),
-        onerror: () => resolve({ bidCount: null, images: [] }),
-        ontimeout: () => resolve({ bidCount: null, images: [] }),
-      })
+      try {
+        const res = await GM.xmlHttpRequest({ method: 'GET', url })
+        resolve(parseDetail(res.responseText))
+      } catch {
+        resolve(null) // signal failure (vs. a real empty result) so it isn't cached
+      }
     }
-    fetchQueue.push(run)
+    fetchQueue.push(() => void run())
     pumpQueue()
   }).then((detail) => {
     activeFetches -= 1
     inflight.delete(url)
-    detailCache.set(url, detail)
+    // Only cache successful fetches; leaving failures uncached lets a later intersection or
+    // zoom retry instead of poisoning the lot for the rest of the page session.
+    if (detail) detailCache.set(url, detail)
     pumpQueue()
-    return detail
+    return detail ?? EMPTY_DETAIL
   })
 
   inflight.set(url, promise)
@@ -369,25 +403,30 @@ const MAX_AUTO_RELOADS = 3 // within RELOAD_WINDOW_MS, then fall back to manual
 const RELOAD_WINDOW_MS = 60_000
 const RELOAD_COUNTDOWN_S = 10
 
-let connectionBannerShown = false
+const bannerShown = (): boolean => !!document.getElementById('eqb-connection')
+
+// True when the element is actually rendered. Unlike `offsetParent !== null` this also holds
+// for position:fixed elements and correctly excludes visibility:hidden / opacity:0 reveals.
+const isElementVisible = (el: HTMLElement): boolean => {
+  if (el.getClientRects().length === 0) return false
+  const style = getComputedStyle(el)
+  return style.visibility !== 'hidden' && Number.parseFloat(style.opacity) !== 0
+}
 
 const hasConnectionError = (): boolean => {
-  // The alert is in the page at all times but hidden (display:none) until the socket gives
-  // up; offsetParent is null while hidden, non-null once revealed.
+  // The alert is in the page at all times but hidden until the socket gives up.
   const alert = document.getElementById(DANGER_ALERT_ID)
-  return !!alert && alert.offsetParent !== null
+  return !!alert && isElementVisible(alert)
 }
 
 const dismissConnectionBanner = (): void => {
   document.getElementById('eqb-connection')?.remove()
-  connectionBannerShown = false
 }
 
 const showConnectionBanner = (): void => {
-  if (connectionBannerShown || document.getElementById('eqb-connection')) {
+  if (bannerShown()) {
     return
   }
-  connectionBannerShown = true
 
   // Rate-limit automatic reloads so a server outage can't trap us in a reload loop.
   const now = Date.now()
@@ -407,8 +446,9 @@ const showConnectionBanner = (): void => {
   banner.appendChild(msg)
 
   const reloadNow = (): void => {
+    // Bump the count only; the window anchor (RELOAD_TS_KEY) stays at the start of the series,
+    // already set by the reset branch above, so the rate-limit window measures from there.
     GM_setValue(RELOAD_COUNT_KEY, count + 1)
-    GM_setValue(RELOAD_TS_KEY, GM_getValue<number>(RELOAD_TS_KEY, now))
     location.reload()
   }
 
@@ -451,7 +491,7 @@ const showConnectionBanner = (): void => {
 const checkConnection = (): void => {
   if (hasConnectionError()) {
     showConnectionBanner()
-  } else if (connectionBannerShown) {
+  } else if (bannerShown()) {
     dismissConnectionBanner() // connection recovered on its own
   }
 }
@@ -467,27 +507,43 @@ const computeAllIn = (bid: number, fees: Fees): number => {
 
 const feesAreZero = (fees: Fees): boolean => fees.premiumPct === 0 && fees.handling === 0 && fees.taxPct === 0
 
-const allInTitle = (bid: number, fees: Fees): string => {
-  const taxNote = fees.taxPct > 0 ? `, ${fees.taxPct}% tax` : ''
-  return `Bid ${usd(bid)} + ${fees.premiumPct}% premium + ${usd(fees.handling)} handling${taxNote}`
-}
+// "+ N% tax" suffix (with a caller-supplied separator), or empty when tax is off.
+const taxNote = (fees: Fees, sep: string): string => (fees.taxPct > 0 ? `${sep}${fees.taxPct}% tax` : '')
 
-const applyAllInBadges = (fees: Fees): void => {
-  // Re-derive from scratch each pass so socket bid updates stay accurate.
-  document.querySelectorAll('.eqb-allin').forEach((b) => b.remove())
+const allInTitle = (bid: number, fees: Fees): string =>
+  `Bid ${usd(bid)} + ${fees.premiumPct}% premium + ${usd(fees.handling)} handling${taxNote(fees, ', ')}`
+
+const applyAllInBadges = (fees: Fees, keys: string[]): void => {
   if (feesAreZero(fees)) {
+    document.querySelectorAll('.eqb-allin').forEach((b) => b.remove())
     return
   }
-  for (const key of lotKeysOnPage()) {
+  for (const key of keys) {
     const nextEl = lotEl(NEXT_BID_PREFIX, key)
-    const bid = parseUsd(nextEl?.textContent)
-    if (!nextEl || bid === null) continue
+    if (!nextEl) continue
+    // The badge lives as a sibling right after the value span (the socket overwrites only the
+    // span, so the sibling survives live updates). Reuse it instead of rebuilding every badge
+    // on the page each pass — a single lot's bid tick shouldn't churn all the others.
+    const sibling = nextEl.nextElementSibling
+    const existing = sibling?.classList.contains('eqb-allin') ? (sibling as HTMLElement) : null
+    const bid = parseUsd(nextEl.textContent)
+    if (bid === null) {
+      existing?.remove()
+      continue
+    }
+    const text = `≈ ${usd(computeAllIn(bid, fees))} all-in`
+    if (existing) {
+      // Comparing text catches both bid ticks and fee-setting changes.
+      if (existing.textContent !== text) {
+        existing.textContent = text
+        existing.title = allInTitle(bid, fees)
+      }
+      continue
+    }
     const badge = document.createElement('span')
     badge.className = 'eqb-allin'
-    badge.textContent = `≈ ${usd(computeAllIn(bid, fees))} all-in`
+    badge.textContent = text
     badge.title = allInTitle(bid, fees)
-    // Insert as a sibling after the value span (which the socket overwrites in place), so
-    // our badge survives live bid updates and is refreshed by the next enhance pass.
     nextEl.insertAdjacentElement('afterend', badge)
   }
 }
@@ -529,8 +585,8 @@ const bidObserver = new IntersectionObserver(
   { rootMargin: '300px' },
 )
 
-const applyBidCounts = (): void => {
-  for (const key of lotKeysOnPage()) {
+const applyBidCounts = (keys: string[]): void => {
+  for (const key of keys) {
     const el = lotEl(HIGH_BIDDER_PREFIX, key)
     if (!el) continue
     if (/be the first/i.test(el.textContent ?? '')) continue // no bids yet — nothing to fetch
@@ -560,6 +616,19 @@ const fileBase = (url: string): string => stripSizePrefix(url).split('/').pop() 
 let lbImages: string[] = []
 let lbIndex = 0
 
+// The keydown handler is only attached while the lightbox is open (see openLightbox), so the
+// rest of the page's typing doesn't run it on every keystroke.
+const onLightboxKey = (e: KeyboardEvent): void => {
+  if (e.key === 'Escape') closeLightbox()
+  if (e.key === 'ArrowLeft') stepLightbox(-1)
+  if (e.key === 'ArrowRight') stepLightbox(1)
+}
+
+const closeLightbox = (): void => {
+  document.getElementById('eqb-lightbox')?.classList.remove('open')
+  document.removeEventListener('keydown', onLightboxKey)
+}
+
 const ensureLightbox = (): HTMLDivElement => {
   let box = document.getElementById('eqb-lightbox') as HTMLDivElement | null
   if (box) return box
@@ -575,19 +644,12 @@ const ensureLightbox = (): HTMLDivElement => {
     </div>
   `
 
-  const close = (): void => box!.classList.remove('open')
   // Click the dark backdrop (but not the image/buttons) to close.
   box.addEventListener('click', (e) => {
-    if (e.target === box) close()
+    if (e.target === box) closeLightbox()
   })
   box.querySelector('.eqb-lb-prev')?.addEventListener('click', () => stepLightbox(-1))
   box.querySelector('.eqb-lb-next')?.addEventListener('click', () => stepLightbox(1))
-  document.addEventListener('keydown', (e) => {
-    if (!box!.classList.contains('open')) return
-    if (e.key === 'Escape') close()
-    if (e.key === 'ArrowLeft') stepLightbox(-1)
-    if (e.key === 'ArrowRight') stepLightbox(1)
-  })
 
   document.body.appendChild(box)
   return box
@@ -630,6 +692,8 @@ const openLightbox = (thumbSrc: string, detailUrl: string | null): void => {
   lbIndex = 0
   renderLightbox()
   box.classList.add('open')
+  // addEventListener dedupes by (type, fn, capture), so a re-open won't stack handlers.
+  document.addEventListener('keydown', onLightboxKey)
 
   // Then pull the lot's full photo set from its detail page and upgrade to a carousel.
   if (detailUrl) {
@@ -684,40 +748,40 @@ const findShowingRow = (): HTMLElement | null => {
   return null
 }
 
-type AuctionGroup = { count: number; total: number; name: string }
+type AuctionGroup = { count: number; total: number }
 
-const updateWatchSummary = (fees: Fees): void => {
+const updateWatchSummary = (fees: Fees, keys: string[]): void => {
   document.getElementById('eqb-watch-summary')?.remove()
   if (!isWatchPage() || feesAreZero(fees)) return
-
-  const keys = lotKeysOnPage()
   if (keys.length === 0) return
 
   // A watchlist can span multiple auctions, and you pay/pick up per auction — so subtotal
   // by auction, then give a grand total.
   const groups = new Map<string, AuctionGroup>()
   let grandTotal = 0
+  let counted = 0
   for (const key of keys) {
-    const bid = parseUsd(lotEl(CURRENT_BID_PREFIX, key)?.textContent) ?? 0
+    // Skip lots whose current bid can't be read yet (e.g. mid socket update) rather than
+    // counting them as $0 — that would understate the total while still inflating the count.
+    const bid = parseUsd(lotEl(CURRENT_BID_PREFIX, key)?.textContent)
+    if (bid === null) continue
     const allIn = computeAllIn(bid, fees)
     const auctionId = auctionIdFromKey(key) ?? 'unknown'
-    const group = groups.get(auctionId) ?? {
-      count: 0,
-      total: 0,
-      name: auctionId === 'unknown' ? 'Other' : auctionNameFor(auctionId),
-    }
+    const group = groups.get(auctionId) ?? { count: 0, total: 0 }
     group.count += 1
     group.total += allIn
     groups.set(auctionId, group)
     grandTotal += allIn
+    counted += 1
   }
+  if (counted === 0) return
 
   const box = document.createElement('div')
   box.id = 'eqb-watch-summary'
 
   const head = document.createElement('div')
   head.className = 'eqb-summary-head'
-  head.textContent = `Win all ${keys.length} watched lot${keys.length === 1 ? '' : 's'} at current bids ≈ ${usd(grandTotal)} all-in`
+  head.textContent = `Win all ${counted} watched lot${counted === 1 ? '' : 's'} at current bids ≈ ${usd(grandTotal)} all-in`
   box.appendChild(head)
 
   // Only break out per-auction rows when more than one auction is represented.
@@ -727,10 +791,12 @@ const updateWatchSummary = (fees: Fees): void => {
     for (const [auctionId, group] of [...groups.entries()].sort((a, b) => b[1].total - a[1].total)) {
       const row = document.createElement('div')
       row.className = 'eqb-summary-row'
+      // Resolve the name only here (when rows actually render), not for every group eagerly.
+      const name = auctionId === 'unknown' ? 'Other' : auctionNameFor(auctionId)
       const link = document.createElement('a')
       link.href = `/auction/${auctionId}`
-      link.textContent = group.name
-      link.title = group.name
+      link.textContent = name
+      link.title = name
       const amount = document.createElement('span')
       amount.textContent = `${group.count} lot${group.count === 1 ? '' : 's'} ≈ ${usd(group.total)}`
       row.append(link, amount)
@@ -741,8 +807,7 @@ const updateWatchSummary = (fees: Fees): void => {
 
   const note = document.createElement('div')
   note.className = 'eqb-summary-note'
-  const taxNote = fees.taxPct > 0 ? ` + ${fees.taxPct}% tax` : ''
-  note.textContent = `Includes ${fees.premiumPct}% premium + ${usd(fees.handling)}/lot${taxNote}. Estimate — premiums and tax can vary by auction.`
+  note.textContent = `Includes ${fees.premiumPct}% premium + ${usd(fees.handling)}/lot${taxNote(fees, ' + ')}. Estimate — premiums and tax can vary by auction.`
   box.appendChild(note)
 
   // Drop the summary just above the "Showing 1 to N of N items" row.
@@ -767,10 +832,11 @@ const enhance = (): void => {
     // grid, the single-lot detail page, and the dashboard Watched Lots tab — and no-ops on
     // pages with no lots (affiliate profiles, account, home), leaving their links untouched.
     const fees = getFees()
-    applyAllInBadges(fees)
-    applyBidCounts()
+    const keys = lotKeysOnPage()
+    applyAllInBadges(fees, keys)
+    applyBidCounts(keys)
     addPhotoPreviews()
-    updateWatchSummary(fees)
+    updateWatchSummary(fees, keys)
   } catch (err) {
     console.error('[equip-bid] enhancement pass failed:', err)
   } finally {
@@ -803,18 +869,33 @@ const buildDialog = (innerHTML: string): HTMLDialogElement => {
   return dialog
 }
 
-const openCredentialsDialog = (): void => {
-  const { email, password } = getCredentials()
+type DialogField = { id: string; label: string; type: string; attrs?: string; value: string }
+
+// Build + show a settings dialog from a field spec. `onSave` receives the live inputs (keyed
+// by id) so callers read values back without re-querying; `extraButton` is the optional
+// bottom-left action (e.g. "Clear saved").
+const openFieldDialog = (opts: {
+  title: string
+  hint: string
+  fields: DialogField[]
+  onSave: (inputs: Record<string, HTMLInputElement>) => void
+  extraButton?: { label: string; className: string; onClick: (inputs: Record<string, HTMLInputElement>) => void }
+}): void => {
+  const fieldsHtml = opts.fields
+    .map(
+      (f) => `<label for="${f.id}">${f.label}</label>\n      <input id="${f.id}" type="${f.type}" ${f.attrs ?? ''} />`,
+    )
+    .join('\n      ')
+  const extraHtml = opts.extraButton
+    ? `<button type="button" class="${opts.extraButton.className}">${opts.extraButton.label}</button>`
+    : '<div></div>'
   const dialog = buildDialog(`
     <form method="dialog">
-      <h2>Equip-Bid Auto Login</h2>
-      <p class="hint">Stored locally in Tampermonkey and re-submitted automatically when your session expires.</p>
-      <label for="eqb-email">Email address</label>
-      <input id="eqb-email" type="email" autocomplete="off" />
-      <label for="eqb-password">Password</label>
-      <input id="eqb-password" type="password" autocomplete="off" />
+      <h2>${opts.title}</h2>
+      <p class="hint">${opts.hint}</p>
+      ${fieldsHtml}
       <div class="buttons">
-        <button type="button" class="clear">Clear saved</button>
+        ${extraHtml}
         <div class="right-buttons">
           <button type="button" class="cancel">Cancel</button>
           <button type="submit" class="save">Save</button>
@@ -823,66 +904,89 @@ const openCredentialsDialog = (): void => {
     </form>
   `)
 
-  const emailInput = dialog.querySelector<HTMLInputElement>('#eqb-email')
-  const passwordInput = dialog.querySelector<HTMLInputElement>('#eqb-password')
-  if (emailInput) emailInput.value = email
-  if (passwordInput) passwordInput.value = password
+  const inputs: Record<string, HTMLInputElement> = {}
+  for (const f of opts.fields) {
+    const input = dialog.querySelector<HTMLInputElement>(`#${f.id}`)
+    if (input) {
+      input.value = f.value
+      inputs[f.id] = input
+    }
+  }
 
   dialog.querySelector<HTMLButtonElement>('button.cancel')?.addEventListener('click', () => dialog.close())
-  dialog.querySelector<HTMLButtonElement>('button.clear')?.addEventListener('click', () => {
-    clearCredentials()
-    if (emailInput) emailInput.value = ''
-    if (passwordInput) passwordInput.value = ''
-  })
-  dialog.querySelector<HTMLFormElement>('form')?.addEventListener('submit', () => {
-    saveCredentials({ email: emailInput?.value.trim() ?? '', password: passwordInput?.value ?? '' })
-    sessionStorage.removeItem(ATTEMPT_FLAG)
-    void ensureLoggedIn()
-  })
+  if (opts.extraButton) {
+    dialog
+      .querySelector<HTMLButtonElement>(`button.${opts.extraButton.className}`)
+      ?.addEventListener('click', () => opts.extraButton!.onClick(inputs))
+  }
+  dialog.querySelector<HTMLFormElement>('form')?.addEventListener('submit', () => opts.onSave(inputs))
 
   dialog.showModal()
 }
 
+const openCredentialsDialog = (): void => {
+  const { email, password } = getCredentials()
+  openFieldDialog({
+    title: 'Equip-Bid Auto Login',
+    hint: 'Stored locally in Tampermonkey and re-submitted automatically when your session expires.',
+    fields: [
+      { id: 'eqb-email', label: 'Email address', type: 'email', attrs: 'autocomplete="off"', value: email },
+      { id: 'eqb-password', label: 'Password', type: 'password', attrs: 'autocomplete="off"', value: password },
+    ],
+    extraButton: {
+      label: 'Clear saved',
+      className: 'clear',
+      onClick: (inputs) => {
+        clearCredentials()
+        inputs['eqb-email'].value = ''
+        inputs['eqb-password'].value = ''
+      },
+    },
+    onSave: (inputs) => {
+      saveCredentials({ email: inputs['eqb-email'].value.trim(), password: inputs['eqb-password'].value })
+      setItemInSessionStorage(ATTEMPT_FLAG, false)
+      void ensureLoggedIn()
+    },
+  })
+}
+
 const openFeesDialog = (): void => {
   const fees = getFees()
-  const dialog = buildDialog(`
-    <form method="dialog">
-      <h2>Equip-Bid Fee Settings</h2>
-      <p class="hint">Used to compute the "all-in" cost shown next to each lot's next required bid.</p>
-      <label for="eqb-premium">Buyer's premium (%)</label>
-      <input id="eqb-premium" type="number" min="0" step="0.1" />
-      <label for="eqb-handling">Handling per lot ($)</label>
-      <input id="eqb-handling" type="number" min="0" step="0.01" />
-      <label for="eqb-tax">Sales tax (%) — 0 to ignore</label>
-      <input id="eqb-tax" type="number" min="0" step="0.1" />
-      <div class="buttons">
-        <div></div>
-        <div class="right-buttons">
-          <button type="button" class="cancel">Cancel</button>
-          <button type="submit" class="save">Save</button>
-        </div>
-      </div>
-    </form>
-  `)
-
-  const premium = dialog.querySelector<HTMLInputElement>('#eqb-premium')
-  const handling = dialog.querySelector<HTMLInputElement>('#eqb-handling')
-  const tax = dialog.querySelector<HTMLInputElement>('#eqb-tax')
-  if (premium) premium.value = String(fees.premiumPct)
-  if (handling) handling.value = String(fees.handling)
-  if (tax) tax.value = String(fees.taxPct)
-
-  dialog.querySelector<HTMLButtonElement>('button.cancel')?.addEventListener('click', () => dialog.close())
-  dialog.querySelector<HTMLFormElement>('form')?.addEventListener('submit', () => {
-    saveFees({
-      premiumPct: Number.parseFloat(premium?.value ?? '') || 0,
-      handling: Number.parseFloat(handling?.value ?? '') || 0,
-      taxPct: Number.parseFloat(tax?.value ?? '') || 0,
-    })
-    scheduleEnhance()
+  openFieldDialog({
+    title: 'Equip-Bid Fee Settings',
+    hint: 'Used to compute the "all-in" cost shown next to each lot\'s next required bid.',
+    fields: [
+      {
+        id: 'eqb-premium',
+        label: "Buyer's premium (%)",
+        type: 'number',
+        attrs: 'min="0" step="0.1"',
+        value: String(fees.premiumPct),
+      },
+      {
+        id: 'eqb-handling',
+        label: 'Handling per lot ($)',
+        type: 'number',
+        attrs: 'min="0" step="0.01"',
+        value: String(fees.handling),
+      },
+      {
+        id: 'eqb-tax',
+        label: 'Sales tax (%) — 0 to ignore',
+        type: 'number',
+        attrs: 'min="0" step="0.1"',
+        value: String(fees.taxPct),
+      },
+    ],
+    onSave: (inputs) => {
+      saveFees({
+        premiumPct: Number.parseFloat(inputs['eqb-premium'].value) || 0,
+        handling: Number.parseFloat(inputs['eqb-handling'].value) || 0,
+        taxPct: Number.parseFloat(inputs['eqb-tax'].value) || 0,
+      })
+      scheduleEnhance()
+    },
   })
-
-  dialog.showModal()
 }
 
 const withBody = (fn: () => void): void => {
