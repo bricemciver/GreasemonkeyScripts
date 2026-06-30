@@ -85,11 +85,27 @@ const insertGoodreadsData = (asin: string, goodreadsData: GoodreadsData) => {
     if (faceout.dataset.csaCItemId !== asin) {
       continue
     }
-    if (faceout.parentElement?.querySelector(`:scope > [${PROCESSED_ATTR}="${asin}"]`)) {
+    const wrapper = faceout.parentElement
+    if (wrapper?.querySelector(`:scope > [${PROCESSED_ATTR}="${asin}"]`)) {
       return
     }
     const badge = buildBadge(goodreadsData)
     badge.setAttribute(PROCESSED_ATTR, asin)
+
+    // Cards in a row (carousels, shelves) have differently-sized text blocks, so
+    // a badge placed directly after the faceout ends up at a ragged height. When
+    // the faceout sits in its own per-card wrapper, lay that wrapper out as a
+    // full-height column and let the badge take the leftover space, so every
+    // badge bottom-aligns across the row. Skip this when the wrapper holds more
+    // than one faceout (i.e. it's the shared row container, not a single card).
+    const isSingleCardWrapper = wrapper && wrapper.querySelectorAll('bds-unified-book-faceout').length === 1
+    if (isSingleCardWrapper) {
+      wrapper.style.display = 'flex'
+      wrapper.style.flexDirection = 'column'
+      wrapper.style.height = '100%'
+      badge.style.marginTop = 'auto'
+    }
+
     faceout.insertAdjacentElement('afterend', badge)
     return
   }
