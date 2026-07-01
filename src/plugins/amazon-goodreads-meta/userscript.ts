@@ -119,7 +119,12 @@ const insertGoodreadsData = (asin: string, goodreadsData: GoodreadsData) => {
   }
 }
 
+// ASINs we've handled (in flight, succeeded, or given up on) so the observer
+// doesn't refetch them, and a count of transport failures per ASIN so a
+// persistently-failing request isn't retried forever on every DOM mutation.
 const processedAsins = new Set<string>()
+const failedAttempts = new Map<string, number>()
+const MAX_ATTEMPTS = 3
 
 const processAsins = async (asins: string[]) => {
   for (const asin of asins) {
@@ -142,9 +147,14 @@ const processAsins = async (asins: string[]) => {
         insertGoodreadsData(asin, aggregateGoodreadsData)
       }
     } catch (error) {
-      // Allow a later run to retry this ASIN if the request failed.
-      processedAsins.delete(asin)
-      console.error('Error fetching Goodreads data:', error)
+      // Allow a later run to retry this ASIN, but only up to MAX_ATTEMPTS so a
+      // persistent failure doesn't flood Goodreads on every DOM mutation.
+      const attempts = (failedAttempts.get(asin) ?? 0) + 1
+      failedAttempts.set(asin, attempts)
+      if (attempts < MAX_ATTEMPTS) {
+        processedAsins.delete(asin)
+      }
+      console.error(`Error fetching Goodreads data (attempt ${attempts}/${MAX_ATTEMPTS}):`, error)
     }
   }
 }
@@ -161,7 +171,19 @@ const init = () => {
 
   run()
 
-  const observer = new MutationObserver(() => run())
+  // Coalesce the bursts of mutations Amazon pages emit (lazy images, carousels,
+  // countdown widgets) into a single deferred run so we don't rescan the whole
+  // document on every individual mutation.
+  let scheduled = 0
+  const observer = new MutationObserver(() => {
+    if (scheduled) {
+      return
+    }
+    scheduled = window.setTimeout(() => {
+      scheduled = 0
+      run()
+    }, 500)
+  })
   observer.observe(document.body, { childList: true, subtree: true })
 }
 
