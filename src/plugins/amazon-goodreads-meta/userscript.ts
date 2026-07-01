@@ -2,10 +2,6 @@ const asinRegex = /^[A-Z0-9]{10}$/
 const goodreadsRegex =
   /"aggregateRating":({"@type":"AggregateRating","ratingValue":.*?,"ratingCount":.*?,"reviewCount":.*?})/
 
-// Marks an element as already enriched so repeated runs (e.g. from the
-// MutationObserver) don't insert duplicate badges for the same book.
-const PROCESSED_ATTR = 'data-goodreads-processed'
-
 interface GoodreadsData {
   rating: string
   ratingCount: string
@@ -81,16 +77,15 @@ const insertGoodreadsData = (asin: string, goodreadsData: GoodreadsData) => {
   // badge to the light-DOM host instead of reaching into the shadow DOM, so we
   // don't depend on the shadow structure or its render timing.
   const faceouts = document.querySelectorAll<HTMLElement>('bds-unified-book-faceout')
-  for (const faceout of Array.from(faceouts)) {
+  for (const faceout of faceouts) {
     if (faceout.dataset.csaCItemId !== asin) {
       continue
     }
     const wrapper = faceout.parentElement
-    if (wrapper?.querySelector(`:scope > [${PROCESSED_ATTR}="${asin}"]`)) {
-      return
+    if (!wrapper) {
+      continue
     }
     const badge = buildBadge(goodreadsData)
-    badge.setAttribute(PROCESSED_ATTR, asin)
 
     // Cards in a row (carousels, shelves) have differently-sized text blocks, so
     // a badge placed directly after the faceout ends up at a ragged height. When
@@ -98,7 +93,7 @@ const insertGoodreadsData = (asin: string, goodreadsData: GoodreadsData) => {
     // full-height column and let the badge take the leftover space, so every
     // badge bottom-aligns across the row. Skip this when the wrapper holds more
     // than one faceout (i.e. it's the shared row container, not a single card).
-    const isSingleCardWrapper = wrapper && wrapper.querySelectorAll('bds-unified-book-faceout').length === 1
+    const isSingleCardWrapper = wrapper.querySelectorAll('bds-unified-book-faceout').length === 1
     if (isSingleCardWrapper) {
       wrapper.style.display = 'flex'
       wrapper.style.flexDirection = 'column'
@@ -112,10 +107,8 @@ const insertGoodreadsData = (asin: string, goodreadsData: GoodreadsData) => {
 
   // Single product page: insert after the review summary block.
   const reviewElement = document.getElementById('reviewFeatureGroup')
-  if (reviewElement && !document.querySelector(`[${PROCESSED_ATTR}="${asin}"]`)) {
-    const badge = buildBadge(goodreadsData)
-    badge.setAttribute(PROCESSED_ATTR, asin)
-    reviewElement.parentNode?.insertBefore(badge, reviewElement.nextSibling)
+  if (reviewElement) {
+    reviewElement.parentNode?.insertBefore(buildBadge(goodreadsData), reviewElement.nextSibling)
   }
 }
 
