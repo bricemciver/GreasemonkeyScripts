@@ -101,7 +101,7 @@ const insertGoodreadsData = (asin: string, goodreadsData: GoodreadsData) => {
       badge.style.marginTop = 'auto'
     }
 
-    faceout.insertAdjacentElement('afterend', badge)
+    faceout.after(badge)
     return
   }
 
@@ -167,13 +167,13 @@ const init = () => {
   // Coalesce the bursts of mutations Amazon pages emit (lazy images, carousels,
   // countdown widgets) into a single deferred run so we don't rescan the whole
   // document on every individual mutation.
-  let scheduled = 0
+  let scheduled: NodeJS.Timeout | null = null
   const observer = new MutationObserver(() => {
     if (scheduled) {
       return
     }
-    scheduled = window.setTimeout(() => {
-      scheduled = 0
+    scheduled = setTimeout(() => {
+      scheduled = null
       run()
     }, 500)
   })
