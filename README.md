@@ -60,6 +60,7 @@ aren't ready for release and which may not even compile.
 
 ## Facebook
 
+- [Facebook Birthday Wisher](src/plugins/facebook-birthday-wisher/README.md 'Documentation') - Draft and post a varied, relationship-appropriate birthday wish to each friend whose birthday is today (not yet on GreasyFork)
 - [Facebook Hide Marketplace Deals](https://greasyfork.org/en/scripts/468331-facebook-hide-marketplace-deals 'Homepage') - Hide the sponsored deals that show up in marketplace searches
 
 ## Gutenberg
