@@ -18,37 +18,79 @@ interface ChessDBResult {
 // (rm6/kwdb -> i5d/z7yx), so locate the list by content instead of by tag.
 const SAN_RE = /^(?:O-O(?:-O)?|[KQRBN]?[a-h]?[1-8]?x?[a-h][1-8](?:=?[QRBN])?)[+#]?[!?]{0,2}$/
 
-const getMoveElements = (): Element[] => {
-  const known = document.querySelector('rm6, l4x')
-  const kwdb = known?.querySelectorAll('kwdb')
-  if (kwdb?.length) return [...kwdb]
-
-  const scope = document.querySelector('main') ?? document.body
-  let best: Element[] = []
-  for (const candidate of scope.querySelectorAll('*')) {
-    const moves = [...candidate.children].filter(
-      (child) => child.childElementCount === 0 && SAN_RE.test(child.textContent?.trim() ?? ''),
-    )
-    if (moves.length > best.length) best = moves
-  }
-  // Lichess marks the move being viewed with a class; everything after it is
-  // ahead of the board, so stop there.
-  const viewing = best.findIndex((el) => el.className !== '')
-  // No move is marked: the board is rewound to the starting position.
-  return viewing === -1 ? [] : best.slice(0, viewing + 1)
+interface MoveEntry {
+  el: Element
+  san: string
 }
 
-const getLichessGame = (): string[] | null => {
-  const moveElements = getMoveElements()
-  if (moveElements.length === 0) return []
+// The move list comes in two shapes. A game in progress renders each move as a
+// bare leaf (`<z7yx>Nf3</z7yx>`); the analysis board and the review page of a
+// finished game wrap it (`<move p="1"><san>e4</san></move>`), interleaved with
+// `<index>` elements holding the move number.
+const sanOf = (el: Element): string | null => {
+  let text: string
+  if (el.childElementCount === 0) text = el.textContent?.trim() ?? ''
+  else {
+    // A direct child, not a descendant: a variation is a `<lines>` subtree
+    // whose nested <san> would otherwise be read as a move of the line that
+    // contains it.
+    const san = el.querySelector(':scope > san')
+    if (!san) return null
+    text = san.textContent?.trim() ?? ''
+  }
+  return SAN_RE.test(text) ? text : null
+}
+
+const entriesIn = (parent: Element): MoveEntry[] => {
+  const entries: MoveEntry[] = []
+  for (const child of parent.children) {
+    const san = sanOf(child)
+    if (san !== null) entries.push({ el: child, san })
+  }
+  return entries
+}
+
+// Returns the moves up to the one on the board, [] at the starting position, or
+// null when the position on screen cannot be determined.
+const getPlayedMoves = (): string[] | null => {
+  const scope = document.querySelector('main') ?? document.body
+  let best: MoveEntry[] = []
+  for (const candidate of scope.querySelectorAll('*')) {
+    const entries = entriesIn(candidate)
+    if (entries.length > best.length) best = entries
+  }
+
+  // Lichess marks the move being viewed; everything after it is ahead of the
+  // board. The analysis board names that class `active`. The round page uses a
+  // build-specific name, but marks exactly one move with it -- requiring
+  // exactly one keeps a lone computer-analysis annotation (`blunder` and
+  // friends, which only ever appear on the analysis board) from being mistaken
+  // for the marker.
+  let viewing = best.findIndex((entry) => entry.el.classList.contains('active'))
+  if (viewing === -1) {
+    const marked = best.filter((entry) => entry.el.className !== '')
+    if (marked.length === 1) viewing = best.indexOf(marked[0])
+  }
+
+  if (viewing === -1) {
+    // The marked move sits inside a variation, so the main line no longer
+    // describes the board.
+    const active = scope.querySelector('move.active')
+    if (active && !best.some((entry) => entry.el === active)) return null
+    // No move is marked: the board is rewound to the starting position.
+    return []
+  }
+  return best.slice(0, viewing + 1).map((entry) => entry.san)
+}
+
+const toUci = (played: string[]): string[] | null => {
+  if (played.length === 0) return []
 
   const game = defaultGame()
   const pos = startingPosition(game.headers).unwrap()
   const uciMoves: string[] = []
 
-  for (const moveEl of moveElements) {
-    const move = moveEl.textContent?.trim()
-    if (!move) continue
+  for (const move of played) {
     const chessMove = parseSan(pos, move)
     if (!chessMove) {
       // A truncated move list would query the explorer for the wrong position.
@@ -85,18 +127,25 @@ const fetchExplorer = async (url: string): Promise<ChessDBResult | null> => {
 
 const getContainer = (): HTMLElement => {
   let container = document.getElementById('lichess-top-move')
-  if (container) return container
-  container = document.createElement('div')
-  container.id = 'lichess-top-move'
-  container.style.cssText =
-    'margin:8px 0;display:flex;justify-content:center;align-items:center;font-size:14px;font-weight:bold;'
-  const host = document.querySelector('.round__app__table, .analyse__tools, main') ?? document.body
-  host.appendChild(container)
+  if (!container) {
+    container = document.createElement('div')
+    container.id = 'lichess-top-move'
+    container.style.cssText =
+      'margin:8px 0;display:flex;justify-content:center;align-items:center;font-size:14px;font-weight:bold;'
+  }
+  // Lichess mounts these panels after the script's first run, so the readout is
+  // re-homed as they appear. `main` is deliberately not a candidate: on the
+  // analysis board it is a grid, which collapses a child it has no area for
+  // into an unreadable sliver over the board.
+  const host = document.querySelector('.round__app__table, .analyse__tools, .analyse__controls') ?? document.body
+  if (container.parentElement !== host) host.appendChild(container)
   return container
 }
 
-const updateMoveDisplay = (move: string | null) => {
-  getContainer().textContent = move ? `Top master move: ${move}` : 'Not in the masters book'
+const updateMoveDisplay = (text: string) => {
+  const container = getContainer()
+  // Rewriting the same text would trip the observer and refresh in a loop.
+  if (container.textContent !== text) container.textContent = text
 }
 
 // Only the newest in-flight lookup is allowed to paint.
@@ -104,7 +153,14 @@ let generation = 0
 
 const refresh = async () => {
   const current = ++generation
-  const moves = getLichessGame()
+  const played = getPlayedMoves()
+  if (played === null) {
+    // Variations are not looked up, but leaving the main line's reading on
+    // screen would attribute it to a position that is not being shown.
+    updateMoveDisplay('Off the main line')
+    return
+  }
+  const moves = toUci(played)
   if (moves === null) return
   const url = `${EXPLORER}?since=2008&play=${moves.join(',')}`
   let data: ChessDBResult | null
@@ -117,7 +173,7 @@ const refresh = async () => {
   if (current !== generation) return
   if (!data) return
   const top = data.moves[0]
-  updateMoveDisplay(top ? `${top.san} (${top.uci})` : null)
+  updateMoveDisplay(top ? `Top master move: ${top.san} (${top.uci})` : 'Not in the masters book')
 }
 
 const main = () => {
