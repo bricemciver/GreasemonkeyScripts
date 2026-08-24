@@ -10,7 +10,7 @@ This script enhances the Lichess chess experience by displaying master-level ope
 
 - **Real-time Analysis**: Automatically analyzes the current position as moves are made
 - **Master Game Data**: Shows opening moves from master-level games in the Lichess database
-- **UCI Notation Display**: Displays the top move in Universal Chess Interface (UCI) format
+- **Move Display**: Shows the top master move in standard algebraic notation, with the UCI form alongside
 - **Caching System**: Uses browser caching to reduce redundant requests to the opening explorer
 - **Dynamic Updates**: Updates automatically when new moves are made in the game
 - **Easy Installation**: Compatible with Tampermonkey, Greasemonkey, and other userscript managers

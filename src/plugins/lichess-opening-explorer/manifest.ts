@@ -7,7 +7,7 @@ export function manifest(): MonkeyUserScript {
     license: 'MIT',
     version: '0.1',
     grant: 'GM.xmlHttpRequest',
-    connect: 'explorer.lichess.ovh',
+    connect: 'explorer.lichess.org',
     match: 'https://lichess.org/*',
     icon: 'https://icons.duckduckgo.com/ip3/lichess.org.ico',
     supportURL: 'https://github.com/bricemciver/GreasemonkeyScripts/issues',
